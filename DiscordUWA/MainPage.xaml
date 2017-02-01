@@ -1,0 +1,131 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DiscordUWA"
+    xmlns:uc="using:DiscordUWA.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Views="using:DiscordUWA.Views"
+    xmlns:Converters="using:DiscordUWA.Converters"
+    xmlns:data="using:DiscordUWA.Models"
+    x:Class="DiscordUWA.MainPage"
+    mc:Ignorable="d"
+    DataContext="{Binding Source={StaticResource Locator}, Path=ServerView}">
+
+    <Page.Resources>
+        <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
+        <Converters:StringToUriConverter x:Key="StringToUriConverter"/>
+        <DataTemplate x:Key="ImageServerListTemplate" x:DataType="data:ServerListModel">
+            <StackPanel>
+                <Button CommandParameter="{x:Bind ServerId}" Command="{Binding Source={StaticResource Locator}, Path=ServerView.SelectServer}">
+                    <Image Height="50" Width="50" VerticalAlignment="Center" HorizontalAlignment="Center" Source="{x:Bind ServerImageUri}" Stretch="Uniform"/>
+                </Button>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="UserListTemplate" x:DataType="data:UserListModel">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="45"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Ellipse Height="30" Width="30" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Ellipse.Fill>
+                        <ImageBrush>
+                            <ImageBrush.ImageSource>
+                                <BitmapImage DecodePixelHeight="30" DecodePixelWidth="30" UriSource="{x:Bind Path=AvatarUrl, Converter={StaticResource StringToUriConverter}}" />
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor}"/>
+                    <TextBlock Text="{x:Bind CurrentlyPlaying}" Visibility="{x:Bind Path=CurrentlyPlaying, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="ChatTextListTemplate" x:DataType="data:ChatTextListModel">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="{x:Bind TimeSent}" HorizontalAlignment="Right" Foreground="#FF686A6E" FontSize="12"/>
+                <TextBlock Grid.Column="1" TextWrapping="WrapWholeWords">
+                    <Run Text="{x:Bind Username}" Foreground="{x:Bind UserRoleColor}" FontWeight="Bold"/>
+                    <Run Text="{x:Bind ChatText}"  />
+                </TextBlock>
+                <uc:GifView Grid.Column="1" Grid.Row="1" Height="100" Width="100" Stretch="Uniform" 
+                            UriSource="{x:Bind Path=ImageUrl}" 
+                            Visibility="{x:Bind Path=ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
+
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="ChannelListTemplate" x:DataType="data:ChannelListModel">
+            <Button CommandParameter="{x:Bind ChannelId}" Command="{Binding Source={StaticResource Locator}, Path=ServerView.SelectChannel}">
+                <TextBlock Text="{x:Bind ChannelName}"/>
+            </Button>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid Loading="Grid_Loading" Background="Black">
+        <SplitView DisplayMode="Inline" IsPaneOpen="True" OpenPaneLength="320" Margin="0,0,-1,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <SplitView.Pane>
+                <Grid x:Name="serverChannelGridPane" Margin="0,0,-1,0" Background="#FF2A2D32">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid Background="#FF1E2124">
+                        <Button x:Name="currentUserAvatarBtn" HorizontalAlignment="Center" Width="50" Height="50" >
+                            <Image x:Name="currentUserAvatarImg" Margin="-10,-6" Source="{Binding CurrentUserAvatarUrl}" VerticalAlignment="Center" HorizontalAlignment="Center" NineGrid="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" />
+                        </Button>
+                    </Grid>
+                    <TextBlock x:Name="serverNameText" Text="{Binding CurrentServerName}" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled"  Grid.Row="1">
+                        <ListView x:Name="serverlistView" ItemsSource="{Binding ServerListModelList}" Grid.Row="1" Background="#FF1E2124" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemTemplate="{StaticResource ImageServerListTemplate}" />
+                    </ScrollViewer>
+                    <ListView x:Name="channelsListView" Header="Text Channels" ItemsSource="{Binding ChannelList}" Grid.Column="1" Grid.Row="1" Background="#FF2E3136"  ItemTemplate="{StaticResource ChannelListTemplate}"/>
+                </Grid>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Grid x:Name="chatGrid" Background="#FF36393E" Margin="0,0,306,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="#" Margin="20,0,0,0"/>
+                        <TextBlock x:Name="currentChannelNameHeader" Text="{Binding CurrentChannelName}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" />
+                    </StackPanel>
+                    <Grid Background="#FF252526" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="90"/>
+                        </Grid.RowDefinitions>
+                        <ListView x:Name="chatLogListView" RenderTransformOrigin="0.5,0.5" Background="#FF36393E" ItemsSource="{Binding ChatLogList}" ItemTemplate="{StaticResource ChatTextListTemplate}"/>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBox x:Name="textBox" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding CurrentChatMessage, Mode=TwoWay}" VerticalAlignment="Top" Width="544" PlaceholderText="chat in channel..."/>
+                            <Button x:Name="sendChatMessage" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,0,0,0" 
+                                    Command="{Binding Source={StaticResource Locator}, Path=ServerView.SendMessageToCurrentChannel}"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </SplitView.Content>
+        </SplitView>
+        <SplitView PanePlacement="Right" OpenPaneLength="300" IsPaneOpen="True" DisplayMode="Inline" HorizontalAlignment="Right">
+            <SplitView.Pane>
+                <StackPanel>
+                    <ListView x:Name="onlineUsersListView" HorizontalAlignment="Left" Height="287" VerticalAlignment="Top" Width="260" Background="#FF2E3136" ItemsSource="{Binding OnlineUserList}" Header="Online" ItemTemplate="{StaticResource UserListTemplate}"/>
+                    <ListView x:Name="offlineUsersListView" HorizontalAlignment="Left" Height="306" VerticalAlignment="Top" Width="260" Background="#FF2E3136" Header="Offline" ItemsSource="{Binding OfflineUserList}" Margin="0,10,0,0" ItemTemplate="{StaticResource UserListTemplate}"/>
+                </StackPanel>
+            </SplitView.Pane>
+        </SplitView>
+    </Grid>
+</Page>
