@@ -15,21 +15,13 @@ using System.Threading.Tasks;
 namespace DiscordUWA.ViewModels {
     public class ServerViewModel : BindableBase {
         private ulong serverId = 0L;
-        private ulong channelId = 81037346132201472L;
+        private ulong channelId = 0L;
 
         public ICommand LoadJoinedServersList { protected set; get; }
+        public ICommand LoadCurrentUserAvatar { protected set; get; }
 
         public ICommand SelectServer { protected set; get; }
-
         public ICommand SelectChannel { protected set; get; }
-
-        public ICommand HackChannelShow { protected set; get; }
-
-        public ICommand HackShowUsers { protected set; get; }
-
-        public ICommand HackShowChatLog { protected set; get; }
-
-        public ICommand LoadCurrentUserAvatar { protected set; get; }
 
         public ICommand SendMessageToCurrentChannel { protected set; get; }
 
@@ -100,58 +92,6 @@ namespace DiscordUWA.ViewModels {
                 }
             });
 
-            this.HackChannelShow = new DelegateCommand(() => {
-                ChannelList.Clear();
-                if (serverId == 0L) return;
-                var server = LocatorService.DiscordSocketClient.GetGuild(serverId);
-
-                foreach (var channel in server.TextChannels) {
-                    string temp = $"# {channel.Name}";
-                    ChannelList.Add(new ChannelListModel(channel.Id, temp));
-                }
-            });
-
-            this.HackShowUsers = new DelegateCommand(() => {
-                onlineUserList.Clear();
-                offlineUserList.Clear();
-
-                var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
-
-                CurrentChannelName = channel.Name;
-
-                var server = LocatorService.DiscordSocketClient.GetGuild(serverId);
-
-
-                foreach (var user in channel.Users) {
-                    Color roleColor = Color.Default;
-                    // todo: figure out how to pick 'highest' role and take that color
-                    foreach (var roleid in user.RoleIds) {
-                        var role = server.GetRole(roleid);
-                        if (!role.IsEveryone) {
-                            roleColor = role.Color;
-                        }
-                    }
-
-                    if (user.Status == Discord.UserStatus.Offline || user.Status == UserStatus.Unknown) {
-                        OfflineUserList.Add(new UserListModel(user.AvatarUrl, "", false, user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString()));
-                    }
-
-                    else {
-                        OnlineUserList.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", (user.Status == Discord.UserStatus.Idle),
-                            user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString()));
-                    }
-                }
-            });
-
-            this.HackShowChatLog = new DelegateCommand(async () => {
-                ChatLogList.Clear();
-                var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
-                var messageLog = await channel.GetMessagesAsync(40).Flatten();
-                foreach (var message in messageLog.Reverse()) {
-                    AddChatMessageToChatLog(message);
-                }
-            });
-
             this.LoadCurrentUserAvatar = new DelegateCommand(() => {
                 CurrentUserAvatarUrl = new Uri(LocatorService.DiscordSocketClient.CurrentUser.AvatarUrl);
             });
@@ -161,14 +101,18 @@ namespace DiscordUWA.ViewModels {
                 serverId = selectedServerId.Value;
                 var server = LocatorService.DiscordSocketClient.GetGuild(serverId);
                 CurrentServerName = server.Name;
-                HackChannelShow.Execute(null);
+                PopulateChannelList();
             });
 
             this.SelectChannel = new DelegateCommand<ulong?>((selectedChannelId) => {
                 if (selectedChannelId == null) return;
                 channelId = selectedChannelId.Value;
-                HackShowChatLog.Execute(null);
-                HackShowUsers.Execute(null);
+
+                var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
+                CurrentChannelName = channel.Name;
+
+                PopulateChatLog();
+                PopulateUserList();
             });
 
             this.SendMessageToCurrentChannel = new DelegateCommand(async () => {
@@ -217,6 +161,53 @@ namespace DiscordUWA.ViewModels {
 
             AddChatMessageToChatLog(message);
             return Task.CompletedTask;
+        }
+
+        private void PopulateChannelList() {
+            ChannelList.Clear();
+            if (serverId == 0L) return;
+            var server = LocatorService.DiscordSocketClient.GetGuild(serverId);
+
+            foreach (var channel in server.TextChannels) {
+                string temp = $"# {channel.Name}";
+                ChannelList.Add(new ChannelListModel(channel.Id, temp));
+            }
+        }
+
+        private void PopulateUserList() {
+            onlineUserList.Clear();
+            offlineUserList.Clear();
+
+            var server = LocatorService.DiscordSocketClient.GetGuild(serverId);
+
+            foreach (var user in channel.Users) {
+                Color roleColor = Color.Default;
+                // todo: figure out how to pick 'highest' role and take that color
+                foreach (var roleid in user.RoleIds) {
+                    var role = server.GetRole(roleid);
+                    if (!role.IsEveryone) {
+                        roleColor = role.Color;
+                    }
+                }
+
+                if (user.Status == Discord.UserStatus.Offline || user.Status == UserStatus.Unknown) {
+                    OfflineUserList.Add(new UserListModel(user.AvatarUrl, "", false, user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString()));
+                }
+
+                else {
+                    OnlineUserList.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", (user.Status == Discord.UserStatus.Idle),
+                        user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString()));
+                }
+            }
+        }
+
+        private void PopulateChatLog() {
+            ChatLogList.Clear();
+            var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
+            var messageLog = await channel.GetMessagesAsync(40).Flatten();
+            foreach (var message in messageLog.Reverse()) {
+                AddChatMessageToChatLog(message);
+            }
         }
     }
 }

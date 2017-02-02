@@ -1,0 +1,40 @@
+<UserControl
+    x:Class="DiscordUWA.UserControls.UserList"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:DiscordUWA.UserControls"
+    xmlns:data="using:DiscordUWA.Models"
+    xmlns:Converters="using:DiscordUWA.Converters"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+    <UserControl.Resources>
+        <DataTemplate x:Key="UserListTemplate" x:DataType="data:UserListModel">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="45"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Ellipse Height="30" Width="30" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Ellipse.Fill>
+                        <ImageBrush>
+                            <ImageBrush.ImageSource>
+                                <BitmapImage DecodePixelHeight="30" DecodePixelWidth="30" UriSource="{x:Bind Path=AvatarUrl, Converter={StaticResource StringToUriConverter}}" />
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor}"/>
+                    <TextBlock Text="{x:Bind CurrentlyPlaying}" Visibility="{x:Bind Path=CurrentlyPlaying, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    <StackPanel>
+        <ListView x:Name="onlineUsersListView" HorizontalAlignment="Left" Height="287" VerticalAlignment="Top" Width="260" Background="#FF2E3136" ItemsSource="{Binding OnlineUserList}" Header="Online" ItemTemplate="{StaticResource UserListTemplate}"/>
+        <ListView x:Name="offlineUsersListView" HorizontalAlignment="Left" Height="306" VerticalAlignment="Top" Width="260" Background="#FF2E3136" Header="Offline" ItemsSource="{Binding OfflineUserList}" Margin="0,10,0,0" ItemTemplate="{StaticResource UserListTemplate}"/>
+    </StackPanel>
+</UserControl>
