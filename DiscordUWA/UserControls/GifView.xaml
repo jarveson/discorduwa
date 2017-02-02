@@ -16,4 +16,5 @@
         HorizontalAlignment="Center"
         Loaded="GifImage_Loaded"
         Unloaded="GifImage_Unloaded" />
+    
 </UserControl>

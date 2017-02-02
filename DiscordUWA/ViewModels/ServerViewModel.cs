@@ -14,7 +14,8 @@ using System.Threading.Tasks;
 
 namespace DiscordUWA.ViewModels {
     public class ServerViewModel : BindableBase {
-        private ulong serverId = 0L;
+
+        private ulong selectedGuildId = 0L;
         private ulong channelId = 0L;
 
         public ICommand LoadJoinedServersList { protected set; get; }
@@ -98,10 +99,11 @@ namespace DiscordUWA.ViewModels {
 
             this.SelectServer = new DelegateCommand<ulong?>((selectedServerId) => {
                 if (selectedServerId == null) return;
-                serverId = selectedServerId.Value;
-                var server = LocatorService.DiscordSocketClient.GetGuild(serverId);
+                selectedGuildId = selectedServerId.Value;
+                var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
                 CurrentServerName = server.Name;
                 PopulateChannelList();
+                PopulateUserList();
             });
 
             this.SelectChannel = new DelegateCommand<ulong?>((selectedChannelId) => {
@@ -112,7 +114,6 @@ namespace DiscordUWA.ViewModels {
                 CurrentChannelName = channel.Name;
 
                 PopulateChatLog();
-                PopulateUserList();
             });
 
             this.SendMessageToCurrentChannel = new DelegateCommand(async () => {
@@ -126,7 +127,7 @@ namespace DiscordUWA.ViewModels {
 
         private void AddChatMessageToChatLog(IMessage message) {
             Color roleColor = new Color(0xff, 0xff, 0xff);
-            var server = LocatorService.DiscordSocketClient.GetGuild(serverId);
+            var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
             var guildUser = server.GetUser(message.Author.Id);
             // todo: figure out how to pick 'highest' role and take that color
             foreach (var roleid in guildUser.RoleIds) {
@@ -165,8 +166,8 @@ namespace DiscordUWA.ViewModels {
 
         private void PopulateChannelList() {
             ChannelList.Clear();
-            if (serverId == 0L) return;
-            var server = LocatorService.DiscordSocketClient.GetGuild(serverId);
+            if (selectedGuildId == 0L) return;
+            var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
 
             foreach (var channel in server.TextChannels) {
                 string temp = $"# {channel.Name}";
@@ -178,9 +179,8 @@ namespace DiscordUWA.ViewModels {
             onlineUserList.Clear();
             offlineUserList.Clear();
 
-            var server = LocatorService.DiscordSocketClient.GetGuild(serverId);
-
-            foreach (var user in channel.Users) {
+            var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
+            foreach (var user in server.Users) {
                 Color roleColor = Color.Default;
                 // todo: figure out how to pick 'highest' role and take that color
                 foreach (var roleid in user.RoleIds) {
@@ -201,7 +201,7 @@ namespace DiscordUWA.ViewModels {
             }
         }
 
-        private void PopulateChatLog() {
+        private async void PopulateChatLog() {
             ChatLogList.Clear();
             var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
             var messageLog = await channel.GetMessagesAsync(40).Flatten();

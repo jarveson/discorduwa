@@ -1,19 +1,6 @@
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI.Xaml;
-using System;
+using DiscordUWA.Models;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.Graphics.DirectX;
-using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
-using Windows.UI;
-using Windows.UI.Core;
+using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -21,23 +8,12 @@ using Windows.UI.Xaml.Media;
 
 namespace DiscordUWA.UserControls {
     public sealed partial class ChatPane : UserControl {
-        public static DependencyProperty ChannelIdProperty { get; } = DependencyProperty.Register(
-            nameof(ChannelId),
-            typeof(long),
-            typeof(ChatPane),
-            new PropertyMetadata(null, new PropertyChangedCallback(OnSourcePropertyChanged))
-            );
-
-        public long ChannelId {
-            get { return (long)GetValue(ChannelIdProperty); }
-            set { SetValue(ChannelIdProperty, value); }
-        }
 
         public static DependencyProperty ChannelNameProperty { get; } = DependencyProperty.Register(
             nameof(ChannelName),
             typeof(string),
             typeof(ChatPane),
-            new PropertyMetadata(null, new PropertyChangedCallback(OnSourcePropertyChanged))
+            new PropertyMetadata("")
             );
 
         public string ChannelName {
@@ -49,7 +25,7 @@ namespace DiscordUWA.UserControls {
             nameof(MessageText),
             typeof(string),
             typeof(ChatPane),
-            new PropertyMetadata(null, new PropertyChangedCallback(OnSourcePropertyChanged))
+            new PropertyMetadata("")
             );
 
         public string MessageText {
@@ -61,7 +37,7 @@ namespace DiscordUWA.UserControls {
             nameof(SendMessageCommand),
             typeof(ICommand),
             typeof(ChatPane),
-            new PropertyMetadata(null, new PropertyChangedCallback(OnSourcePropertyChanged))
+            new PropertyMetadata(null)
             );
 
         public ICommand SendMessageCommand {
@@ -73,12 +49,17 @@ namespace DiscordUWA.UserControls {
             nameof(ChatLogList),
             typeof(IEnumerable<ChatTextListModel>),
             typeof(ChatPane),
-            new PropertyMetadata(null, new PropertyChangedCallback(OnSourcePropertyChanged))
+            new PropertyMetadata(null)
             );
 
         public IEnumerable<ChatTextListModel> ChatLogList {
             get { return (IEnumerable<ChatTextListModel>)GetValue(ChatLogListProperty); }
             set { SetValue(ChatLogListProperty, value); }
         }
+
+        public ChatPane() {
+            this.InitializeComponent();
+        }
+
     }
 }

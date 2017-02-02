@@ -29,6 +29,10 @@
         </DataTemplate>
     </Page.Resources>
     <Grid Loading="Grid_Loading" Background="Black">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <SplitView DisplayMode="Inline" IsPaneOpen="True" OpenPaneLength="320" Margin="0,0,-1,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <SplitView.Pane>
                 <Grid x:Name="serverChannelGridPane" Margin="0,0,-1,0" Background="#FF2A2D32">
@@ -53,17 +57,16 @@
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
-                <uc:ChatPane 
-                    ChannelId="{x:Bind ChannelId}" 
-                    ChannelName="{x:Bind CurrentChannelName}"
-                    ChatLogList="{x:Bind ChatLogList}"
-                    MessageText="{Binding CurrentChatMessage, Mode=TwoWay}" 
+                <uc:ChatPane
+                    ChannelName="{Binding CurrentChannelName}"
+                    ChatLogList="{Binding ChatLogList}"
+                    MessageText="{Binding CurrentChatMessage, Mode=TwoWay}"
                     SendMessageCommand="{Binding Source={StaticResource Locator}, Path=ServerView.SendMessageToCurrentChannel}"/>
             </SplitView.Content>
         </SplitView>
-        <SplitView PanePlacement="Right" OpenPaneLength="300" IsPaneOpen="True" DisplayMode="Inline" HorizontalAlignment="Right">
+        <SplitView PanePlacement="Right" OpenPaneLength="300" IsPaneOpen="True" DisplayMode="Inline" HorizontalAlignment="Right" Grid.Column="1">
             <SplitView.Pane>
-                <uc:UserList GuildId="{x:Bind ServerId}" OnlineUserList="{Binding OnlineUserList}" OfflineUserList="{Binding OfflineUserList}"/>
+                <uc:UserList OnlineUserList="{Binding OnlineUserList}" OfflineUserList="{Binding OfflineUserList}" Margin="0,20,0,0" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
             </SplitView.Pane>
         </SplitView>
     </Grid>

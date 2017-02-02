@@ -7,10 +7,11 @@
     xmlns:uc="using:DiscordUWA.UserControls"
     xmlns:data="using:DiscordUWA.Models"
     xmlns:Converters="using:DiscordUWA.Converters"
-    mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400">
+    mc:Ignorable="d" Height="607.2" Width="267.2"
+    x:Name="root">
     <UserControl.Resources>
+        <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
+        <Converters:StringToUriConverter x:Key="StringToUriConverter"/>
         <DataTemplate x:Key="UserListTemplate" x:DataType="data:UserListModel">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -34,7 +35,7 @@
         </DataTemplate>
     </UserControl.Resources>
     <StackPanel>
-        <ListView x:Name="onlineUsersListView" HorizontalAlignment="Left" Height="287" VerticalAlignment="Top" Width="260" Background="#FF2E3136" ItemsSource="{Binding OnlineUserList}" Header="Online" ItemTemplate="{StaticResource UserListTemplate}"/>
-        <ListView x:Name="offlineUsersListView" HorizontalAlignment="Left" Height="306" VerticalAlignment="Top" Width="260" Background="#FF2E3136" Header="Offline" ItemsSource="{Binding OfflineUserList}" Margin="0,10,0,0" ItemTemplate="{StaticResource UserListTemplate}"/>
+        <ListView x:Name="onlineUsersListView" HorizontalAlignment="Left" VerticalAlignment="Top" Width="260" Background="#FF2E3136" ItemsSource="{Binding OnlineUserList, ElementName=root}" Header="Online" ItemTemplate="{StaticResource UserListTemplate}"/>
+        <ListView x:Name="offlineUsersListView" HorizontalAlignment="Left" VerticalAlignment="Top" Width="260" Background="#FF2E3136" Header="Offline" ItemsSource="{Binding OfflineUserList, ElementName=root}" Margin="0,10,0,0" ItemTemplate="{StaticResource UserListTemplate}"/>
     </StackPanel>
 </UserControl>

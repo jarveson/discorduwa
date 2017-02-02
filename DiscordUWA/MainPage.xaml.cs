@@ -38,13 +38,6 @@ namespace DiscordUWA
             ServerViewModel svm = (ServerViewModel)DataContext;
             svm.LoadJoinedServersList.Execute(null);
             svm.LoadCurrentUserAvatar.Execute(null);
-            
-        }
-
-        private void chatLogListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args) {
-            int lastItem = chatLogListView.Items.Count - 1;
-            chatLogListView.ScrollIntoView(chatLogListView.Items[lastItem]);
-            
         }
     }
 }
