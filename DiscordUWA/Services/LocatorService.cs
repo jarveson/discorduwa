@@ -24,6 +24,7 @@ namespace DiscordUWA.Services {
 
             navService.Configure("login", typeof(LoginPanel));
             navService.Configure("main", typeof(MainPage));
+            navService.Configure("userProfile", typeof(UserProfile));
 
             SimpleIoc.Default.Register(() => navService);
             SimpleIoc.Default.Register(() => discordClient);

@@ -31,7 +31,7 @@ namespace DiscordUWA.ViewModels {
             get { return this.isLoading; }
             set { SetProperty<bool>(ref isLoading, value); }
         }
-
+        
         public LoginViewModel() {
 
             this.LoginCommand = new DelegateCommand(() => {

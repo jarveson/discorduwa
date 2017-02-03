@@ -23,21 +23,11 @@ namespace DiscordUWA
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : BindablePage
     {
         public MainPage()
         {
             this.InitializeComponent();
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e) {
-            base.OnNavigatedTo(e);
-        }
-
-        private void Grid_Loading(FrameworkElement sender, object args) {
-            ServerViewModel svm = (ServerViewModel)DataContext;
-            svm.LoadJoinedServersList.Execute(null);
-            svm.LoadCurrentUserAvatar.Execute(null);
         }
     }
 }

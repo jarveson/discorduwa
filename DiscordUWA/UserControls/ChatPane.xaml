@@ -43,6 +43,8 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="#" Margin="20,0,0,0"/>
             <TextBlock Text="{Binding Path=ChannelName, ElementName=root}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" />
+            <TextBlock Text="{Binding Path=ChannelTopic, ElementName=root}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <Button Command="{Binding Path=ToggleUserList, ElementName=root}" FontFamily="Segoe MDL2 Assets" Content="&#xE716;" Margin="20,0" HorizontalAlignment="Right" Background="Transparent"/>
         </StackPanel>
         <Grid Background="#FF252526" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -63,7 +65,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox TextWrapping="Wrap" Text="{Binding MessageText, Mode=TwoWay, ElementName=root}" PlaceholderText="chat in channel..." Margin="20,0,0,0"/>
+                <TextBox TextWrapping="Wrap" Text="{Binding MessageText, Mode=TwoWay, ElementName=root}" PlaceholderText="Type Message..." Margin="20,0,0,0"/>
                 <Button x:Name="sendChatMessage" Content="Send" Margin="20,0" Grid.Column="1" Command="{x:Bind SendMessageCommand}"/>
             </Grid>
         </Grid>

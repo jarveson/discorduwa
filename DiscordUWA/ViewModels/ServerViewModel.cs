@@ -13,7 +13,7 @@ using Discord.WebSocket;
 using System.Threading.Tasks;
 
 namespace DiscordUWA.ViewModels {
-    public class ServerViewModel : BindableBase {
+    public class ServerViewModel : INavigable, BindableBase {
 
         private ulong selectedGuildId = 0L;
         private ulong channelId = 0L;
@@ -25,6 +25,9 @@ namespace DiscordUWA.ViewModels {
         public ICommand SelectChannel { protected set; get; }
 
         public ICommand SendMessageToCurrentChannel { protected set; get; }
+        public ICommand ToggleUserListCommand { protected set; get;}
+
+        public ICommand UserClick {protected set; get;}
 
         private ObservableCollection<ServerListModel> serverListModelList = new ObservableCollection<ServerListModel>();
         public ObservableCollection<ServerListModel> ServerListModelList {
@@ -77,6 +80,26 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref currentChatMessage, value); }
         }
 
+        private bool showUserList = true;
+        public bool ShowUserList {
+            get { return this.showUserList; }
+            set { SetProperty(ref showUserList, value); }
+        }
+
+        private string channelTopic = "";
+        public string ChannelTopic {
+            get { return this.channelTopic; }
+            set { SetProperty(ref channelTopic, value); }
+        }
+
+        public void OnNavigatingTo(object parameter) {
+            LoadJoinedServersList.Execute(null);
+            LoadCurrentUserAvatar.Execute(null);
+        }
+        public void OnNavigatingFrom(object parameter) {
+
+        }
+
         public ServerViewModel() {
             this.ChatLogList = new ObservableCollection<ChatTextListModel>();
 
@@ -112,6 +135,7 @@ namespace DiscordUWA.ViewModels {
 
                 var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
                 CurrentChannelName = channel.Name;
+                ChannelTopic = channel.Topic;
 
                 PopulateChatLog();
             });
@@ -123,8 +147,16 @@ namespace DiscordUWA.ViewModels {
 
                 CurrentChatMessage = String.Empty;
             });
-        }
 
+            this.ToggleUserListCommand = new DelegateCommand(() => {
+                ShowUserList = !ShowUserList;
+            });
+
+            this.UserClick = new DelegateCommand((userId) => {
+                LocatorService.NavigationService.NavigateTo("userProfile", userId);
+            });
+        }
+        
         private void AddChatMessageToChatLog(IMessage message) {
             Color roleColor = new Color(0xff, 0xff, 0xff);
             var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
@@ -191,14 +223,16 @@ namespace DiscordUWA.ViewModels {
                 }
 
                 if (user.Status == Discord.UserStatus.Offline || user.Status == UserStatus.Unknown) {
-                    OfflineUserList.Add(new UserListModel(user.AvatarUrl, "", false, user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString()));
+                    offlineUserList.Add(new UserListModel(user.AvatarUrl, "", false, user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString(), user.Id));
                 }
 
                 else {
-                    OnlineUserList.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", (user.Status == Discord.UserStatus.Idle),
-                        user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString()));
+                    onlineUserList.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", (user.Status == Discord.UserStatus.Idle),
+                        user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString(), user.Id));
                 }
             }
+            OfflineUserList = offlineUserList;
+            OnlineUserList = onlineUserList;
         }
 
         private async void PopulateChatLog() {

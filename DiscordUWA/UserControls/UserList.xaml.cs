@@ -32,6 +32,18 @@ namespace DiscordUWA.UserControls {
             set { SetValue(OfflineUserListProperty, value); }
         }
 
+        public static DependencyProperty UserClickProperty { get; } = DependencyProperty.Register(
+            nameof(UserClick),
+            typeof(ICommand),
+            typeof(UserList),
+            new PropertyMetadata(null)
+            );
+
+        public ICommand> UserClick {
+            get { return (ICommand)GetValue(UserClickProperty); }
+            set { SetValue(UserClickProperty, value); }
+        }
+
         public UserList() {
             this.InitializeComponent();
         }

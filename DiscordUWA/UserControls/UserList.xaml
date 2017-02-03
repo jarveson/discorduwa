@@ -12,6 +12,7 @@
     <UserControl.Resources>
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
         <Converters:StringToUriConverter x:Key="StringToUriConverter"/>
+
         <DataTemplate x:Key="UserListTemplate" x:DataType="data:UserListModel">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -30,6 +31,7 @@
                 <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor}"/>
                     <TextBlock Text="{x:Bind CurrentlyPlaying}" Visibility="{x:Bind Path=CurrentlyPlaying, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
+                    <Button Content="Profile" CommandParameter="{x:Bind Id}" Command="{Binding Path=UserClick, ElementName=root">
                 </StackPanel>
             </Grid>
         </DataTemplate>

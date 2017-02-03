@@ -57,6 +57,18 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ChatLogListProperty, value); }
         }
 
+        public static DependencyProperty ToggleUserListProperty { get; } = DependencyProperty.Register(
+            nameof(ToggleUserList),
+            typeof(ICommand),
+            typeof(ChatPane),
+            new PropertyMetadata(null)
+            );
+
+        public ICommand ToggleUserList {
+            get { return (ICommand)GetValue(ToggleUserListProperty); }
+            set { SetValue(ToggleUserListProperty, value); }
+        }
+
         public ChatPane() {
             this.InitializeComponent();
         }

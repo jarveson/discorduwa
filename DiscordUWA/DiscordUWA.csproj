@@ -102,7 +102,6 @@
     <Compile Include="Converters\StringExistsToVisibilityConverter.cs" />
     <Compile Include="Converters\StringToUriConverter.cs" />
     <Compile Include="Interfaces\INavServiceExtend.cs" />
-    <Compile Include="Interfaces\IRootPanel.cs" />
     <Compile Include="Interfaces\ISettingsService.cs" />
     <Compile Include="Interfaces\IViewModelBase.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -125,7 +124,6 @@
     <Compile Include="UserControls\UserList.xaml.cs">
       <DependentUpon>UserList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\ServerViewModel.cs" />
     <Compile Include="Views\LoginPanel.xaml.cs">
