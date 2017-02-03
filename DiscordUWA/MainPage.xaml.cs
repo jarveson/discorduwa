@@ -1,33 +1,30 @@
-﻿using DiscordUWA.Services;
+﻿using DiscordUWA.Common;
 using DiscordUWA.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
-
-namespace DiscordUWA
-{
+namespace DiscordUWA {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : BindablePage
-    {
-        public MainPage()
-        {
+    public sealed partial class MainPage : BindablePage {
+        public ServerViewModel Vm {
+            get {
+                return (ServerViewModel)DataContext;
+            }
+        }
+
+        private void IsPaneOpenPropertyChanged(DependencyObject sender, DependencyProperty dp) {
+            if (Vm.ShowUserList)
+                UserListSplitView.Width = 300;
+            else
+                UserListSplitView.Width = 0;
+        }
+
+        public MainPage() {
             this.InitializeComponent();
+
+            this.UserListSplitView.RegisterPropertyChangedCallback(SplitView.IsPaneOpenProperty, IsPaneOpenPropertyChanged);
         }
     }
 }

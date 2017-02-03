@@ -9,6 +9,7 @@
     xmlns:Converters="using:DiscordUWA.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
+    d:DesignWidth="800"
     x:Name="root" Width="Auto">
     <UserControl.Resources>
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
@@ -40,18 +41,24 @@
             <RowDefinition Height="80"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="#" Margin="20,0,0,0"/>
-            <TextBlock Text="{Binding Path=ChannelName, ElementName=root}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" />
-            <TextBlock Text="{Binding Path=ChannelTopic, ElementName=root}" HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <Button Command="{Binding Path=ToggleUserList, ElementName=root}" FontFamily="Segoe MDL2 Assets" Content="&#xE716;" Margin="20,0" HorizontalAlignment="Right" Background="Transparent"/>
-        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Disabled" Orientation="Horizontal">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="#" Margin="20,0,0,0"/>
+                <TextBlock Text="{x:Bind Path=ChannelName, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" />
+                <TextBlock Text="{x:Bind Path=ChannelTopic, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0" />
+            </StackPanel>
+            <Button Command="{x:Bind Path=ToggleUserList, Mode=OneWay}" Grid.Column="1" FontFamily="Segoe MDL2 Assets" Content="&#xE716;" Margin="20,0" HorizontalAlignment="Center" Background="Transparent"/>
+        </Grid>
         <Grid Background="#FF252526" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="90"/>
             </Grid.RowDefinitions>
-            <ListView x:Name="chatLogListView" RenderTransformOrigin="0.5,0.5" Background="#FF36393E" ItemsSource="{Binding ChatLogList}" ItemTemplate="{StaticResource ChatTextListTemplate}">
+            <ListView x:Name="chatLogListView" RenderTransformOrigin="0.5,0.5" Background="#FF36393E" ItemsSource="{x:Bind ChatLogList, Mode=OneWay}" ItemTemplate="{StaticResource ChatTextListTemplate}">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <!-- Setting VerticalAlignment="Bottom" causes the contents to be bottom-aligned,
@@ -65,7 +72,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox TextWrapping="Wrap" Text="{Binding MessageText, Mode=TwoWay, ElementName=root}" PlaceholderText="Type Message..." Margin="20,0,0,0"/>
+                <TextBox TextWrapping="Wrap" Text="{x:Bind MessageText, Mode=TwoWay}" PlaceholderText="Type Message..." Margin="20,0,0,0"/>
                 <Button x:Name="sendChatMessage" Content="Send" Margin="20,0" Grid.Column="1" Command="{x:Bind SendMessageCommand}"/>
             </Grid>
         </Grid>

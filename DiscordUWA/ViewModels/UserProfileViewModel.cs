@@ -5,7 +5,7 @@ using System;
 using System.Windows.Input;
 
 namespace DiscordUWA.ViewModels {
-    public class UserProfileViewModel : INavigable, BindableBase {
+    public class UserProfileViewModel : BindableBase, INavigable {
 
         public void OnNavigatingTo(object parameter) {
             //todo: load stuff from username?

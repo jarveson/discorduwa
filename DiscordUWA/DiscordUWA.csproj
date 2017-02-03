@@ -97,13 +97,15 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\BindableBase.cs" />
+    <Compile Include="Common\BindablePage.cs" />
     <Compile Include="Common\DelegateCommand.cs" />
     <Compile Include="Converters\ConverterFlipBool.cs" />
     <Compile Include="Converters\StringExistsToVisibilityConverter.cs" />
     <Compile Include="Converters\StringToUriConverter.cs" />
+    <Compile Include="Converters\UriToImageSourceConverter.cs" />
+    <Compile Include="Interfaces\INavigable.cs" />
     <Compile Include="Interfaces\INavServiceExtend.cs" />
     <Compile Include="Interfaces\ISettingsService.cs" />
-    <Compile Include="Interfaces\IViewModelBase.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -126,8 +128,12 @@
     </Compile>
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\ServerViewModel.cs" />
+    <Compile Include="ViewModels\UserProfileViewModel.cs" />
     <Compile Include="Views\LoginPanel.xaml.cs">
       <DependentUpon>LoginPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserProfile.xaml.cs">
+      <DependentUpon>UserProfile.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +174,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\LoginPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserProfile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

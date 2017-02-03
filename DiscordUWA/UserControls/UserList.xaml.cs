@@ -1,6 +1,7 @@
 using DiscordUWA.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -39,9 +40,33 @@ namespace DiscordUWA.UserControls {
             new PropertyMetadata(null)
             );
 
-        public ICommand> UserClick {
+        public ICommand UserClick {
             get { return (ICommand)GetValue(UserClickProperty); }
             set { SetValue(UserClickProperty, value); }
+        }
+
+        public static DependencyProperty ShowChannelTopicProperty { get; } = DependencyProperty.Register(
+            nameof(ShowChannelTopic),
+            typeof(bool),
+            typeof(UserList),
+            new PropertyMetadata(null)
+            );
+
+        public bool ShowChannelTopic {
+            get { return (bool)GetValue(ShowChannelTopicProperty); }
+            set { SetValue(ShowChannelTopicProperty, value); }
+        }
+
+        public static DependencyProperty ChannelTopicProperty { get; } = DependencyProperty.Register(
+            nameof(ChannelTopic),
+            typeof(string),
+            typeof(UserList),
+            new PropertyMetadata(null)
+            );
+
+        public string ChannelTopic {
+            get { return (string)GetValue(ChannelTopicProperty); }
+            set { SetValue(ChannelTopicProperty, value); }
         }
 
         public UserList() {

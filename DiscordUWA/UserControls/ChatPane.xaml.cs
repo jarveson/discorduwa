@@ -69,6 +69,18 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ToggleUserListProperty, value); }
         }
 
+        public static DependencyProperty ChannelTopicProperty { get; } = DependencyProperty.Register(
+            nameof(ChannelTopic),
+            typeof(string),
+            typeof(ChatPane),
+            new PropertyMetadata("")
+            );
+
+        public string ChannelTopic {
+            get { return (string)GetValue(ChannelTopicProperty); }
+            set { SetValue(ChannelTopicProperty, value); }
+        }
+
         public ChatPane() {
             this.InitializeComponent();
         }

@@ -13,8 +13,7 @@
     DataContext="{Binding Source={StaticResource Locator}, Path=ServerView}">
 
     <Page.Resources>
-        <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
-        <Converters:StringToUriConverter x:Key="StringToUriConverter"/>
+        <Converters:UriToImageSourceConverter x:Key="UriToImageSourceConverter"/>
         <DataTemplate x:Key="ImageServerListTemplate" x:DataType="data:ServerListModel">
             <StackPanel>
                 <Button CommandParameter="{x:Bind ServerId}" Command="{Binding Source={StaticResource Locator}, Path=ServerView.SelectServer}">
@@ -46,34 +45,35 @@
                     </Grid.RowDefinitions>
                     <Grid Background="#FF1E2124">
                         <Button x:Name="currentUserAvatarBtn" HorizontalAlignment="Center" Width="50" Height="50" >
-                            <Image x:Name="currentUserAvatarImg" Margin="-10,-6" Source="{Binding CurrentUserAvatarUrl}" VerticalAlignment="Center" HorizontalAlignment="Center" NineGrid="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" />
+                            <Image x:Name="currentUserAvatarImg" Margin="-10,-6" Source="{x:Bind Vm.CurrentUserAvatarUrl, Mode=OneWay, Converter={StaticResource UriToImageSourceConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" NineGrid="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" />
                         </Button>
                     </Grid>
-                    <TextBlock x:Name="serverNameText" Text="{Binding CurrentServerName}" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock x:Name="serverNameText" Text="{x:Bind Vm.CurrentServerName, Mode=OneWay}" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled"  Grid.Row="1">
-                        <ListView x:Name="serverlistView" ItemsSource="{Binding ServerListModelList}" Grid.Row="1" Background="#FF1E2124" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemTemplate="{StaticResource ImageServerListTemplate}" />
+                        <ListView x:Name="serverlistView" ItemsSource="{x:Bind Vm.ServerListModelList, Mode=OneWay}" Grid.Row="1" Background="#FF1E2124" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemTemplate="{StaticResource ImageServerListTemplate}" />
                     </ScrollViewer>
-                    <ListView x:Name="channelsListView" Header="Text Channels" ItemsSource="{Binding ChannelList}" Grid.Column="1" Grid.Row="1" Background="#FF2E3136"  ItemTemplate="{StaticResource ChannelListTemplate}"/>
+                    <ListView x:Name="channelsListView" Header="Text Channels" ItemsSource="{x:Bind Vm.ChannelList, Mode=OneWay}" Grid.Column="1" Grid.Row="1" Background="#FF2E3136"  ItemTemplate="{StaticResource ChannelListTemplate}" Margin="10,0,0,0"/>
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
                 <uc:ChatPane
-                    ChannelName="{Binding CurrentChannelName}"
-                    ChatLogList="{Binding ChatLogList}"
-                    MessageText="{Binding CurrentChatMessage, Mode=TwoWay}"
-                    ToggleUserList="{Binding ToggleUserListCommand}"
-                    SendMessageCommand="{Binding Source={StaticResource Locator}, Path=ServerView.SendMessageToCurrentChannel}"/>
+                    ChannelName="{x:Bind Vm.CurrentChannelName, Mode=OneWay}"
+                    ChannelTopic="{x:Bind Vm.ChannelTopic, Mode=OneWay}"
+                    ChatLogList="{x:Bind Vm.ChatLogList, Mode=OneWay, FallbackValue=''}"
+                    MessageText="{x:Bind Vm.CurrentChatMessage, Mode=TwoWay}"
+                    ToggleUserList="{x:Bind Vm.ToggleUserListCommand}"
+                    SendMessageCommand="{x:Bind Vm.SendMessageToCurrentChannel}"/>
             </SplitView.Content>
         </SplitView>
-        <SplitView IsPaneOpen="{Binding ShowUserList}" PanePlacement="Right" OpenPaneLength="300" DisplayMode="Inline" HorizontalAlignment="Right" Grid.Column="1">
+        <SplitView x:Name="UserListSplitView" IsPaneOpen="{x:Bind Vm.ShowUserList, Mode=OneWay, FallbackValue='True'}" PanePlacement="Right" OpenPaneLength="300" HorizontalAlignment="Right" Grid.Column="1" DisplayMode="Inline">
             <SplitView.Pane>
                 <uc:UserList 
                     ShowChannelTopic="False"
-                    ChannelTopic="{Binding ChannelTopic}"
-                    OnlineUserList="{Binding OnlineUserList}" 
-                    OfflineUserList="{Binding OfflineUserList}" 
-                    UserClick="{Binding Source={StaticResource Locator}, Path=ServerView.UserClick}}"
-                    Margin="0,20,0,0" 
+                    ChannelTopic="{x:Bind Vm.ChannelTopic, Mode=OneWay}"
+                    OnlineUserList="{x:Bind Vm.OnlineUserList, Mode=OneWay, FallbackValue=''}" 
+                    OfflineUserList="{x:Bind Vm.OfflineUserList, Mode=OneWay, FallbackValue=''}" 
+                    UserClick="{x:Bind Vm.UserClick}"
+                    Margin="20,20,0,0" 
                     VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
             </SplitView.Pane>
         </SplitView>

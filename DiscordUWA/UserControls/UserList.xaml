@@ -7,7 +7,9 @@
     xmlns:uc="using:DiscordUWA.UserControls"
     xmlns:data="using:DiscordUWA.Models"
     xmlns:Converters="using:DiscordUWA.Converters"
-    mc:Ignorable="d" Height="607.2" Width="267.2"
+    mc:Ignorable="d" 
+    d:DesignHeight="600"
+    d:DesignWidth="300"
     x:Name="root">
     <UserControl.Resources>
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
@@ -31,13 +33,13 @@
                 <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor}"/>
                     <TextBlock Text="{x:Bind CurrentlyPlaying}" Visibility="{x:Bind Path=CurrentlyPlaying, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
-                    <Button Content="Profile" CommandParameter="{x:Bind Id}" Command="{Binding Path=UserClick, ElementName=root">
+                    <!--<Button Content="Profile" CommandParameter="{x:Bind Id}" Command="{Binding Path=UserClick, ElementName=root}"/>-->
                 </StackPanel>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
     <StackPanel>
-        <ListView x:Name="onlineUsersListView" HorizontalAlignment="Left" VerticalAlignment="Top" Width="260" Background="#FF2E3136" ItemsSource="{Binding OnlineUserList, ElementName=root}" Header="Online" ItemTemplate="{StaticResource UserListTemplate}"/>
-        <ListView x:Name="offlineUsersListView" HorizontalAlignment="Left" VerticalAlignment="Top" Width="260" Background="#FF2E3136" Header="Offline" ItemsSource="{Binding OfflineUserList, ElementName=root}" Margin="0,10,0,0" ItemTemplate="{StaticResource UserListTemplate}"/>
+        <ListView x:Name="onlineUsersListView" HorizontalAlignment="Left" VerticalAlignment="Top" Width="260" Background="#FF2E3136" ItemsSource="{x:Bind OnlineUserList, Mode=OneWay}" Header="Online" ItemTemplate="{StaticResource UserListTemplate}"/>
+        <ListView x:Name="offlineUsersListView" HorizontalAlignment="Left" VerticalAlignment="Top" Width="260" Background="#FF2E3136" Header="Offline" ItemsSource="{x:Bind OfflineUserList, Mode=OneWay}" Margin="0,10,0,0" ItemTemplate="{StaticResource UserListTemplate}"/>
     </StackPanel>
 </UserControl>

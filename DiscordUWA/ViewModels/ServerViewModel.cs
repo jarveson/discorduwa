@@ -13,8 +13,8 @@ using Discord.WebSocket;
 using System.Threading.Tasks;
 
 namespace DiscordUWA.ViewModels {
-    public class ServerViewModel : INavigable, BindableBase {
-
+    public class ServerViewModel : BindableBase, INavigable {
+        
         private ulong selectedGuildId = 0L;
         private ulong channelId = 0L;
 
@@ -110,9 +110,7 @@ namespace DiscordUWA.ViewModels {
                 var servers = LocatorService.DiscordSocketClient.Guilds;
 
                 foreach (var server in servers) {
-                    //serverId = server.Id;
-                    string serverIconUrl = server.IconUrl == null ? "x" : server.IconUrl;
-                    ServerListModelList.Add(new ServerListModel(server.Id, server.Name, serverIconUrl));
+                    ServerListModelList.Add(new ServerListModel(server.Id, server.Name, server.IconUrl));
                 }
             });
 
@@ -152,7 +150,7 @@ namespace DiscordUWA.ViewModels {
                 ShowUserList = !ShowUserList;
             });
 
-            this.UserClick = new DelegateCommand((userId) => {
+            this.UserClick = new DelegateCommand<ulong>((userId) => {
                 LocatorService.NavigationService.NavigateTo("userProfile", userId);
             });
         }
@@ -169,7 +167,7 @@ namespace DiscordUWA.ViewModels {
                 }
             }
 
-            string imageUrl = "x";
+            string imageUrl = null;
             // 'pictures' can also just be attachements -_-
             foreach (var attachment in message.Attachments) {
                 // shameless hack around dealing with this
