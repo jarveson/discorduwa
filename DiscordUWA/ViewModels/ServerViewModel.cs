@@ -11,10 +11,10 @@ using Windows.UI.Xaml;
 using GalaSoft.MvvmLight.Threading;
 using Discord.WebSocket;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace DiscordUWA.ViewModels {
     public class ServerViewModel : BindableBase, INavigable {
-        
         private ulong selectedGuildId = 0L;
         private ulong channelId = 0L;
 
@@ -25,9 +25,9 @@ namespace DiscordUWA.ViewModels {
         public ICommand SelectChannel { protected set; get; }
 
         public ICommand SendMessageToCurrentChannel { protected set; get; }
-        public ICommand ToggleUserListCommand { protected set; get;}
+        public ICommand ToggleUserListCommand { protected set; get; }
 
-        public ICommand UserClick {protected set; get;}
+        public ICommand UserClick { protected set; get; }
 
         private ObservableCollection<ServerListModel> serverListModelList = new ObservableCollection<ServerListModel>();
         public ObservableCollection<ServerListModel> ServerListModelList {
@@ -41,20 +41,23 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref channelList, value); }
         }
 
-        private ObservableCollection<UserListModel> offlineUserList = new ObservableCollection<UserListModel>();
-        public ObservableCollection<UserListModel> OfflineUserList {
+        private RangeObservableCollection<UserListModel> offlineUserList = new RangeObservableCollection<UserListModel>();
+        public RangeObservableCollection<UserListModel> OfflineUserList {
             get { return this.offlineUserList; }
             set { SetProperty(ref offlineUserList, value); }
         }
 
-        private ObservableCollection<UserListModel> onlineUserList = new ObservableCollection<UserListModel>();
-        public ObservableCollection<UserListModel> OnlineUserList {
+        private RangeObservableCollection<UserListModel> onlineUserList = new RangeObservableCollection<UserListModel>();
+        public RangeObservableCollection<UserListModel> OnlineUserList {
             get { return this.onlineUserList; }
             set { SetProperty(ref onlineUserList, value); }
         }
 
-        // observables dont need setproperty on outer, just on inner properties?
-        public ObservableCollection<ChatTextListModel> ChatLogList { get; set; }
+        private RangeObservableCollection<ChatTextListModel> chatLogList = new RangeObservableCollection<ChatTextListModel>();
+        public RangeObservableCollection<ChatTextListModel> ChatLogList {
+            get { return this.chatLogList; }
+            set { SetProperty(ref chatLogList, value); }
+        }
 
         private string currentServerName;
         public string CurrentServerName {
@@ -101,8 +104,6 @@ namespace DiscordUWA.ViewModels {
         }
 
         public ServerViewModel() {
-            this.ChatLogList = new ObservableCollection<ChatTextListModel>();
-
             LocatorService.DiscordSocketClient.MessageReceived += DiscordClient_MessageReceived;
 
             this.LoadJoinedServersList = new DelegateCommand(() => {
@@ -118,13 +119,13 @@ namespace DiscordUWA.ViewModels {
                 CurrentUserAvatarUrl = new Uri(LocatorService.DiscordSocketClient.CurrentUser.AvatarUrl);
             });
 
-            this.SelectServer = new DelegateCommand<ulong?>((selectedServerId) => {
+            this.SelectServer = new DelegateCommand<ulong?>(async (selectedServerId) => {
                 if (selectedServerId == null) return;
                 selectedGuildId = selectedServerId.Value;
                 var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
                 CurrentServerName = server.Name;
                 PopulateChannelList();
-                PopulateUserList();
+                await PopulateUserList();
             });
 
             this.SelectChannel = new DelegateCommand<ulong?>((selectedChannelId) => {
@@ -154,7 +155,7 @@ namespace DiscordUWA.ViewModels {
                 LocatorService.NavigationService.NavigateTo("userProfile", userId);
             });
         }
-        
+
         private void AddChatMessageToChatLog(IMessage message) {
             Color roleColor = new Color(0xff, 0xff, 0xff);
             var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
@@ -179,8 +180,8 @@ namespace DiscordUWA.ViewModels {
                 imageUrl = embed.Thumbnail?.Url;
             }
             // Serialize UI update to the main UI thread
-            DispatcherHelper.CheckBeginInvokeOnUI( () => {
-                ChatLogList.Add(new ChatTextListModel(message.Author.Username, roleColor.ToString(), message.Content,
+            DispatcherHelper.CheckBeginInvokeOnUI(() => {
+                ChatLogList.Add(new ChatTextListModel(message.Author.Username, roleColor.ToWinColor(), message.Content,
                     message.Timestamp.ToString("h:mm tt"), imageUrl));
             });
         }
@@ -205,38 +206,42 @@ namespace DiscordUWA.ViewModels {
             }
         }
 
-        private void PopulateUserList() {
+        private async Task PopulateUserList() {
             onlineUserList.Clear();
             offlineUserList.Clear();
 
             var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
-            foreach (var user in server.Users) {
-                Color roleColor = Color.Default;
-                // todo: figure out how to pick 'highest' role and take that color
-                foreach (var roleid in user.RoleIds) {
-                    var role = server.GetRole(roleid);
-                    if (!role.IsEveryone) {
-                        roleColor = role.Color;
+
+            await Task.Run(() => {
+                List<UserListModel> tmpOffline = new List<UserListModel>();
+                List<UserListModel> tmpOnline = new List<UserListModel>();
+
+                foreach (var user in server.Users) {
+                    Color roleColor = Color.Default;
+                    // todo: figure out how to pick 'highest' role and take that color
+                    foreach (var roleid in user.RoleIds) {
+                        var role = server.GetRole(roleid);
+                        if (!role.IsEveryone) {
+                            roleColor = role.Color;
+                        }
                     }
+                    if (user.Status == Discord.UserStatus.Offline || user.Status == UserStatus.Unknown)
+                        tmpOffline.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
+                    else
+                        tmpOnline.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
                 }
-
-                if (user.Status == Discord.UserStatus.Offline || user.Status == UserStatus.Unknown) {
-                    offlineUserList.Add(new UserListModel(user.AvatarUrl, "", false, user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString(), user.Id));
-                }
-
-                else {
-                    onlineUserList.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", (user.Status == Discord.UserStatus.Idle),
-                        user.Username, roleColor.RawValue == 0 ? "#99ffffff" : roleColor.ToString(), user.Id));
-                }
-            }
-            OfflineUserList = offlineUserList;
-            OnlineUserList = onlineUserList;
+                DispatcherHelper.CheckBeginInvokeOnUI(() => {
+                    OfflineUserList.AddRange(tmpOffline);
+                    OnlineUserList.AddRange(tmpOnline);
+                });
+            });
         }
 
         private async void PopulateChatLog() {
             ChatLogList.Clear();
             var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
             var messageLog = await channel.GetMessagesAsync(40).Flatten();
+
             foreach (var message in messageLog.Reverse()) {
                 AddChatMessageToChatLog(message);
             }

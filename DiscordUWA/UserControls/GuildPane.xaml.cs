@@ -1,0 +1,146 @@
+using DiscordUWA.Common;
+using DiscordUWA.Models;
+using System.Collections.Generic;
+using System.Windows.Input;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+
+namespace DiscordUWA.UserControls {
+    public sealed partial class GuildPane : UserControl {
+
+        public static DependencyProperty ShowUserListProperty { get; } = DependencyProperty.Register(
+            nameof(ShowUserList),
+            typeof(bool),
+            typeof(GuildPane),
+            new PropertyMetadata("")
+            );
+
+        public bool ShowUserList {
+            get { return (bool)GetValue(ShowUserListProperty); }
+            set { SetValue(ShowUserListProperty, value); }
+        }
+
+        public static DependencyProperty ChannelNameProperty { get; } = DependencyProperty.Register(
+            nameof(ChannelName),
+            typeof(string),
+            typeof(GuildPane),
+            new PropertyMetadata("")
+            );
+
+        public string ChannelName {
+            get { return (string)GetValue(ChannelNameProperty); }
+            set { SetValue(ChannelNameProperty, value); }
+        }
+
+        public static DependencyProperty MessageTextProperty { get; } = DependencyProperty.Register(
+            nameof(MessageText),
+            typeof(string),
+            typeof(GuildPane),
+            new PropertyMetadata("")
+            );
+
+        public string MessageText {
+            get { return (string)GetValue(MessageTextProperty); }
+            set { SetValue(MessageTextProperty, value); }
+        }
+
+        public static DependencyProperty SendMessageCommandProperty { get; } = DependencyProperty.Register(
+            nameof(SendMessageCommand),
+            typeof(ICommand),
+            typeof(GuildPane),
+            new PropertyMetadata(null)
+            );
+
+        public ICommand SendMessageCommand {
+            get { return (ICommand)GetValue(SendMessageCommandProperty); }
+            set { SetValue(SendMessageCommandProperty, value); }
+        }
+
+        public static DependencyProperty UserClickCommandProperty { get; } = DependencyProperty.Register(
+            nameof(UserClick),
+            typeof(ICommand),
+            typeof(GuildPane),
+            new PropertyMetadata(null)
+            );
+
+        public ICommand UserClick {
+            get { return (ICommand)GetValue(UserClickCommandProperty); }
+            set { SetValue(UserClickCommandProperty, value); }
+        }
+
+        public static DependencyProperty ChatLogListProperty { get; } = DependencyProperty.Register(
+            nameof(ChatLogList),
+            typeof(IEnumerable<ChatTextListModel>),
+            typeof(GuildPane),
+            new PropertyMetadata(null)
+            );
+
+        public IEnumerable<ChatTextListModel> ChatLogList {
+            get { return (IEnumerable<ChatTextListModel>)GetValue(ChatLogListProperty); }
+            set { SetValue(ChatLogListProperty, value); }
+        }
+
+        public static DependencyProperty ChannelTopicProperty { get; } = DependencyProperty.Register(
+            nameof(ChannelTopic),
+            typeof(string),
+            typeof(GuildPane),
+            new PropertyMetadata("")
+            );
+
+        public string ChannelTopic {
+            get { return (string)GetValue(ChannelTopicProperty); }
+            set { SetValue(ChannelTopicProperty, value); }
+        }
+
+        public static DependencyProperty OnlineUserListProperty { get; } = DependencyProperty.Register(
+            nameof(OnlineUserList),
+            typeof(IEnumerable<UserListModel>),
+            typeof(UserList),
+            new PropertyMetadata(null)
+            );
+
+        public IEnumerable<UserListModel> OnlineUserList {
+            get { return (IEnumerable<UserListModel>)GetValue(OnlineUserListProperty); }
+            set { SetValue(OnlineUserListProperty, value); }
+        }
+
+        public static DependencyProperty OfflineUserListProperty { get; } = DependencyProperty.Register(
+            nameof(OfflineUserList),
+            typeof(IEnumerable<UserListModel>),
+            typeof(UserList),
+            new PropertyMetadata(null)
+            );
+
+        public IEnumerable<UserListModel> OfflineUserList {
+            get { return (IEnumerable<UserListModel>)GetValue(OfflineUserListProperty); }
+            set { SetValue(OfflineUserListProperty, value); }
+        }
+
+        public static DependencyProperty ToggleUserListCommandProperty { get; } = DependencyProperty.Register(
+            nameof(ToggleUserListCommand),
+            typeof(ICommand),
+            typeof(UserList),
+            new PropertyMetadata(null)
+            );
+
+        public ICommand ToggleUserListCommand {
+            get { return (ICommand)GetValue(ToggleUserListCommandProperty); }
+            set { SetValue(ToggleUserListCommandProperty, value); }
+        }
+
+        private void IsPaneOpenPropertyChanged(DependencyObject sender, DependencyProperty dp) {
+            if (ShowUserList)
+                UserListSplitView.Width = 300;
+            else
+                UserListSplitView.Width = 0;
+        }
+
+        public GuildPane() {
+            this.InitializeComponent();
+            //this.UserListSplitView.RegisterPropertyChangedCallback(SplitView.IsPaneOpenProperty, IsPaneOpenPropertyChanged);
+        }
+
+    }
+}

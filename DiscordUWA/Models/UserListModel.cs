@@ -1,20 +1,19 @@
 ﻿using Windows.UI;
-using Windows.UI.Xaml.Media;
 
 namespace DiscordUWA.Models {
     public class UserListModel {
         public string AvatarUrl { get; private set; }
-        public string UserRoleColor { get; private set; }
+        public Color UserRoleColor { get; private set; }
         public string CurrentlyPlaying { get; private set; }
-        public bool IsIdle { get; private set; }
+        public Color StatusColor { get; private set; }
         public string Username { get; private set; }
         public ulong Id {get; private set;}
 
-        public UserListModel(string avatarUrl, string currentlyPlaying, bool isIdle, string username, string userRoleColor, ulong id) {
-            this.AvatarUrl = avatarUrl;//== null ? "": avatarUrl;
+        public UserListModel(string avatarUrl, string currentlyPlaying, Color statusColor, string username, Color userRoleColor, ulong id) {
+            this.AvatarUrl = avatarUrl == null ? "https://discordapp.com/assets/322c936a8c8be1b803cd94861bdfa868.png" : avatarUrl;
             this.CurrentlyPlaying = currentlyPlaying;
-            this.IsIdle = isIdle;
-            this.Username = IsIdle ? $"{username}(idle)" : username;
+            this.StatusColor = statusColor;
+            this.Username = username;
             this.UserRoleColor = userRoleColor;
             this.Id = id;
         }

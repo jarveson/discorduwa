@@ -14,17 +14,8 @@ namespace DiscordUWA {
             }
         }
 
-        private void IsPaneOpenPropertyChanged(DependencyObject sender, DependencyProperty dp) {
-            if (Vm.ShowUserList)
-                UserListSplitView.Width = 300;
-            else
-                UserListSplitView.Width = 0;
-        }
-
         public MainPage() {
             this.InitializeComponent();
-
-            this.UserListSplitView.RegisterPropertyChangedCallback(SplitView.IsPaneOpenProperty, IsPaneOpenPropertyChanged);
         }
     }
 }
