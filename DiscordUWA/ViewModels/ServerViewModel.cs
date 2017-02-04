@@ -41,16 +41,10 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref channelList, value); }
         }
 
-        private RangeObservableCollection<UserListModel> offlineUserList = new RangeObservableCollection<UserListModel>();
-        public RangeObservableCollection<UserListModel> OfflineUserList {
-            get { return this.offlineUserList; }
-            set { SetProperty(ref offlineUserList, value); }
-        }
-
-        private RangeObservableCollection<UserListModel> onlineUserList = new RangeObservableCollection<UserListModel>();
-        public RangeObservableCollection<UserListModel> OnlineUserList {
-            get { return this.onlineUserList; }
-            set { SetProperty(ref onlineUserList, value); }
+        private RangeObservableCollection<UserListSectionModel> fullUserList = new RangeObservableCollection<UserListSectionModel>();
+        public RangeObservableCollection<UserListSectionModel> FullUserList {
+            get { return this.fullUserList; }
+            set { SetProperty(ref fullUserList, value); }
         }
 
         private RangeObservableCollection<ChatTextListModel> chatLogList = new RangeObservableCollection<ChatTextListModel>();
@@ -207,9 +201,7 @@ namespace DiscordUWA.ViewModels {
         }
 
         private async Task PopulateUserList() {
-            onlineUserList.Clear();
-            offlineUserList.Clear();
-
+            fullUserList.Clear();
             var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
 
             await Task.Run(() => {
@@ -231,8 +223,8 @@ namespace DiscordUWA.ViewModels {
                         tmpOnline.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
                 }
                 DispatcherHelper.CheckBeginInvokeOnUI(() => {
-                    OfflineUserList.AddRange(tmpOffline);
-                    OnlineUserList.AddRange(tmpOnline);
+                    fullUserList.Add(new UserListSectionModel("Online", tmpOnline));
+                    fullUserList.Add(new UserListSectionModel("Offline", tmpOffline));
                 });
             });
         }

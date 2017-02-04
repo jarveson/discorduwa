@@ -60,8 +60,7 @@
                     ChatLogList="{x:Bind Vm.ChatLogList, Mode=OneWay, FallbackValue=''}"
                     MessageText="{x:Bind Vm.CurrentChatMessage, Mode=TwoWay}"
                     ShowUserList="{x:Bind Vm.ShowUserList, Mode=OneWay, FallbackValue='True'}"
-                    OnlineUserList="{x:Bind Vm.OnlineUserList, Mode=OneWay, FallbackValue=''}"
-                    OfflineUserList="{x:Bind Vm.OfflineUserList, Mode=OneWay, FallbackValue=''}"
+                    FullUserList="{x:Bind Vm.FullUserList, Mode=OneWay, FallbackValue=''}"
                     SendMessageCommand="{x:Bind Vm.SendMessageToCurrentChannel}"
                     ToggleUserListCommand="{x:Bind Vm.ToggleUserListCommand}"/>
             </SplitView.Content>

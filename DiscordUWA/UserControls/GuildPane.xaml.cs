@@ -94,28 +94,16 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ChannelTopicProperty, value); }
         }
 
-        public static DependencyProperty OnlineUserListProperty { get; } = DependencyProperty.Register(
-            nameof(OnlineUserList),
-            typeof(IEnumerable<UserListModel>),
+        public static DependencyProperty FullUserListProperty { get; } = DependencyProperty.Register(
+            nameof(FullUserList),
+            typeof(IEnumerable<UserListSectionModel>),
             typeof(UserList),
             new PropertyMetadata(null)
             );
 
-        public IEnumerable<UserListModel> OnlineUserList {
-            get { return (IEnumerable<UserListModel>)GetValue(OnlineUserListProperty); }
-            set { SetValue(OnlineUserListProperty, value); }
-        }
-
-        public static DependencyProperty OfflineUserListProperty { get; } = DependencyProperty.Register(
-            nameof(OfflineUserList),
-            typeof(IEnumerable<UserListModel>),
-            typeof(UserList),
-            new PropertyMetadata(null)
-            );
-
-        public IEnumerable<UserListModel> OfflineUserList {
-            get { return (IEnumerable<UserListModel>)GetValue(OfflineUserListProperty); }
-            set { SetValue(OfflineUserListProperty, value); }
+        public IEnumerable<UserListSectionModel> FullUserList {
+            get { return (IEnumerable<UserListSectionModel>)GetValue(FullUserListProperty); }
+            set { SetValue(FullUserListProperty, value); }
         }
 
         public static DependencyProperty ToggleUserListCommandProperty { get; } = DependencyProperty.Register(

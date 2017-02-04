@@ -9,28 +9,16 @@ using Windows.UI.Xaml.Media;
 
 namespace DiscordUWA.UserControls {
     public sealed partial class UserList : UserControl {
-        public static DependencyProperty OnlineUserListProperty { get; } = DependencyProperty.Register(
-            nameof(OnlineUserList),
-            typeof(IEnumerable<UserListModel>),
+        public static DependencyProperty UserListProperty { get; } = DependencyProperty.Register(
+            nameof(FullUserList),
+            typeof(IEnumerable<UserListSectionModel>),
             typeof(UserList),
             new PropertyMetadata(null)
             );
 
-        public IEnumerable<UserListModel> OnlineUserList {
-            get { return (IEnumerable<UserListModel>)GetValue(OnlineUserListProperty); }
-            set { SetValue(OnlineUserListProperty, value); }
-        }
-
-        public static DependencyProperty OfflineUserListProperty { get; } = DependencyProperty.Register(
-            nameof(OfflineUserList),
-            typeof(IEnumerable<UserListModel>),
-            typeof(UserList),
-            new PropertyMetadata(null)
-            );
-
-        public IEnumerable<UserListModel> OfflineUserList {
-            get { return (IEnumerable<UserListModel>)GetValue(OfflineUserListProperty); }
-            set { SetValue(OfflineUserListProperty, value); }
+        public IEnumerable<UserListSectionModel> FullUserList {
+            get { return (IEnumerable<UserListSectionModel>)GetValue(UserListProperty); }
+            set { SetValue(UserListProperty, value); }
         }
 
         public static DependencyProperty UserClickProperty { get; } = DependencyProperty.Register(
