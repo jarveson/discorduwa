@@ -9,6 +9,15 @@ namespace DiscordUWA.Models {
         public string Username { get; private set; }
         public ulong Id {get; private set;}
 
+        public UserListModel() {
+            this.AvatarUrl = "https://discordapp.com/assets/322c936a8c8be1b803cd94861bdfa868.png";
+            this.CurrentlyPlaying = "";
+            this.Username = "";
+            this.StatusColor = Color.FromArgb(0xff, 0xff, 0xff, 0xff);
+            this.UserRoleColor = Color.FromArgb(0xff, 0xff, 0xff, 0xff);
+            this.Id = 0;
+        }
+
         public UserListModel(string avatarUrl, string currentlyPlaying, Color statusColor, string username, Color userRoleColor, ulong id) {
             this.AvatarUrl = avatarUrl == null ? "https://discordapp.com/assets/322c936a8c8be1b803cd94861bdfa868.png" : avatarUrl;
             this.CurrentlyPlaying = currentlyPlaying;

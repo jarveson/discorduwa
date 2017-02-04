@@ -85,7 +85,7 @@
                     <uc:UserList 
                         ShowChannelTopic="False"
                         ChannelTopic="{x:Bind ChannelTopic, Mode=OneWay}"
-                        FullUserList="{x:Bind FullUserList, Mode=OneWay, FallbackValue=''}" 
+                        FullUserList="{x:Bind FullUserList, Mode=OneWay}" 
                         UserClick="{x:Bind UserClick}"
                         Margin="20,20,0,0" 
                         VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>

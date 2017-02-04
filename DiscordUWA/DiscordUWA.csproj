@@ -104,6 +104,7 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorToSolidColorBrushConverter.cs" />
     <Compile Include="Converters\ConverterFlipBool.cs" />
+    <Compile Include="Converters\StringNotExistsToVisibilityConverter.cs" />
     <Compile Include="Converters\StringExistsToVisibilityConverter.cs" />
     <Compile Include="Converters\StringToUriConverter.cs" />
     <Compile Include="Converters\UriToImageSourceConverter.cs" />
@@ -130,9 +131,6 @@
     </Compile>
     <Compile Include="UserControls\UserList.xaml.cs">
       <DependentUpon>UserList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\UserListSection.xaml.cs">
-      <DependentUpon>UserListSection.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\ServerViewModel.cs" />
@@ -180,10 +178,6 @@
     <Page Include="UserControls\UserList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\UserListSection.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LoginPanel.xaml">
       <Generator>MSBuild:Compile</Generator>

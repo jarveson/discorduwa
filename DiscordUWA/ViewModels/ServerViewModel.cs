@@ -205,8 +205,8 @@ namespace DiscordUWA.ViewModels {
             var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
 
             await Task.Run(() => {
-                List<UserListModel> tmpOffline = new List<UserListModel>();
-                List<UserListModel> tmpOnline = new List<UserListModel>();
+                List<UserListSectionModel> tmpOffline = new List<UserListSectionModel>();
+                List<UserListSectionModel> tmpOnline = new List<UserListSectionModel>();
 
                 foreach (var user in server.Users) {
                     Color roleColor = Color.Default;
@@ -218,13 +218,16 @@ namespace DiscordUWA.ViewModels {
                         }
                     }
                     if (user.Status == Discord.UserStatus.Offline || user.Status == UserStatus.Unknown)
-                        tmpOffline.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
+                        tmpOffline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
                     else
-                        tmpOnline.Add(new UserListModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
+                        tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
                 }
                 DispatcherHelper.CheckBeginInvokeOnUI(() => {
-                    fullUserList.Add(new UserListSectionModel("Online", tmpOnline));
-                    fullUserList.Add(new UserListSectionModel("Offline", tmpOffline));
+                    fullUserList.Add(new UserListSectionModel("Online"));
+                    fullUserList.AddRange(tmpOnline);
+                    fullUserList.Add(new UserListSectionModel("Offline"));
+                    fullUserList.AddRange(tmpOffline);
+                    
                 });
             });
         }
