@@ -29,7 +29,8 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{x:Bind RoleSectionName}" 
                            Visibility="{x:Bind RoleSectionName, Converter={StaticResource StringExistsToVisibilityConverter}}"
-                           Grid.Row="0"/>
+                           Grid.Row="0"
+                           Grid.ColumnSpan="2"/>
 
                 <Ellipse Grid.Row="1" 
                          Visibility="{x:Bind RoleSectionName, Converter={StaticResource StrNotToVis}}" 

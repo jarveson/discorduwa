@@ -208,26 +208,44 @@ namespace DiscordUWA.ViewModels {
                 List<UserListSectionModel> tmpOffline = new List<UserListSectionModel>();
                 List<UserListSectionModel> tmpOnline = new List<UserListSectionModel>();
 
+                SortedDictionary<IRole, List<UserListSectionModel>> tmpUserSort = new SortedDictionary<IRole, List<UserListSectionModel>>();
+
                 foreach (var user in server.Users) {
                     Color roleColor = Color.Default;
+
+                    if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown) {
+                        tmpOffline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
+                        continue;
+                    }
                     // todo: figure out how to pick 'highest' role and take that color
                     foreach (var roleid in user.RoleIds) {
                         var role = server.GetRole(roleid);
                         if (!role.IsEveryone) {
                             roleColor = role.Color;
                         }
+                        if (role.IsHoisted) {
+                            if (!tmpUserSort.ContainsKey(role))
+                                tmpUserSort[role] = new List<UserListSectionModel>();
+                            tmpUserSort[role].Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
+                            break;
+                        }
                     }
-                    if (user.Status == Discord.UserStatus.Offline || user.Status == UserStatus.Unknown)
-                        tmpOffline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
-                    else
-                        tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
+                    tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
                 }
                 DispatcherHelper.CheckBeginInvokeOnUI(() => {
+                    foreach(var key in tmpUserSort.Keys) {
+                        fullUserList.Add(new UserListSectionModel(key.Name));
+
+                        foreach (var value in tmpUserSort[key])
+                            fullUserList.Add(value);
+                    }
                     fullUserList.Add(new UserListSectionModel("Online"));
-                    fullUserList.AddRange(tmpOnline);
+                    foreach (var user in tmpOnline)
+                        fullUserList.Add(user);
                     fullUserList.Add(new UserListSectionModel("Offline"));
-                    fullUserList.AddRange(tmpOffline);
-                    
+                    foreach (var user in tmpOffline)
+                        fullUserList.Add(user);
+
                 });
             });
         }
