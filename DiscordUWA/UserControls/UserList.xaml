@@ -8,7 +8,6 @@
     xmlns:data="using:DiscordUWA.Models"
     xmlns:Converters="using:DiscordUWA.Converters"
     mc:Ignorable="d" 
-    NavigationCacheMode="Enabled"
     d:DesignHeight="600"
     d:DesignWidth="300"
     x:Name="root">

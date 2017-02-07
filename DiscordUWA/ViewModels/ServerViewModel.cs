@@ -74,7 +74,7 @@ namespace DiscordUWA.ViewModels {
         private string currentUserName;
         public string CurrentUserName {
             get { return this.currentUserName;}
-            set { SetProperty(ref currentChannelName, value); }
+            set { SetProperty(ref currentUserName, value); }
         }
 
         private string currentUserDescrim;
@@ -106,8 +106,8 @@ namespace DiscordUWA.ViewModels {
             LoadJoinedServersList.Execute(null);
             LoadCurrentUserAvatar.Execute(null);
             var currentUser = LocatorService.DiscordSocketClient.CurrentUser;
-            currentUserName = currentUser.Username;
-            currentUserDescrim = currentUser.Discriminator;
+            CurrentUserName = currentUser.Username;
+            CurrentUserDescrim = $"#{currentUser.Discriminator}";
         }
         public void OnNavigatingFrom(object parameter) {
 
@@ -136,6 +136,7 @@ namespace DiscordUWA.ViewModels {
                 CurrentServerName = server.Name;
                 PopulateChannelList();
                 await PopulateUserList();
+                SelectChannel.Execute(server.DefaultChannel.Id);
             });
 
             this.SelectChannel = new DelegateCommand<ulong?>((selectedChannelId) => {
@@ -210,7 +211,7 @@ namespace DiscordUWA.ViewModels {
             if (selectedGuildId == 0L) return;
             var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
 
-            foreach (var channel in server.TextChannels) {
+            foreach (var channel in server.TextChannels.OrderBy(x => x.Position)) {
                 string temp = $"# {channel.Name}";
                 ChannelList.Add(new ChannelListModel(channel.Id, temp));
             }
@@ -233,20 +234,21 @@ namespace DiscordUWA.ViewModels {
                         tmpOffline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
                         continue;
                     }
+                    bool foundRole = false;
                     // todo: figure out how to pick 'highest' role and take that color
                     foreach (var roleid in user.RoleIds) {
                         var role = server.GetRole(roleid);
-                        if (!role.IsEveryone) {
-                            roleColor = role.Color;
-                        }
+                        roleColor = role.Color;
                         if (role.IsHoisted) {
+                            foundRole = true;
                             if (!tmpUserSort.ContainsKey(role))
                                 tmpUserSort[role] = new List<UserListSectionModel>();
                             tmpUserSort[role].Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
                             break;
                         }
                     }
-                    tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
+                    if (!foundRole)
+                        tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
                 }
                 DispatcherHelper.CheckBeginInvokeOnUI(() => {
                     foreach(var key in tmpUserSort.Keys) {
@@ -255,13 +257,16 @@ namespace DiscordUWA.ViewModels {
                         foreach (var value in tmpUserSort[key])
                             fullUserList.Add(value);
                     }
-                    fullUserList.Add(new UserListSectionModel("Online"));
-                    foreach (var user in tmpOnline)
-                        fullUserList.Add(user);
-                    fullUserList.Add(new UserListSectionModel("Offline"));
-                    foreach (var user in tmpOffline)
-                        fullUserList.Add(user);
-
+                    if (tmpOnline.Count > 0) {
+                        fullUserList.Add(new UserListSectionModel("Online"));
+                        foreach (var user in tmpOnline)
+                            fullUserList.Add(user);
+                    }
+                    if (tmpOffline.Count > 0) {
+                        fullUserList.Add(new UserListSectionModel("Offline"));
+                        foreach (var user in tmpOffline)
+                            fullUserList.Add(user);
+                    }
                 });
             });
         }

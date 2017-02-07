@@ -33,9 +33,14 @@ namespace DiscordUWA.ViewModels {
         }
 
         public void OnNavigatingTo(object parameter) {
-            var currentUser = LocatorService.DiscordSocketClient.GetUser(parameter as IUser);
-            avatarUrl = currentUser.AvatarUrl;
-            statusColor = currentUser.Status.ToWinColor();
+            var id = parameter as ulong?;
+            if (id.HasValue) {
+                var currentUser = LocatorService.DiscordSocketClient.GetUser(id.Value);
+                avatarUrl = new Uri(currentUser.AvatarUrl);
+                statusColor = currentUser.Status.ToWinColor();
+                userName = currentUser.Username;
+                UserDescrim = $"#{currentUser.Discriminator}";
+            }
         }
         public void OnNavigatingFrom(object parameter) {
 

@@ -45,7 +45,7 @@ namespace DiscordUWA.Services {
             }
             Type page = pagesByKey[pageKey];
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.
-           RunAsync(CoreDispatcherPriority.Normal, () => this.currentFame.Navigate(page));
+           RunAsync(CoreDispatcherPriority.Normal, () => this.currentFame.Navigate(page, parameter));
         }
 
         public void GoBack() {

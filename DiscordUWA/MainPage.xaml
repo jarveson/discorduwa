@@ -11,7 +11,7 @@
     x:Class="DiscordUWA.MainPage"
     mc:Ignorable="d"
     NavigationCacheMode="Enabled"
-    DataContext="{Binding Source={StaticResource Locator}, Path=ServerView}">
+    DataContext="{Binding ServerView, Source={StaticResource Locator}}">
 
     <Page.Resources>
         <Converters:UriToImageSourceConverter x:Key="UriToImageSourceConverter"/>
@@ -38,7 +38,7 @@
                     <VisualState.Setters>
                         <Setter Target="GuildSplitter.DisplayMode" Value="Inline"/>
                         <Setter Target="GuildSplitter.IsPaneOpen" Value="True"/>
-                        <Setter Target="GuildPane.UserListDisplayMode" Value="Inline">
+                        <Setter Target="GuildPane.UserListDisplayMode" Value="Inline"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="narrowState">
@@ -48,7 +48,7 @@
                     <VisualState.Setters>
                         <Setter Target="GuildSplitter.DisplayMode" Value="Overlay"/>
                         <Setter Target="GuildSplitter.IsPaneOpen" Value="False"/>
-                        <Setter Target="GuildPane.UserListDisplayMode" Value="Overlay">
+                        <Setter Target="GuildPane.UserListDisplayMode" Value="Overlay"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -83,14 +83,15 @@
                               Margin="10,0,0,0"/>
                     <Grid Grid.Row="2" Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20">
-                            <ColumnDefinition Width="20">
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Ellipse Height="30" Width="30" 
+                        <Ellipse
+                            Height="30" Width="30" 
                             VerticalAlignment="Center" 
-                            HorizontalAlignment="Center">
+                            HorizontalAlignment="Center" Margin="20,10,15,10">
                             <Ellipse.Fill>
                                 <ImageBrush>
                                     <ImageBrush.ImageSource>
@@ -99,9 +100,9 @@
                                 </ImageBrush>
                             </Ellipse.Fill>
                         </Ellipse>
-                        <TextBlock Grid.Column="1" FontWeight="Bold">
-                            <Run Text="{x:Bind CurrentUserName}" Foreground="White"/>
-                            <Run Text="{x:Bind CurrentUserDescrim}" Foreground="Grey" />
+                        <TextBlock Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center">
+                            <Run Text="{x:Bind Vm.CurrentUserName, Mode=OneWay, FallbackValue='Username'}" Foreground="White"/>
+                            <Run Text="{x:Bind Vm.CurrentUserDescrim, Mode=OneWay}" Foreground="Gray" />
                         </TextBlock>
                         <Button Grid.Column="2" Content="@" HorizontalAlignment="Center" Background="Transparent"/>
                         <Button Grid.Column="3" FontFamily="Segoe MDL2 Assets" Content="&#xE713;" HorizontalAlignment="Center" Background="Transparent"/>
@@ -119,7 +120,8 @@
                     UserListDisplayMode="Inline"
                     FullUserList="{x:Bind Vm.FullUserList, Mode=OneWay, FallbackValue=''}"
                     SendMessageCommand="{x:Bind Vm.SendMessageToCurrentChannel}"
-                    ToggleUserListCommand="{x:Bind Vm.ToggleUserListCommand}"/>
+                    ToggleUserListCommand="{x:Bind Vm.ToggleUserListCommand}"
+                    UserClick="{x:Bind Vm.UserClick}"/>
             </SplitView.Content>
         </SplitView>
     </Grid>

@@ -39,7 +39,7 @@
     </UserControl.Resources>
     <Grid x:Name="chatGrid" Background="#FF36393E" Margin="0,0,0,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid>
@@ -51,9 +51,8 @@
             <ToggleButton x:Name="TogglePaneButton"
                           TabIndex="1"
                           Style="{StaticResource SplitViewTogglePaneButtonStyle}"
-                          IsChecked="{x:Bind IsPaneOpen Mode=TwoWay}"
                           AutomationProperties.Name="Menu"
-                          ToolTipService.ToolTip="Menu" Grid.Row="0" Grid.Column="0" />
+                          ToolTipService.ToolTip="Menu" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Disabled" Orientation="Horizontal">
                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="#" Margin="20,0,0,0"/>

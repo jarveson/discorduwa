@@ -16,27 +16,28 @@ namespace DiscordUWA.Services {
 
         public LocatorService() {
             NavigationService navService = new NavigationService(); 
+
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
             SimpleIoc.Default.Register<IDialogService, DialogService>();
-
-            DiscordSocketClient discordClient = new DiscordSocketClient();
-            //DiscordRestClient discordRestClient = new DiscordRestClient();
 
             navService.Configure("login", typeof(LoginPanel));
             navService.Configure("main", typeof(MainPage));
             navService.Configure("userProfile", typeof(UserProfile));
 
-            SimpleIoc.Default.Register(() => navService);
+            DiscordSocketClient discordClient = new DiscordSocketClient();
             SimpleIoc.Default.Register(() => discordClient);
-            //SimpleIoc.Default.Register(() => discordRestClient);
+
+            SimpleIoc.Default.Register(() => navService);
             SimpleIoc.Default.Register<SettingsService>();
 
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<ServerViewModel>();
+            SimpleIoc.Default.Register<UserProfileViewModel>();
         }
 
         public static LoginViewModel LoginView => ServiceLocator.Current.GetInstance<LoginViewModel>();
         public static ServerViewModel ServerView => ServiceLocator.Current.GetInstance<ServerViewModel>();
+        public static UserProfileViewModel UserProfileView => ServiceLocator.Current.GetInstance<UserProfileViewModel>();
 
         public static INavServiceExtend NavigationService  => ServiceLocator.Current.GetInstance<NavigationService>();
         public static ISettingsService SettingsService =>  ServiceLocator.Current.GetInstance<SettingsService>();

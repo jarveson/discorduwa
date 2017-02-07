@@ -5,7 +5,12 @@
     xmlns:local="using:DiscordUWA"
     RequestedTheme="Dark">
     <Application.Resources>
-        <vm:LocatorService x:Key="Locator" xmlns:vm="using:DiscordUWA.Services"/>
+        <ResourceDictionary>
+            <vm:LocatorService x:Key="Locator" xmlns:vm="using:DiscordUWA.Services"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 
 </Application>

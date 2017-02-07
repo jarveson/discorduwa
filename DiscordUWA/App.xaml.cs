@@ -79,7 +79,6 @@ namespace DiscordUWA {
                 // parameter
 
                 LocatorService.NavigationService.SetCurrentFrame(rootFrame);
-                //Locator.NavigationService.NavigateTo(typeof(MainPage));
                 LocatorService.NavigationService.NavigateTo("login");
             }
             // Ensure the current window is active
