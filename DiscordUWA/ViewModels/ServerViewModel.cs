@@ -71,6 +71,19 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref currentUserAvatarUrl, value); }
         }
 
+        private string currentUserName;
+        public string CurrentUserName {
+            get { return this.currentUserName;}
+            set { SetProperty(ref currentChannelName, value); }
+        }
+
+        private string currentUserDescrim;
+        public string CurrentUserDescrim {
+            get { return this.currentUserDescrim;}
+            set { SetProperty(ref currentUserDescrim, value); }
+        }
+
+
         private string currentChatMessage;
         public string CurrentChatMessage {
             get { return this.currentChatMessage; }
@@ -92,6 +105,9 @@ namespace DiscordUWA.ViewModels {
         public void OnNavigatingTo(object parameter) {
             LoadJoinedServersList.Execute(null);
             LoadCurrentUserAvatar.Execute(null);
+            var currentUser = LocatorService.DiscordSocketClient.CurrentUser;
+            currentUserName = currentUser.Username;
+            currentUserDescrim = currentUser.Discriminator;
         }
         public void OnNavigatingFrom(object parameter) {
 

@@ -8,6 +8,7 @@
     xmlns:data="using:DiscordUWA.Models"
     xmlns:Converters="using:DiscordUWA.Converters"
     mc:Ignorable="d" 
+    NavigationCacheMode="Enabled"
     d:DesignHeight="600"
     d:DesignWidth="300"
     x:Name="root">
@@ -73,5 +74,12 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <ListView x:Name="UserListContent" HorizontalAlignment="Left" VerticalAlignment="Top" Width="260" Background="#FF2E3136" ItemsSource="{x:Bind FullUserList}" ItemTemplate="{StaticResource UserListTemplate}"/>
+    <ListView x:Name="UserListContent" 
+              HorizontalAlignment="Left" VerticalAlignment="Top" 
+              Width="260" 
+              Background="#FF2E3136" 
+              IsItemClickEnabled="True"
+              ItemsSource="{x:Bind FullUserList}" 
+              ItemTemplate="{StaticResource UserListTemplate}"
+              ItemClick="OnItemClick"/>
 </UserControl>

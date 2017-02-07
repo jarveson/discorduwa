@@ -34,6 +34,18 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ChannelNameProperty, value); }
         }
 
+        public static DependencyProperty UserListDisplayModeProp { get; } = DependencyProperty.Register(
+            nameof(UserListDisplayMode),
+            typeof(SplitViewDisplayMode),
+            typeof(GuildPane),
+            new PropertyMetadata(SplitViewDisplayMode.Inline)
+            );
+
+        public SplitViewDisplayMode UserListDisplayMode {
+            get { return (SplitViewDisplayMode)GetValue(UserListDisplayModeProp); }
+            set { SetValue(UserListDisplayModeProp, value); }
+        }
+
         public static DependencyProperty MessageTextProperty { get; } = DependencyProperty.Register(
             nameof(MessageText),
             typeof(string),
@@ -118,16 +130,8 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ToggleUserListCommandProperty, value); }
         }
 
-        private void IsPaneOpenPropertyChanged(DependencyObject sender, DependencyProperty dp) {
-            if (ShowUserList)
-                UserListSplitView.Width = 300;
-            else
-                UserListSplitView.Width = 0;
-        }
-
         public GuildPane() {
             this.InitializeComponent();
-            //this.UserListSplitView.RegisterPropertyChangedCallback(SplitView.IsPaneOpenProperty, IsPaneOpenPropertyChanged);
         }
 
     }

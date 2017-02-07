@@ -10,29 +10,55 @@
     xmlns:data="using:DiscordUWA.Models"
     x:Class="DiscordUWA.MainPage"
     mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
     DataContext="{Binding Source={StaticResource Locator}, Path=ServerView}">
 
     <Page.Resources>
         <Converters:UriToImageSourceConverter x:Key="UriToImageSourceConverter"/>
         <DataTemplate x:Key="ImageServerListTemplate" x:DataType="data:ServerListModel">
             <StackPanel>
-                <Button CommandParameter="{x:Bind ServerId}" Command="{Binding Source={StaticResource Locator}, Path=ServerView.SelectServer}">
+                <Button CommandParameter="{x:Bind ServerId}" Command="{Binding ServerView.SelectServer, Source={StaticResource Locator}}">
                     <Image Height="50" Width="50" VerticalAlignment="Center" HorizontalAlignment="Center" Source="{x:Bind ServerImageUri}" Stretch="Uniform"/>
                 </Button>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="ChannelListTemplate" x:DataType="data:ChannelListModel">
-            <Button CommandParameter="{x:Bind ChannelId}" Command="{Binding Source={StaticResource Locator}, Path=ServerView.SelectChannel}">
+            <Button CommandParameter="{x:Bind ChannelId}" Command="{Binding ServerView.SelectChannel, Source={StaticResource Locator}}">
                 <TextBlock Text="{x:Bind ChannelName}"/>
             </Button>
         </DataTemplate>
     </Page.Resources>
     <Grid Background="Black">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="wideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="641" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="GuildSplitter.DisplayMode" Value="Inline"/>
+                        <Setter Target="GuildSplitter.IsPaneOpen" Value="True"/>
+                        <Setter Target="GuildPane.UserListDisplayMode" Value="Inline">
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="narrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="GuildSplitter.DisplayMode" Value="Overlay"/>
+                        <Setter Target="GuildSplitter.IsPaneOpen" Value="False"/>
+                        <Setter Target="GuildPane.UserListDisplayMode" Value="Overlay">
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <SplitView DisplayMode="Inline" IsPaneOpen="True" OpenPaneLength="320" Margin="0,0,-1,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <SplitView x:Name="GuildSplitter" DisplayMode="Inline" IsPaneOpen="True" OpenPaneLength="320" Margin="0,0,-1,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <SplitView.Pane>
                 <Grid x:Name="serverChannelGridPane" Margin="-5,0,-1,0" Background="#FF2A2D32">
                     <Grid.ColumnDefinitions>
@@ -41,25 +67,56 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80"/>
-                        <RowDefinition/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Button x:Name="currentUserAvatarBtn" HorizontalAlignment="Center" Width="50" Height="50" Margin="0,0">
-                        <Image x:Name="currentUserAvatarImg" Margin="-10,-6" Source="{x:Bind Vm.CurrentUserAvatarUrl, Mode=OneWay, Converter={StaticResource UriToImageSourceConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" NineGrid="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" />
-                    </Button>
                     <TextBlock x:Name="serverNameText" Text="{x:Bind Vm.CurrentServerName, Mode=OneWay}" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
                         <ListView x:Name="serverlistView" ItemsSource="{x:Bind Vm.ServerListModelList, Mode=OneWay}" Background="#FF1E2124" ItemTemplate="{StaticResource ImageServerListTemplate}" />
                     </ScrollViewer>
-                    <ListView x:Name="channelsListView" Header="Text Channels" ItemsSource="{x:Bind Vm.ChannelList, Mode=OneWay}" Grid.Column="1" Grid.Row="1" Background="#FF2E3136"  ItemTemplate="{StaticResource ChannelListTemplate}" Margin="10,0,0,0"/>
+                    <ListView x:Name="channelsListView" 
+                              Header="Text Channels" 
+                              ItemsSource="{x:Bind Vm.ChannelList, Mode=OneWay}"
+                              Grid.Column="1" Grid.Row="1" 
+                              Background="#FF2E3136"
+                              ItemTemplate="{StaticResource ChannelListTemplate}" 
+                              Margin="10,0,0,0"/>
+                    <Grid Grid.Row="2" Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20">
+                            <ColumnDefinition Width="20">
+                        </Grid.ColumnDefinitions>
+                        <Ellipse Height="30" Width="30" 
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center">
+                            <Ellipse.Fill>
+                                <ImageBrush>
+                                    <ImageBrush.ImageSource>
+                                        <BitmapImage DecodePixelHeight="30" DecodePixelWidth="30" UriSource="{x:Bind Vm.CurrentUserAvatarUrl, Mode=OneWay}" />
+                                    </ImageBrush.ImageSource>
+                                </ImageBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Grid.Column="1" FontWeight="Bold">
+                            <Run Text="{x:Bind CurrentUserName}" Foreground="White"/>
+                            <Run Text="{x:Bind CurrentUserDescrim}" Foreground="Grey" />
+                        </TextBlock>
+                        <Button Grid.Column="2" Content="@" HorizontalAlignment="Center" Background="Transparent"/>
+                        <Button Grid.Column="3" FontFamily="Segoe MDL2 Assets" Content="&#xE713;" HorizontalAlignment="Center" Background="Transparent"/>
+                    </Grid>
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
                 <uc:GuildPane
+                    x:Name="GuildPane"
                     ChannelName="{x:Bind Vm.CurrentChannelName, Mode=OneWay}"
                     ChannelTopic="{x:Bind Vm.ChannelTopic, Mode=OneWay}"
                     ChatLogList="{x:Bind Vm.ChatLogList, Mode=OneWay, FallbackValue=''}"
                     MessageText="{x:Bind Vm.CurrentChatMessage, Mode=TwoWay}"
                     ShowUserList="{x:Bind Vm.ShowUserList, Mode=OneWay, FallbackValue='True'}"
+                    UserListDisplayMode="Inline"
                     FullUserList="{x:Bind Vm.FullUserList, Mode=OneWay, FallbackValue=''}"
                     SendMessageCommand="{x:Bind Vm.SendMessageToCurrentChannel}"
                     ToggleUserListCommand="{x:Bind Vm.ToggleUserListCommand}"/>
