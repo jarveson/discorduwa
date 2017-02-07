@@ -22,12 +22,12 @@ namespace DiscordUWA.ViewModels {
         public ICommand LoadCurrentUserAvatar { protected set; get; }
 
         public ICommand SelectServer { protected set; get; }
-        public ICommand SelectChannel { protected set; get; }
-
         public ICommand SendMessageToCurrentChannel { protected set; get; }
         public ICommand ToggleUserListCommand { protected set; get; }
 
         public ICommand UserClick { protected set; get; }
+
+        public ICommand ServerListToggle {protected set; get;}
 
         private ObservableCollection<ServerListModel> serverListModelList = new ObservableCollection<ServerListModel>();
         public ObservableCollection<ServerListModel> ServerListModelList {
@@ -51,6 +51,14 @@ namespace DiscordUWA.ViewModels {
         public RangeObservableCollection<ChatTextListModel> ChatLogList {
             get { return this.chatLogList; }
             set { SetProperty(ref chatLogList, value); }
+        }
+
+        private ChannelListModel selectedChannel; 
+        public ChannelListModel SelectedChannel {
+            get { return this.selectedChannel; }
+            set { SetProperty(ref selectedChannel, value); 
+                SelectedChannel(value.ChannelId);
+            }
         }
 
         private string currentServerName;
@@ -96,6 +104,12 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref showUserList, value); }
         }
 
+        private bool showServerPane = true;
+        public bool ShowServerPane {
+            get { return this.showServerPane; }
+            set { SetProperty(ref showServerPane, value); }
+        }
+
         private string channelTopic = "";
         public string ChannelTopic {
             get { return this.channelTopic; }
@@ -136,18 +150,7 @@ namespace DiscordUWA.ViewModels {
                 CurrentServerName = server.Name;
                 PopulateChannelList();
                 await PopulateUserList();
-                SelectChannel.Execute(server.DefaultChannel.Id);
-            });
-
-            this.SelectChannel = new DelegateCommand<ulong?>((selectedChannelId) => {
-                if (selectedChannelId == null) return;
-                channelId = selectedChannelId.Value;
-
-                var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
-                CurrentChannelName = channel.Name;
-                ChannelTopic = channel.Topic;
-
-                PopulateChatLog();
+                await SelectChannel(server.DefaultChannel.Id);
             });
 
             this.SendMessageToCurrentChannel = new DelegateCommand(async () => {
@@ -163,8 +166,24 @@ namespace DiscordUWA.ViewModels {
             });
 
             this.UserClick = new DelegateCommand<ulong>((userId) => {
-                LocatorService.NavigationService.NavigateTo("userProfile", userId);
+                // 0 for now should mean its the role header
+                if (userId != 0)
+                    LocatorService.NavigationService.NavigateTo("userProfile", userId);
             });
+
+            this.ServerListToggle = new DelegateCommand(() => {
+                ShowServerPane = !ShowServerPane;
+            });
+        }
+
+        private async Task SelectChannel(ulong selectedChannelId) {
+            channelId = selectedChannelId.Value;
+
+            var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
+            CurrentChannelName = channel.Name;
+            ChannelTopic = channel.Topic;
+
+            await PopulateChatLog();
         }
 
         private void AddChatMessageToChatLog(IMessage message) {
@@ -230,10 +249,6 @@ namespace DiscordUWA.ViewModels {
                 foreach (var user in server.Users) {
                     Color roleColor = Color.Default;
 
-                    if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown) {
-                        tmpOffline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
-                        continue;
-                    }
                     bool foundRole = false;
                     // todo: figure out how to pick 'highest' role and take that color
                     foreach (var roleid in user.RoleIds) {
@@ -243,27 +258,31 @@ namespace DiscordUWA.ViewModels {
                             foundRole = true;
                             if (!tmpUserSort.ContainsKey(role))
                                 tmpUserSort[role] = new List<UserListSectionModel>();
-                            tmpUserSort[role].Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
+                            tmpUserSort[role].Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.isBot));
                             break;
                         }
                     }
-                    if (!foundRole)
-                        tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id));
+                    if (!foundRole) {
+                        if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown)
+                            tmpOffline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.isBot));
+                        else
+                            tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.isBot));
+                    }
                 }
                 DispatcherHelper.CheckBeginInvokeOnUI(() => {
                     foreach(var key in tmpUserSort.Keys) {
-                        fullUserList.Add(new UserListSectionModel(key.Name));
+                        fullUserList.Add(new UserListSectionModel(key.Name, tmpUserSort[key].Count));
 
                         foreach (var value in tmpUserSort[key])
                             fullUserList.Add(value);
                     }
                     if (tmpOnline.Count > 0) {
-                        fullUserList.Add(new UserListSectionModel("Online"));
+                        fullUserList.Add(new UserListSectionModel("Online", tmpOnline.Count));
                         foreach (var user in tmpOnline)
                             fullUserList.Add(user);
                     }
                     if (tmpOffline.Count > 0) {
-                        fullUserList.Add(new UserListSectionModel("Offline"));
+                        fullUserList.Add(new UserListSectionModel("Offline", tmpOffline.Count));
                         foreach (var user in tmpOffline)
                             fullUserList.Add(user);
                     }
@@ -271,7 +290,7 @@ namespace DiscordUWA.ViewModels {
             });
         }
 
-        private async void PopulateChatLog() {
+        private async Task PopulateChatLog() {
             ChatLogList.Clear();
             var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
             var messageLog = await channel.GetMessagesAsync(40).Flatten();

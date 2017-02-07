@@ -34,18 +34,6 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ChannelNameProperty, value); }
         }
 
-        public static DependencyProperty UserListDisplayModeProp { get; } = DependencyProperty.Register(
-            nameof(UserListDisplayMode),
-            typeof(SplitViewDisplayMode),
-            typeof(GuildPane),
-            new PropertyMetadata(SplitViewDisplayMode.Inline)
-            );
-
-        public SplitViewDisplayMode UserListDisplayMode {
-            get { return (SplitViewDisplayMode)GetValue(UserListDisplayModeProp); }
-            set { SetValue(UserListDisplayModeProp, value); }
-        }
-
         public static DependencyProperty MessageTextProperty { get; } = DependencyProperty.Register(
             nameof(MessageText),
             typeof(string),
@@ -80,6 +68,18 @@ namespace DiscordUWA.UserControls {
         public ICommand UserClick {
             get { return (ICommand)GetValue(UserClickCommandProperty); }
             set { SetValue(UserClickCommandProperty, value); }
+        }
+
+        public static DependencyProperty ServerListToggleCommandProperty { get; } = DependencyProperty.Register(
+            nameof(ServerListToggle),
+            typeof(ICommand),
+            typeof(GuildPane),
+            new PropertyMetadata(null)
+            );
+
+        public ICommand ServerListToggle {
+            get { return (ICommand)GetValue(ServerListToggleCommandProperty); }
+            set { SetValue(ServerListToggleCommandProperty, value); }
         }
 
         public static DependencyProperty ChatLogListProperty { get; } = DependencyProperty.Register(

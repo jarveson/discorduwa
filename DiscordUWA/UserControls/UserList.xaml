@@ -16,6 +16,7 @@
         <Converters:StringNotExistsToVisibilityConverter x:Key="StrNotToVis"/>
         <Converters:StringToUriConverter x:Key="StringToUriConverter"/>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
+        <Converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
 
         <DataTemplate x:Key="UserListTemplate" x:DataType="data:UserListSectionModel">
             <Grid>
@@ -27,10 +28,12 @@
                     <ColumnDefinition Width="45"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{x:Bind RoleSectionName}" 
-                           Visibility="{x:Bind RoleSectionName, Converter={StaticResource StringExistsToVisibilityConverter}}"
-                           Grid.Row="0"
-                           Grid.ColumnSpan="2"/>
+                <TextBlock Visibility="{x:Bind RoleSectionName, Converter={StaticResource StringExistsToVisibilityConverter}}"
+                           Grid.Row="0" Grid.ColumnSpan="2">
+                           <Run Text="{x:Bind RoleSectionName}"/>
+                           <Run Text="-"/>
+                           <Run Text="{x:Bind NumUsers}"/>
+                </TextBlock>
 
                 <Ellipse Grid.Row="1" 
                          Visibility="{x:Bind RoleSectionName, Converter={StaticResource StrNotToVis}}" 
@@ -65,7 +68,10 @@
                             Grid.Column="1" 
                             VerticalAlignment="Center" 
                             HorizontalAlignment="Center">
-                    <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
+                        <TextBlock Text="BOT" FontWeight="Bold" Visibility="{x:Bind IsBot, Converter={StaticResource BoolToVis}">
+                    </StackPanel>
                     <TextBlock Text="{x:Bind CurrentlyPlaying}" Visibility="{x:Bind CurrentlyPlaying, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
                     <!--<Button Content="Profile" CommandParameter="{x:Bind Id}" Command="{Binding UserClick, ElementName=root}"/>-->
                 </StackPanel>

@@ -68,7 +68,7 @@
                             HorizontalAlignment="Center"
                             Margin="2,5,2,7" />
                     </PivotItem.Header>
-                    <TextBlock Text="UserContent" />
+                    <TextBlock Text="add user note?. todo" />
                 </PivotItem>
 
                 <PivotItem>
@@ -85,7 +85,7 @@
                             HorizontalAlignment="Center"
                             Margin="2,5,2,7" />
                     </PivotItem.Header>
-                    <TextBlock Text="mutual servers content" />
+                    <TextBlock Text="mutual servers content. todo" />
                 </PivotItem>
 
                 <PivotItem>
@@ -102,7 +102,7 @@
                             HorizontalAlignment="Center"
                             Margin="2,5,2,7" />
                     </PivotItem.Header>
-                    <TextBlock Text="mutual friends content" />
+                    <TextBlock Text="mutual friends content. todo" />
                 </PivotItem>
             </Pivot>
         </ScrollViewer>

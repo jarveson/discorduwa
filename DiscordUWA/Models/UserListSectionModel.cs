@@ -8,12 +8,14 @@ using Windows.UI;
 namespace DiscordUWA.Models {
     public class UserListSectionModel : UserListModel {
         public string RoleSectionName = "";
+        public uint NumUsers = 0;
 
-        public UserListSectionModel(string avatarUrl, string currentlyPlaying, Color statusColor, string username, Color userRoleColor, ulong id) : base(avatarUrl, currentlyPlaying, statusColor, username,userRoleColor, id){
+        public UserListSectionModel(string avatarUrl, string currentlyPlaying, Color statusColor, string username, Color userRoleColor, ulong id, bool isBot) : base(avatarUrl, currentlyPlaying, statusColor, username,userRoleColor, id, isBot){
         }
 
-        public UserListSectionModel(string role) {
+        public UserListSectionModel(string role, uint numUsers) {
             RoleSectionName = role;
+            NumUsers = numUsers;
         }
     }
 }

@@ -81,11 +81,35 @@ namespace DiscordUWA {
                 LocatorService.NavigationService.SetCurrentFrame(rootFrame);
                 LocatorService.NavigationService.NavigateTo("login");
             }
+            // For now just leave this as global back,
+            // eventually we will want to do this on a page basis
+            SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
+
             // Ensure the current window is active
             Window.Current.Activate();
 
             DispatcherHelper.Initialize();
 
+        }
+
+        /// <summary>
+        /// Invoked when a user issues a global back on the device.
+        /// If the app has no in-app back stack left for the current view/frame the user may be navigated away
+        /// back to the previous app in the system's app back stack or to the start screen.
+        /// In windowed mode on desktop there is no system app back stack and the user will stay in the app even when the in-app back stack is depleted.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void App_BackRequested(object sender, BackRequestedEventArgs e) {
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame == null)
+                return;
+
+            // If we can go back and the event has not already been handled, do so.
+            if (rootFrame.CanGoBack && e.Handled == false) {
+                e.Handled = true;
+                rootFrame.GoBack();
+            }
         }
 
         /// <summary>

@@ -15,6 +15,7 @@
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
         <Converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
+        <Converters:NegateBooleanConverter x:Key="NegateBool"/>
         <DataTemplate x:Key="ChatTextListTemplate" x:DataType="data:ChatTextListModel">
             <Grid VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
@@ -52,14 +53,20 @@
                           TabIndex="1"
                           Style="{StaticResource SplitViewTogglePaneButtonStyle}"
                           AutomationProperties.Name="Menu"
-                          ToolTipService.ToolTip="Menu" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
+                          ToolTipService.ToolTip="Menu" 
+                          Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
 
-            <StackPanel Grid.Column="1" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Disabled" Orientation="Horizontal">
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="#" Margin="20,0,0,0"/>
-                <TextBlock Text="{x:Bind ChannelName, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" />
-                <TextBlock Text="{x:Bind ChannelTopic, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0" />
+            <StackPanel Grid.Column="1" 
+                    VerticalAlignment="Center" 
+                    ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                    Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="#" Margin="20,0,0,0"/>
+                <TextBlock Text="{x:Bind ChannelName, Mode=OneWay}" VerticalAlignment="Center" FontWeight="Bold" />
+                <TextBlock Text="{x:Bind ChannelTopic, Mode=OneWay}" VerticalAlignment="Center" Margin="20,0,0,0" />
             </StackPanel>
-            <Button Command="{x:Bind ToggleUserListCommand}" Grid.Column="2" FontFamily="Segoe MDL2 Assets" Content="&#xE716;" Margin="20,0" HorizontalAlignment="Center" Background="Transparent"/>
+            <Button Command="{x:Bind ToggleUserListCommand}" Grid.Column="2" Margin="20,0" HorizontalAlignment="Center" Background="Transparent">
+                <FontIcon Glyph="&#xE716;"/>
+            </Button>
         </Grid>
         <Grid Background="#FF252526" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -85,7 +92,11 @@
                 <TextBox TextWrapping="Wrap" Text="{x:Bind MessageText, Mode=TwoWay}" PlaceholderText="Type Message..." Margin="20,0,0,0"/>
                 <Button x:Name="sendChatMessage" Content="Send" Margin="20,0" Grid.Column="1" Command="{x:Bind SendMessageCommand}"/>
             </Grid>
-            <SplitView x:Name="UserListSplitView" Visibility="{x:Bind ShowUserList, Mode=OneWay, Converter={StaticResource BoolToVis}, FallbackValue='Visible'}" IsPaneOpen="True" PanePlacement="Right" OpenPaneLength="300" HorizontalAlignment="Right" Grid.Column="1" Grid.RowSpan="2" DisplayMode="Inline">
+            <SplitView x:Name="UserListSplitView" 
+                       Grid.Column="1" Grid.RowSpan="2"
+                       Visibility="{x:Bind ShowUserList, Mode=OneWay, Converter={StaticResource BoolToVis}, FallbackValue='Visible'}" 
+                       IsPaneOpen="True" DisplayMode="Inline" PanePlacement="Right" OpenPaneLength="300"
+                       HorizontalAlignment="Right">
                 <SplitView.Pane>
                     <uc:UserList 
                         ShowChannelTopic="False"

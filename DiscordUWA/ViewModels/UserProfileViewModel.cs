@@ -41,9 +41,10 @@ namespace DiscordUWA.ViewModels {
                 userName = currentUser.Username;
                 UserDescrim = $"#{currentUser.Discriminator}";
             }
+            // Add back button to titlebar
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
         public void OnNavigatingFrom(object parameter) {
-
         }
 
         public UserProfileViewModel() {
