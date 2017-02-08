@@ -56,12 +56,7 @@ namespace DiscordUWA.UserControls {
             get { return (string)GetValue(ChannelTopicProperty); }
             set { SetValue(ChannelTopicProperty, value); }
         }
-
-        private void OnItemClick(object sender, ItemClickEventArgs e) {
-            var selected = e.ClickedItem as UserListSectionModel;
-            UserClick.Execute(selected.Id);
-        }
-
+        
         public UserList() {
             this.InitializeComponent();
         }

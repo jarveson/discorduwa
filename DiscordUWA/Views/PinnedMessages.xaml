@@ -1,0 +1,80 @@
+<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DiscordUWA.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ViewModels="using:DiscordUWA.ViewModels"
+    xmlns:Converters="using:DiscordUWA.Converters"
+    x:Class="DiscordUWA.Views.LoginPanel"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
+        <Converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
+        <DataTemplate x:Key="ChatTextListTemplate" x:DataType="data:ChatTextListModel">
+            <Grid VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Ellipse Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}" 
+                         Height="30" Width="30" 
+                         VerticalAlignment="Center" 
+                         HorizontalAlignment="Center">
+                    <Ellipse.Fill>
+                        <ImageBrush>
+                            <ImageBrush.ImageSource>
+                                <BitmapImage UriSource="{x:Bind AvatarUrl, Converter={StaticResource StringToUriConverter}}" />
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                <Grid Grid.Column="1" Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontWeight="Bold"
+                           Text="{x:Bind Username}" 
+                           Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
+                    <TextBlock Grid.Column="1"
+                           Text="{x:Bind TimeSent}" 
+                           HorizontalAlignment="Right" 
+                           Foreground="#FF686A6E"/>
+                </Grid>
+                
+                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{X:Bind ChatText}"/>
+
+                <Image Grid.Column="1" Grid.Row="2" Stretch="Uniform" 
+                       Visibility="{x:Bind Path=ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                    <Image.Source>
+                        <BitmapImage UriSource="{x:Bind Path=ImageUrl}">
+                    </Image.Source>
+                </Image>
+                <Seperator Grid.Row="3" Grid.ColumnSpan="2">
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Background="#FF36393E">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Pinned Messages" FontWeight="Bold" />
+
+        <ListView x:Name="chatLogListView" 
+                  ItemsSource="{x:Bind ChatLogList, Mode=OneWay}" 
+                  ItemTemplate="{StaticResource ChatTextListTemplate}">
+        </ListView>
+    </Grid>
+</Page>

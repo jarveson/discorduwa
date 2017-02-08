@@ -45,7 +45,7 @@
                     <Ellipse.Fill>
                         <ImageBrush>
                             <ImageBrush.ImageSource>
-                                <BitmapImage DecodePixelHeight="30" DecodePixelWidth="30" UriSource="{x:Bind AvatarUrl, Converter={StaticResource StringToUriConverter}}" />
+                                <BitmapImage UriSource="{x:Bind AvatarUrl, Converter={StaticResource StringToUriConverter}}" />
                             </ImageBrush.ImageSource>
                         </ImageBrush>
                     </Ellipse.Fill>
@@ -86,5 +86,5 @@
               IsItemClickEnabled="True"
               ItemsSource="{x:Bind FullUserList}" 
               ItemTemplate="{StaticResource UserListTemplate}"
-              ItemClick="OnItemClick"/>
+              uc:ListViewBaseExtensions.Command="{x:Bind UserClick}"/>
 </UserControl>

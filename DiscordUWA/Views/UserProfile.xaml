@@ -31,7 +31,7 @@
                 <Ellipse.Fill>
                     <ImageBrush>
                         <ImageBrush.ImageSource>
-                            <BitmapImage DecodePixelHeight="128" DecodePixelWidth="128" UriSource="{x:Bind Vm.AvatarUrl}" />
+                            <BitmapImage UriSource="{x:Bind Vm.AvatarUrl}" />
                         </ImageBrush.ImageSource>
                     </ImageBrush>
                 </Ellipse.Fill>

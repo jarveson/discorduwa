@@ -7,15 +7,12 @@
     xmlns:ViewModels="using:DiscordUWA.ViewModels"
     xmlns:Converters="using:DiscordUWA.Converters"
     x:Class="DiscordUWA.Views.LoginPanel"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    DataContext="{Binding LoginView, Source={StaticResource Locator}}">
 
     <Page.Resources>
         <Converters:ConverterFlipBool x:Key="ConverterFlipBool"/>
     </Page.Resources>
-
-    <Page.DataContext>
-        <ViewModels:LoginViewModel/>
-    </Page.DataContext>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Canvas HorizontalAlignment="Left" Height="523" Margin="516,294,0,0" VerticalAlignment="Top" Width="750" Background="#FF5873B0">

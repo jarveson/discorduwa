@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:DiscordUWA.UserControls"
+    xmlns:controls="using:DiscordUWA.Controls"
     xmlns:data="using:DiscordUWA.Models"
     xmlns:Converters="using:DiscordUWA.Converters"
     mc:Ignorable="d"
@@ -24,20 +25,47 @@
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="{x:Bind TimeSent}" HorizontalAlignment="Right" Foreground="#FF686A6E" FontSize="12"/>
-                <TextBlock Grid.Column="1" TextWrapping="WrapWholeWords">
-                    <Run Text="{x:Bind Username}" Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}" FontWeight="Bold"/>
-                    <Run Text="{x:Bind ChatText}"  />
-                </TextBlock>
-                <uc:GifView Grid.Column="1" Grid.Row="1" Height="100" Width="100" Stretch="Uniform" 
-                            UriSource="{x:Bind Path=ImageUrl}" 
-                            Visibility="{x:Bind Path=ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
+                <Ellipse Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}" 
+                         Height="30" Width="30" 
+                         VerticalAlignment="Center" 
+                         HorizontalAlignment="Center">
+                    <Ellipse.Fill>
+                        <ImageBrush>
+                            <ImageBrush.ImageSource>
+                                <BitmapImage UriSource="{x:Bind AvatarUrl, Converter={StaticResource StringToUriConverter}}" />
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
 
+                <Grid Grid.Column="1" Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontWeight="Bold"
+                           Text="{x:Bind Username}" 
+                           Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
+                    <TextBlock Grid.Column="1"
+                           Text="{x:Bind TimeSent}" 
+                           HorizontalAlignment="Right" 
+                           Foreground="#FF686A6E"/>
+                </Grid>
+                
+                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{X:Bind ChatText}"/>
+
+                <Image Grid.Column="1" Grid.Row="2" Stretch="Uniform" 
+                       Visibility="{x:Bind Path=ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                    <Image.Source>
+                        <BitmapImage UriSource="{x:Bind Path=ImageUrl}">
+                    </Image.Source>
+                </Image>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
-    <Grid x:Name="chatGrid" Background="#FF36393E" Margin="0,0,0,0">
+    <Grid x:Name="chatGrid" Background="#FF36393E">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition/>
@@ -67,6 +95,9 @@
             <Button Command="{x:Bind ToggleUserListCommand}" Grid.Column="2" Margin="20,0" HorizontalAlignment="Center" Background="Transparent">
                 <FontIcon Glyph="&#xE716;"/>
             </Button>
+            <Button Command="{x:Bind PinnedMessagesCommand}" Grid.Column="2" Margin="20,0" HorizontalAlignment="Center" Background="Transparent">
+                <FontIcon Glyph="&#xE718;"/>
+            </Button>
         </Grid>
         <Grid Background="#FF252526" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -77,7 +108,10 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <ListView x:Name="chatLogListView" RenderTransformOrigin="0.5,0.5" Background="#FF36393E" ItemsSource="{x:Bind ChatLogList, Mode=OneWay}" ItemTemplate="{StaticResource ChatTextListTemplate}">
+            <ListView x:Name="chatLogListView"
+                      Background="#FF36393E" 
+                      ItemsSource="{x:Bind ChatLogList, Mode=OneWay}" 
+                      ItemTemplate="{StaticResource ChatTextListTemplate}">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView" VerticalAlignment="Bottom"/>

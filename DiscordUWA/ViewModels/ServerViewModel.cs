@@ -17,13 +17,13 @@ namespace DiscordUWA.ViewModels {
     public class ServerViewModel : BindableBase, INavigable {
         private ulong selectedGuildId = 0L;
         private ulong channelId = 0L;
+        private ulong lastAuthorId = 0L;
 
         public ICommand LoadJoinedServersList { protected set; get; }
         public ICommand LoadCurrentUserAvatar { protected set; get; }
-
-        public ICommand SelectServer { protected set; get; }
         public ICommand SendMessageToCurrentChannel { protected set; get; }
         public ICommand ToggleUserListCommand { protected set; get; }
+        public ICommand PinnedMessagesCommand {protected set; get;}
 
         public ICommand UserClick { protected set; get; }
 
@@ -65,6 +65,18 @@ namespace DiscordUWA.ViewModels {
             }
         }
 
+        private ServerListModel selectedGuild; 
+        public ServerListModel SelectedGuild {
+            get { return this.selectedGuild; }
+            set {
+                if (SetProperty(ref selectedGuild, value)) {
+                    DispatcherHelper.CheckBeginInvokeOnUI(async () => {
+                        await SelectServer(value.ServerId)
+                    });
+                }
+            }
+        }
+
         private string currentServerName;
         public string CurrentServerName {
             get { return this.currentServerName; }
@@ -99,7 +111,13 @@ namespace DiscordUWA.ViewModels {
         private string currentChatMessage;
         public string CurrentChatMessage {
             get { return this.currentChatMessage; }
-            set { SetProperty(ref currentChatMessage, value); }
+            set { 
+                if (SetProperty(ref currentChatMessage, value) && !value.IsNullOrEmpty()) {
+                    DispatcherHelper.CheckBeginInvokeOnUI(async () => {
+                        await (LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel).TriggerTypingAsync();
+                    });
+                }
+            }
         }
 
         private bool showUserList = true;
@@ -147,16 +165,6 @@ namespace DiscordUWA.ViewModels {
                 CurrentUserAvatarUrl = new Uri(LocatorService.DiscordSocketClient.CurrentUser.AvatarUrl);
             });
 
-            this.SelectServer = new DelegateCommand<ulong?>(async (selectedServerId) => {
-                if (selectedServerId == null) return;
-                selectedGuildId = selectedServerId.Value;
-                var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
-                CurrentServerName = server.Name;
-                PopulateChannelList();
-                await PopulateUserList();
-                SelectedChannel = ChannelList.SingleOrDefault(x => x.ChannelId == server.DefaultChannel.Id);
-            });
-
             this.SendMessageToCurrentChannel = new DelegateCommand(async () => {
                 var message = currentChatMessage;
                 var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
@@ -178,16 +186,20 @@ namespace DiscordUWA.ViewModels {
             this.ServerListToggle = new DelegateCommand(() => {
                 ShowServerPane = !ShowServerPane;
             });
+
+            this.PinnedMessagesCommand = new DelegateCommand(() => {
+                if (channelId != 0)
+                    LocatorService.NavigationService.NavigateTo("pinnedMessages", channelId);
+            });
         }
 
         private async Task SelectChannel(ulong selectedChannelId) {
             channelId = selectedChannelId;
+            await PopulateChatLog();
 
             var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
             CurrentChannelName = channel.Name;
             ChannelTopic = channel.Topic;
-
-            await PopulateChatLog().ConfigureAwait(false);
         }
 
         private void AddChatMessageToChatLog(IMessage message) {
@@ -214,9 +226,15 @@ namespace DiscordUWA.ViewModels {
                 imageUrl = embed.Thumbnail?.Url;
             }
             // Serialize UI update to the main UI thread
+            bool sameAuthor = message.Author.Id == lastAuthorId;
+            lastAuthorId = message.Author.Id;
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
-                ChatLogList.Add(new ChatTextListModel(message.Author.Username, roleColor.ToWinColor(), message.Content,
-                    message.Timestamp.ToString("h:mm tt"), imageUrl));
+                if (sameAuthor)
+                    ChatLogList.Add(new ChatTextListModel("", roleColor.ToWinColor(), message.Content,
+                        message.Timestamp.ToString("h:mm tt"), imageUrl, ""));
+                else 
+                    ChatLogList.Add(new ChatTextListModel(message.Author.Username, roleColor.ToWinColor(), message.Content,
+                        message.Timestamp.ToString("h:mm tt"), imageUrl, message.Author.AvatarUrl));
             });
         }
 
@@ -276,6 +294,8 @@ namespace DiscordUWA.ViewModels {
                             tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.IsBot));
                     }
                 }
+                // todo: can we use DeferRefresh here instead of this other range thing?
+                // or is that advancedcollectionview specific?
                 DispatcherHelper.CheckBeginInvokeOnUI(() => {
                     foreach(var key in tmpUserSort.Keys) {
                         fullUserList.Add(new UserListSectionModel(key.Name, (uint)tmpUserSort[key].Count));
@@ -305,6 +325,15 @@ namespace DiscordUWA.ViewModels {
             foreach (var message in messageLog.Reverse()) {
                 AddChatMessageToChatLog(message);
             }
+        }
+
+        private async Task SelectServer(ulong selectedServerId) {
+            selectedGuildId = selectedServerId;
+            var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
+            await PopulateUserList();
+            CurrentServerName = server.Name;
+            PopulateChannelList();
+            SelectedChannel = ChannelList.SingleOrDefault(x => x.ChannelId == server.DefaultChannel.Id);
         }
     }
 }

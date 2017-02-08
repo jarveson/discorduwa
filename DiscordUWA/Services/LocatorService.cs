@@ -23,6 +23,7 @@ namespace DiscordUWA.Services {
             navService.Configure("login", typeof(LoginPanel));
             navService.Configure("main", typeof(MainPage));
             navService.Configure("userProfile", typeof(UserProfile));
+            navService.Configure("pinnedMessages", typeof(PinnedMessages));
 
             DiscordSocketClient discordClient = new DiscordSocketClient();
             SimpleIoc.Default.Register(() => discordClient);
@@ -33,11 +34,13 @@ namespace DiscordUWA.Services {
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<ServerViewModel>();
             SimpleIoc.Default.Register<UserProfileViewModel>();
+            SimpleIoc.Default.Register<PinnedMessagesViewModel>();
         }
 
         public static LoginViewModel LoginView => ServiceLocator.Current.GetInstance<LoginViewModel>();
         public static ServerViewModel ServerView => ServiceLocator.Current.GetInstance<ServerViewModel>();
         public static UserProfileViewModel UserProfileView => ServiceLocator.Current.GetInstance<UserProfileViewModel>();
+        public static PinnedMessagesViewModel PinnedMessagesView => ServiceLocator.Current.GetInstance<PinnedMessagesViewModel>();
 
         public static INavServiceExtend NavigationService  => ServiceLocator.Current.GetInstance<NavigationService>();
         public static ISettingsService SettingsService =>  ServiceLocator.Current.GetInstance<SettingsService>();

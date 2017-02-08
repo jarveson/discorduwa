@@ -7,7 +7,6 @@ using Windows.UI.Core;
 
 namespace DiscordUWA.ViewModels {
     public class UserProfileViewModel : BindableBase, INavigable {
-
         private string userName;
         public string UserName {
             get { return this.userName;}
