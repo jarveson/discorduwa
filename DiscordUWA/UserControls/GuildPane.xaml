@@ -15,7 +15,6 @@
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
         <Converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
-        <Converters:NegateBooleanConverter x:Key="NegateBool"/>
         <DataTemplate x:Key="ChatTextListTemplate" x:DataType="data:ChatTextListModel">
             <Grid VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
@@ -53,6 +52,7 @@
                           TabIndex="1"
                           Style="{StaticResource SplitViewTogglePaneButtonStyle}"
                           AutomationProperties.Name="Menu"
+                          Command="{x:Bind ServerListToggle}"
                           ToolTipService.ToolTip="Menu" 
                           Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
 

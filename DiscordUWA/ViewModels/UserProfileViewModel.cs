@@ -3,6 +3,7 @@ using DiscordUWA.Interfaces;
 using DiscordUWA.Services;
 using System;
 using System.Windows.Input;
+using Windows.UI.Core;
 
 namespace DiscordUWA.ViewModels {
     public class UserProfileViewModel : BindableBase, INavigable {
@@ -45,6 +46,7 @@ namespace DiscordUWA.ViewModels {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
         public void OnNavigatingFrom(object parameter) {
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
         }
 
         public UserProfileViewModel() {

@@ -54,7 +54,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <SplitView x:Name="GuildSplitter" DisplayMode="Inline" IsPaneOpen="{x:Bind Vm.ShowServerPane, Mode=OneWay, FallbackValue='True'}" OpenPaneLength="320" Margin="0,0,-1,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <SplitView x:Name="GuildSplitter" DisplayMode="Inline" IsPaneOpen="{x:Bind Vm.ShowServerPane, Mode=TwoWay, FallbackValue='True'}" OpenPaneLength="320" Margin="0,0,-1,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <SplitView.Pane>
                 <Grid x:Name="serverChannelGridPane" Margin="-5,0,-1,0" Background="#FF2A2D32">
                     <Grid.ColumnDefinitions>
@@ -73,7 +73,7 @@
                     <ListView x:Name="channelsListView" 
                               Header="Text Channels" 
                               ItemsSource="{x:Bind Vm.ChannelList, Mode=OneWay}"
-                              SelectedItem="{x:Bind Vm.SelectedChannel, Mode=OneWay}"
+                              SelectedItem="{x:Bind Vm.SelectedChannel, Mode=TwoWay}"
                               Grid.Column="1" Grid.Row="1" 
                               Background="#FF2E3136"
                               ItemTemplate="{StaticResource ChannelListTemplate}" 
@@ -120,7 +120,7 @@
                     SendMessageCommand="{x:Bind Vm.SendMessageToCurrentChannel}"
                     ToggleUserListCommand="{x:Bind Vm.ToggleUserListCommand}"
                     UserClick="{x:Bind Vm.UserClick}"
-                    ServerListToggle="{x:Bind ServerListToggle}"/>
+                    ServerListToggle="{x:Bind Vm.ServerListToggle}"/>
             </SplitView.Content>
         </SplitView>
     </Grid>

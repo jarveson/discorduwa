@@ -56,8 +56,12 @@ namespace DiscordUWA.ViewModels {
         private ChannelListModel selectedChannel; 
         public ChannelListModel SelectedChannel {
             get { return this.selectedChannel; }
-            set { SetProperty(ref selectedChannel, value); 
-                SelectedChannel(value.ChannelId);
+            set {
+                if (SetProperty(ref selectedChannel, value)) {
+                    DispatcherHelper.CheckBeginInvokeOnUI(async () => {
+                        await SelectChannel(value.ChannelId);
+                    });
+                }
             }
         }
 
@@ -150,7 +154,7 @@ namespace DiscordUWA.ViewModels {
                 CurrentServerName = server.Name;
                 PopulateChannelList();
                 await PopulateUserList();
-                await SelectChannel(server.DefaultChannel.Id);
+                SelectedChannel = ChannelList.SingleOrDefault(x => x.ChannelId == server.DefaultChannel.Id);
             });
 
             this.SendMessageToCurrentChannel = new DelegateCommand(async () => {
@@ -177,13 +181,13 @@ namespace DiscordUWA.ViewModels {
         }
 
         private async Task SelectChannel(ulong selectedChannelId) {
-            channelId = selectedChannelId.Value;
+            channelId = selectedChannelId;
 
             var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
             CurrentChannelName = channel.Name;
             ChannelTopic = channel.Topic;
 
-            await PopulateChatLog();
+            await PopulateChatLog().ConfigureAwait(false);
         }
 
         private void AddChatMessageToChatLog(IMessage message) {
@@ -249,41 +253,44 @@ namespace DiscordUWA.ViewModels {
                 foreach (var user in server.Users) {
                     Color roleColor = Color.Default;
 
-                    bool foundRole = false;
                     // todo: figure out how to pick 'highest' role and take that color
+                    bool foundRole = false;
                     foreach (var roleid in user.RoleIds) {
                         var role = server.GetRole(roleid);
                         roleColor = role.Color;
                         if (role.IsHoisted) {
+                            if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown)
+                                break;
+
                             foundRole = true;
                             if (!tmpUserSort.ContainsKey(role))
                                 tmpUserSort[role] = new List<UserListSectionModel>();
-                            tmpUserSort[role].Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.isBot));
+                            tmpUserSort[role].Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.IsBot));
                             break;
                         }
                     }
                     if (!foundRole) {
                         if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown)
-                            tmpOffline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.isBot));
+                            tmpOffline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.IsBot));
                         else
-                            tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.isBot));
+                            tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.IsBot));
                     }
                 }
                 DispatcherHelper.CheckBeginInvokeOnUI(() => {
                     foreach(var key in tmpUserSort.Keys) {
-                        fullUserList.Add(new UserListSectionModel(key.Name, tmpUserSort[key].Count));
+                        fullUserList.Add(new UserListSectionModel(key.Name, (uint)tmpUserSort[key].Count));
 
                         foreach (var value in tmpUserSort[key])
                             fullUserList.Add(value);
                     }
                     if (tmpOnline.Count > 0) {
-                        fullUserList.Add(new UserListSectionModel("Online", tmpOnline.Count));
-                        foreach (var user in tmpOnline)
+                        fullUserList.Add(new UserListSectionModel("Online", (uint)tmpOnline.Count));
+                        foreach (var user in tmpOnline.OrderBy(x => x.Username))
                             fullUserList.Add(user);
                     }
                     if (tmpOffline.Count > 0) {
-                        fullUserList.Add(new UserListSectionModel("Offline", tmpOffline.Count));
-                        foreach (var user in tmpOffline)
+                        fullUserList.Add(new UserListSectionModel("Offline", (uint)tmpOffline.Count));
+                        foreach (var user in tmpOffline.OrderBy(x => x.Username))
                             fullUserList.Add(user);
                     }
                 });
@@ -293,7 +300,7 @@ namespace DiscordUWA.ViewModels {
         private async Task PopulateChatLog() {
             ChatLogList.Clear();
             var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
-            var messageLog = await channel.GetMessagesAsync(40).Flatten();
+            var messageLog = await channel.GetMessagesAsync(40).Flatten().ConfigureAwait(false);
 
             foreach (var message in messageLog.Reverse()) {
                 AddChatMessageToChatLog(message);
