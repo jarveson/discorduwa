@@ -10,7 +10,7 @@
 // THE CODE OR THE USE OR OTHER DEALINGS IN THE CODE.
 // ******************************************************************
 
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -60,7 +60,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 {
                     break;
                 }
-                else if (!Common.IsWhiteSpace(c))
+                else if (!Helpers.Common.IsWhiteSpace(c))
                 {
                     return null;
                 }

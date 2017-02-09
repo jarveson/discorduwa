@@ -10,7 +10,7 @@
 // THE CODE OR THE USE OR OTHER DEALINGS IN THE CODE.
 // ******************************************************************
 
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -86,7 +86,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             // Skip whitespace
             pos++;
-            while (pos < end && Common.IsWhiteSpace(markdown[pos]))
+            while (pos < end && Helpers.Common.IsWhiteSpace(markdown[pos]))
             {
                 pos++;
             }
@@ -98,7 +98,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             // Extract the URL.
             int urlStart = pos;
-            while (pos < end && !Common.IsWhiteSpace(markdown[pos]))
+            while (pos < end && !Helpers.Common.IsWhiteSpace(markdown[pos]))
             {
                 pos++;
             }
@@ -110,7 +110,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             // Skip whitespace.
             pos++;
-            while (pos < end && Common.IsWhiteSpace(markdown[pos]))
+            while (pos < end && Helpers.Common.IsWhiteSpace(markdown[pos]))
             {
                 pos++;
             }
@@ -149,7 +149,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
                 // Check there isn't any trailing text.
                 pos++;
-                while (pos < end && Common.IsWhiteSpace(markdown[pos]))
+                while (pos < end && Helpers.Common.IsWhiteSpace(markdown[pos]))
                 {
                     pos++;
                 }

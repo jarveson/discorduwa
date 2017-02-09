@@ -12,7 +12,7 @@
 
 using System;
 using System.Collections.Generic;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -186,7 +186,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             internal static int ParseContents(string markdown, int startingPos, int maxEndingPos, int quoteDepth, bool requireVerticalBar, Action<int, int> contentParser)
             {
                 // Skip quote characters.
-                int pos = Common.SkipQuoteCharacters(markdown, startingPos, maxEndingPos, quoteDepth);
+                int pos = Helpers.Common.SkipQuoteCharacters(markdown, startingPos, maxEndingPos, quoteDepth);
 
                 // If the line starts with a '|' character, skip it.
                 bool lineHasVerticalBar = false;
@@ -199,7 +199,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 while (pos < maxEndingPos)
                 {
                     // Ignore any whitespace at the start of the cell (except for a newline character).
-                    while (pos < maxEndingPos && Common.IsWhiteSpace(markdown[pos]) && markdown[pos] != '\n')
+                    while (pos < maxEndingPos && Helpers.Common.IsWhiteSpace(markdown[pos]) && markdown[pos] != '\n')
                     {
                         pos++;
                     }
@@ -237,7 +237,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                     // Ignore any whitespace at the end of the cell.
                     if (endOfCell > startOfCellContent)
                     {
-                        while (Common.IsWhiteSpace(markdown[pos - 1]))
+                        while (Helpers.Common.IsWhiteSpace(markdown[pos - 1]))
                         {
                             pos--;
                         }
@@ -288,7 +288,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                     contentParser: (startingPos2, maxEndingPos2) =>
                     {
                         var cell = new TableCell();
-                        cell.Inlines = Common.ParseInlineChildren(markdown, startingPos2, maxEndingPos2);
+                        cell.Inlines = Helpers.Common.ParseInlineChildren(markdown, startingPos2, maxEndingPos2);
                         Cells.Add(cell);
                     });
             }

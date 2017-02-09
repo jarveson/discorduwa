@@ -13,7 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -167,7 +167,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
                 // Find the end of the current line.
                 int startOfNextLine;
-                int endOfLine = Common.FindNextSingleNewLine(markdown, nonSpacePos, end, out startOfNextLine);
+                int endOfLine = Helpers.Common.FindNextSingleNewLine(markdown, nonSpacePos, end, out startOfNextLine);
 
                 if (nonSpaceChar == '\0')
                 {

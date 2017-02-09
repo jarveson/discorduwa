@@ -11,7 +11,7 @@
 // ******************************************************************
 
 using System.Text;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -48,7 +48,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             StringBuilder code = null;
             actualEnd = start;
 
-            foreach (var lineInfo in Common.ParseLines(markdown, start, maxEnd, quoteDepth))
+            foreach (var lineInfo in Helpers.Common.ParseLines(markdown, start, maxEnd, quoteDepth))
             {
                 // Add every line that starts with a tab character or at least 4 spaces.
                 int pos = lineInfo.StartOfLine;

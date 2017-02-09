@@ -11,7 +11,7 @@
 // ******************************************************************
 
 using System.Collections.Generic;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -36,9 +36,9 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
-        internal static void AddTripChars(List<Common.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<Helpers.Common.InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '^', Method = Common.InlineParseMethod.Superscript });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '^', Method = Helpers.Common.InlineParseMethod.Superscript });
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed superscript text span, or <c>null</c> if this is not a superscript text span. </returns>
-        internal static Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
+        internal static Helpers.Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
         {
             // Check the first character.
             if (start == maxEnd || markdown[start] != '^')
@@ -63,7 +63,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             {
                 // Find the end parenthesis.
                 innerStart++;
-                innerEnd = Common.IndexOf(markdown, ')', innerStart, maxEnd);
+                innerEnd = Helpers.Common.IndexOf(markdown, ')', innerStart, maxEnd);
                 if (innerEnd == -1)
                 {
                     return null;
@@ -74,7 +74,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             else
             {
                 // Search for the next whitespace character.
-                innerEnd = Common.FindNextWhiteSpace(markdown, innerStart, maxEnd, ifNotFoundReturnLength: true);
+                innerEnd = Helpers.Common.FindNextWhiteSpace(markdown, innerStart, maxEnd, ifNotFoundReturnLength: true);
                 if (innerEnd == innerStart)
                 {
                     // No match if the character after the caret is a space.
@@ -86,8 +86,8 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             // We found something!
             var result = new SuperscriptTextInline();
-            result.Inlines = Common.ParseInlineChildren(markdown, innerStart, innerEnd);
-            return new Common.InlineParseResult(result, start, end);
+            result.Inlines = Helpers.Common.ParseInlineChildren(markdown, innerStart, innerEnd);
+            return new Helpers.Common.InlineParseResult(result, start, end);
         }
 
         /// <summary>

@@ -1,15 +1,19 @@
-<Page
+<common:BindablePage
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DiscordUWA.Views"
+    xmlns:common="using:DiscordUWA.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ViewModels="using:DiscordUWA.ViewModels"
+    xmlns:controls="using:DiscordUWA.Controls"
     xmlns:Converters="using:DiscordUWA.Converters"
-    x:Class="DiscordUWA.Views.LoginPanel"
+    xmlns:data="using:DiscordUWA.Models"
+    x:Class="DiscordUWA.Views.PinnedMessages"
+    DataContext="{Binding PinnedMessagesView, Source={StaticResource Locator}}"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
+    <Page.Resources>
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
         <Converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
@@ -32,49 +36,49 @@
                     <Ellipse.Fill>
                         <ImageBrush>
                             <ImageBrush.ImageSource>
-                                <BitmapImage UriSource="{x:Bind AvatarUrl, Converter={StaticResource StringToUriConverter}}" />
+                                <BitmapImage UriSource="{Binding AvatarUrl}" />
                             </ImageBrush.ImageSource>
                         </ImageBrush>
                     </Ellipse.Fill>
                 </Ellipse>
 
-                <Grid Grid.Column="1" Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock FontWeight="Bold"
-                           Text="{x:Bind Username}" 
-                           Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
+                <StackPanel Grid.Column="1" 
+                            Orientation="Horizontal"
+                            Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                    <TextBlock MaxWidth="200"
+                               FontWeight="Bold"
+                               Text="{x:Bind Username}" 
+                               Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
                     <TextBlock Grid.Column="1"
+                           Margin="5,0,0,0"
                            Text="{x:Bind TimeSent}" 
-                           HorizontalAlignment="Right" 
                            Foreground="#FF686A6E"/>
-                </Grid>
+                </StackPanel>
                 
-                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{X:Bind ChatText}"/>
+                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind ChatText}"/>
 
-                <Image Grid.Column="1" Grid.Row="2" Stretch="Uniform" 
-                       Visibility="{x:Bind Path=ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                <Image Grid.Column="1" Grid.Row="2" MaxHeight="{x:Bind ImageMaxHeight}"
+                       Visibility="{x:Bind ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}">
                     <Image.Source>
-                        <BitmapImage UriSource="{x:Bind Path=ImageUrl}">
+                        <BitmapImage UriSource="{Binding ImageUrl}"/>
                     </Image.Source>
                 </Image>
-                <Seperator Grid.Row="3" Grid.ColumnSpan="2">
+                <Rectangle Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Fill="LightGray" Height="2" Margin="4,0"/>
             </Grid>
         </DataTemplate>
-    </UserControl.Resources>
+    </Page.Resources>
 
-    <Grid Background="#FF36393E">
+    <Grid Background="#FF36393E" MaxWidth="720">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Pinned Messages" FontWeight="Bold" />
+        <TextBlock Text="Pinned Messages" Margin="20,20,0,0" FontWeight="Bold"/>
 
-        <ListView x:Name="chatLogListView" 
-                  ItemsSource="{x:Bind ChatLogList, Mode=OneWay}" 
+        <ListView Grid.Row="1" 
+                  x:Name="chatLogListView" 
+                  ItemsSource="{x:Bind Vm.ChatLogList, Mode=OneWay}" 
                   ItemTemplate="{StaticResource ChatTextListTemplate}">
         </ListView>
     </Grid>
-</Page>
+</common:BindablePage>

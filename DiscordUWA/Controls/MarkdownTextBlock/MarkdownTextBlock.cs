@@ -13,7 +13,7 @@
 using System;
 using System.Collections.Generic;
 using DiscordUWA.Controls.Markdown.Display;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 using DiscordUWA.Controls.Markdown.Parse;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -21,6 +21,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
+using DiscordUWA.Controls.Markdown.Helpers;
 
 namespace DiscordUWA.Controls
 {

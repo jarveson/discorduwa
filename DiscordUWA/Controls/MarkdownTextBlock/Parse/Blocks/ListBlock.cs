@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -89,7 +89,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             ListItemBlock currentListItem = null;
             actualEnd = start;
 
-            foreach (var lineInfo in Common.ParseLines(markdown, start, maxEnd, quoteDepth))
+            foreach (var lineInfo in Helpers.Common.ParseLines(markdown, start, maxEnd, quoteDepth))
             {
                 // Is this line blank?
                 if (lineInfo.IsLineBlank)
@@ -296,8 +296,8 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             var builder = listItemBuilder.Builder;
             if (builder.Length >= 2 &&
-                Common.IsWhiteSpace(builder[builder.Length - 2]) &&
-                Common.IsWhiteSpace(builder[builder.Length - 1]))
+                Helpers.Common.IsWhiteSpace(builder[builder.Length - 2]) &&
+                Helpers.Common.IsWhiteSpace(builder[builder.Length - 1]))
             {
                 builder.Length -= 2;
                 builder.AppendLine();
@@ -349,7 +349,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                         {
                             // Don't allow blocks.
                             var paragraph = new ParagraphBlock();
-                            paragraph.Inlines = Common.ParseInlineChildren(blockText, 0, blockText.Length);
+                            paragraph.Inlines = Helpers.Common.ParseInlineChildren(blockText, 0, blockText.Length);
                             newBlockList.Add(paragraph);
                         }
                     }

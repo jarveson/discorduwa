@@ -14,7 +14,7 @@ namespace DiscordUWA.UserControls {
             nameof(ShowUserList),
             typeof(bool),
             typeof(GuildPane),
-            new PropertyMetadata("")
+            new PropertyMetadata(true)
             );
 
         public bool ShowUserList {
@@ -128,6 +128,18 @@ namespace DiscordUWA.UserControls {
         public ICommand ToggleUserListCommand {
             get { return (ICommand)GetValue(ToggleUserListCommandProperty); }
             set { SetValue(ToggleUserListCommandProperty, value); }
+        }
+
+        public static DependencyProperty PinnedMessagesCommandProperty { get; } = DependencyProperty.Register(
+            nameof(PinnedMessagesCommand),
+            typeof(ICommand),
+            typeof(UserList),
+            new PropertyMetadata(null)
+            );
+
+        public ICommand PinnedMessagesCommand {
+            get { return (ICommand)GetValue(PinnedMessagesCommandProperty); }
+            set { SetValue(PinnedMessagesCommandProperty, value); }
         }
 
         public GuildPane() {

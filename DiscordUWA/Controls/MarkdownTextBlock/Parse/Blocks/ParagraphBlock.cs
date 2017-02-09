@@ -11,7 +11,7 @@
 // ******************************************************************
 
 using System.Collections.Generic;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -41,7 +41,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         internal static ParagraphBlock Parse(string markdown)
         {
             var result = new ParagraphBlock();
-            result.Inlines = Common.ParseInlineChildren(markdown, 0, markdown.Length);
+            result.Inlines = Helpers.Common.ParseInlineChildren(markdown, 0, markdown.Length);
             return result;
         }
 

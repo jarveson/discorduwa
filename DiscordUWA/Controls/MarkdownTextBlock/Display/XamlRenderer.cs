@@ -13,7 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 using DiscordUWA.Controls.Markdown.Parse;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -1109,7 +1109,7 @@ namespace DiscordUWA.Controls.Markdown.Display
                         return false;
                     }
                 }
-                else if (inline is IInlineLeaf && !Common.IsBlankOrWhiteSpace(((IInlineLeaf)inline).Text))
+                else if (inline is IInlineLeaf && !Helpers.Common.IsBlankOrWhiteSpace(((IInlineLeaf)inline).Text))
                 {
                     if (superscriptLevel != 1)
                     {

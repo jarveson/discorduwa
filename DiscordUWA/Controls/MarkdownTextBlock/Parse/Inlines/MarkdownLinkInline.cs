@@ -12,7 +12,7 @@
 
 using System;
 using System.Collections.Generic;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -52,9 +52,9 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
-        internal static void AddTripChars(List<Common.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<Helpers.Common.InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '[', Method = Common.InlineParseMethod.MarkdownLink });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '[', Method = Helpers.Common.InlineParseMethod.MarkdownLink });
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed markdown link, or <c>null</c> if this is not a markdown link. </returns>
-        internal static Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
+        internal static Helpers.Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
         {
             // Expect a '[' character.
             if (start == maxEnd || markdown[start] != '[')
@@ -103,7 +103,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             // Skip whitespace.
             pos = linkTextClose + 1;
-            while (pos < maxEnd && Common.IsWhiteSpace(markdown[pos]))
+            while (pos < maxEnd && Helpers.Common.IsWhiteSpace(markdown[pos]))
             {
                 pos++;
             }
@@ -119,7 +119,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             {
                 // Skip whitespace.
                 linkOpen++;
-                while (linkOpen < maxEnd && Common.IsWhiteSpace(markdown[linkOpen]))
+                while (linkOpen < maxEnd && Helpers.Common.IsWhiteSpace(markdown[linkOpen]))
                 {
                     linkOpen++;
                 }
@@ -129,7 +129,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 int linkClose = -1;
                 while (pos < maxEnd)
                 {
-                    linkClose = Common.IndexOf(markdown, ')', pos, maxEnd);
+                    linkClose = Helpers.Common.IndexOf(markdown, ')', pos, maxEnd);
                     if (linkClose == -1)
                     {
                         return null;
@@ -151,7 +151,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 int end = linkClose + 1;
 
                 // Skip whitespace backwards.
-                while (linkClose > linkOpen && Common.IsWhiteSpace(markdown[linkClose - 1]))
+                while (linkClose > linkOpen && Helpers.Common.IsWhiteSpace(markdown[linkClose - 1]))
                 {
                     linkClose--;
                 }
@@ -166,7 +166,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 string url;
                 string tooltip = null;
                 bool lastUrlCharIsDoubleQuote = markdown[linkClose - 1] == '"';
-                int tooltipStart = Common.IndexOf(markdown, " \"", linkOpen, linkClose - 1);
+                int tooltipStart = Helpers.Common.IndexOf(markdown, " \"", linkOpen, linkClose - 1);
                 if (tooltipStart == linkOpen)
                 {
                     return null;
@@ -192,15 +192,15 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
                 // We found a regular stand-alone link.
                 var result = new MarkdownLinkInline();
-                result.Inlines = Common.ParseInlineChildren(markdown, linkTextOpen, linkTextClose, ignoreLinks: true);
+                result.Inlines = Helpers.Common.ParseInlineChildren(markdown, linkTextOpen, linkTextClose, ignoreLinks: true);
                 result.Url = url.Replace(" ", "%20");
                 result.Tooltip = tooltip;
-                return new Common.InlineParseResult(result, start, end);
+                return new Helpers.Common.InlineParseResult(result, start, end);
             }
             else if (markdown[pos] == '[')
             {
                 // Find the ']' character.
-                int linkClose = Common.IndexOf(markdown, ']', pos + 1, maxEnd);
+                int linkClose = Helpers.Common.IndexOf(markdown, ']', pos + 1, maxEnd);
                 if (linkClose == -1)
                 {
                     return null;
@@ -208,14 +208,14 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
                 // We found a reference-style link.
                 var result = new MarkdownLinkInline();
-                result.Inlines = Common.ParseInlineChildren(markdown, linkTextOpen, linkTextClose, ignoreLinks: true);
+                result.Inlines = Helpers.Common.ParseInlineChildren(markdown, linkTextOpen, linkTextClose, ignoreLinks: true);
                 result.ReferenceId = markdown.Substring(linkOpen + 1, linkClose - (linkOpen + 1));
                 if (result.ReferenceId == string.Empty)
                 {
                     result.ReferenceId = markdown.Substring(linkTextOpen, linkTextClose - linkTextOpen);
                 }
 
-                return new Common.InlineParseResult(result, start, linkClose + 1);
+                return new Helpers.Common.InlineParseResult(result, start, linkClose + 1);
             }
 
             return null;

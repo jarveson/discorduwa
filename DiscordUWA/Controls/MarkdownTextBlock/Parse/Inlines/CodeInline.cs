@@ -11,7 +11,7 @@
 // ******************************************************************
 
 using System.Collections.Generic;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -37,9 +37,9 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
-        internal static void AddTripChars(List<Common.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<Helpers.Common.InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '`', Method = Common.InlineParseMethod.Code });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '`', Method = Helpers.Common.InlineParseMethod.Code });
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed inline code span, or <c>null</c> if this is not an inline code span. </returns>
-        internal static Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
+        internal static Helpers.Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
         {
             // Check the first char.
             if (start == maxEnd || markdown[start] != '`')
@@ -67,7 +67,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 innerStart++;
 
                 // Find the end of the span.
-                innerEnd = Common.IndexOf(markdown, "``", innerStart, maxEnd);
+                innerEnd = Helpers.Common.IndexOf(markdown, "``", innerStart, maxEnd);
                 if (innerEnd == -1)
                 {
                     return null;
@@ -80,7 +80,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 // Standard single backtick syntax.
 
                 // Find the end of the span.
-                innerEnd = Common.IndexOf(markdown, '`', innerStart, maxEnd);
+                innerEnd = Helpers.Common.IndexOf(markdown, '`', innerStart, maxEnd);
                 if (innerEnd == -1)
                 {
                     return null;
@@ -98,7 +98,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             // We found something!
             var result = new CodeInline();
             result.Text = markdown.Substring(innerStart, innerEnd - innerStart).Trim(' ', '\t', '\r', '\n');
-            return new Common.InlineParseResult(result, start, end);
+            return new Helpers.Common.InlineParseResult(result, start, end);
         }
 
         /// <summary>

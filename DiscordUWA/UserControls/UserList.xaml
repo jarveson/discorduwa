@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:common="using:DiscordUWA.Common"
     xmlns:uc="using:DiscordUWA.UserControls"
     xmlns:data="using:DiscordUWA.Models"
     xmlns:Converters="using:DiscordUWA.Converters"
@@ -86,5 +87,5 @@
               IsItemClickEnabled="True"
               ItemsSource="{x:Bind FullUserList}" 
               ItemTemplate="{StaticResource UserListTemplate}"
-              uc:ListViewBaseExtensions.Command="{x:Bind UserClick}"/>
+              common:ListViewBaseExtensions.Command="{x:Bind UserClick}"/>
 </UserControl>

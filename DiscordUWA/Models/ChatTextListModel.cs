@@ -8,14 +8,16 @@ namespace DiscordUWA.Models {
         public string ChatText { get; private set; }
         public string TimeSent { get; private set; }
         public string ImageUrl { get; private set; }
+        public int ImageMaxHeight { get; private set; }
         public string AvatarUrl {get; private set; }
 
-        public ChatTextListModel(string username, Color roleColor, string chatText, string timeSent, string imageUrl, string avatarUrl) {
+        public ChatTextListModel(string username, Color roleColor, string chatText, string timeSent, string imageUrl, int imageMaxHeight, string avatarUrl) {
             this.Username = username;
             this.UserRoleColor = roleColor;
             this.ChatText = chatText;
             this.TimeSent = timeSent;
             this.ImageUrl = imageUrl;
+            this.ImageMaxHeight = imageMaxHeight;
             AvatarUrl = avatarUrl;
         }
     }

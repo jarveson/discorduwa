@@ -16,50 +16,52 @@
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
         <Converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
+        <Converters:StringToUriConverter x:Key="StringToUri"/>
         <DataTemplate x:Key="ChatTextListTemplate" x:DataType="data:ChatTextListModel">
             <Grid VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Ellipse Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}" 
                          Height="30" Width="30" 
+                         Grid.RowSpan="2"
+                         Margin="0,5,5,0"
                          VerticalAlignment="Center" 
                          HorizontalAlignment="Center">
                     <Ellipse.Fill>
                         <ImageBrush>
                             <ImageBrush.ImageSource>
-                                <BitmapImage UriSource="{x:Bind AvatarUrl, Converter={StaticResource StringToUriConverter}}" />
+                                <BitmapImage UriSource="{Binding AvatarUrl}" />
                             </ImageBrush.ImageSource>
                         </ImageBrush>
                     </Ellipse.Fill>
                 </Ellipse>
 
-                <Grid Grid.Column="1" Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock FontWeight="Bold"
-                           Text="{x:Bind Username}" 
-                           Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
-                    <TextBlock Grid.Column="1"
+                <StackPanel Grid.Column="1" 
+                            Orientation="Horizontal"
+                            Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                    <TextBlock MaxWidth="200"
+                               FontWeight="Bold"
+                               Text="{x:Bind Username}" 
+                               Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
+                    <TextBlock
+                           Margin="5,0,0,0"
                            Text="{x:Bind TimeSent}" 
-                           HorizontalAlignment="Right" 
                            Foreground="#FF686A6E"/>
-                </Grid>
-                
-                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{X:Bind ChatText}"/>
+                </StackPanel>
 
-                <Image Grid.Column="1" Grid.Row="2" Stretch="Uniform" 
-                       Visibility="{x:Bind Path=ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind ChatText}"/>
+
+                <Image Grid.Column="1" Grid.Row="2" MaxHeight="{x:Bind ImageMaxHeight}" HorizontalAlignment="Left"
+                       Visibility="{x:Bind ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}">
                     <Image.Source>
-                        <BitmapImage UriSource="{x:Bind Path=ImageUrl}">
+                        <BitmapImage UriSource="{Binding ImageUrl}"/>
                     </Image.Source>
                 </Image>
             </Grid>
@@ -89,15 +91,17 @@
                     ScrollViewer.VerticalScrollBarVisibility="Disabled" 
                     Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" Text="#" Margin="20,0,0,0"/>
-                <TextBlock Text="{x:Bind ChannelName, Mode=OneWay}" VerticalAlignment="Center" FontWeight="Bold" />
+                <TextBlock VerticalAlignment="Center" Text="{x:Bind ChannelName, Mode=OneWay}" FontWeight="Bold"/>
                 <TextBlock Text="{x:Bind ChannelTopic, Mode=OneWay}" VerticalAlignment="Center" Margin="20,0,0,0" />
             </StackPanel>
-            <Button Command="{x:Bind ToggleUserListCommand}" Grid.Column="2" Margin="20,0" HorizontalAlignment="Center" Background="Transparent">
-                <FontIcon Glyph="&#xE716;"/>
-            </Button>
-            <Button Command="{x:Bind PinnedMessagesCommand}" Grid.Column="2" Margin="20,0" HorizontalAlignment="Center" Background="Transparent">
-                <FontIcon Glyph="&#xE718;"/>
-            </Button>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="20,0">
+                <Button Command="{x:Bind ToggleUserListCommand}" HorizontalAlignment="Center" Background="Transparent">
+                    <FontIcon Glyph="&#xE716;"/>
+                </Button>
+                <Button Command="{x:Bind PinnedMessagesCommand}" HorizontalAlignment="Center" Background="Transparent">
+                    <FontIcon Glyph="&#xE718;"/>
+                </Button>
+            </StackPanel>
         </Grid>
         <Grid Background="#FF252526" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -112,6 +116,12 @@
                       Background="#FF36393E" 
                       ItemsSource="{x:Bind ChatLogList, Mode=OneWay}" 
                       ItemTemplate="{StaticResource ChatTextListTemplate}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="Padding" Value="6,3"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView" VerticalAlignment="Bottom"/>

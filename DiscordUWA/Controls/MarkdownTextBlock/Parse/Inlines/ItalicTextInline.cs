@@ -11,7 +11,7 @@
 // ******************************************************************
 
 using System.Collections.Generic;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -36,10 +36,10 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
-        internal static void AddTripChars(List<Common.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<Helpers.Common.InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '*', Method = Common.InlineParseMethod.Italic });
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '_', Method = Common.InlineParseMethod.Italic });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '*', Method = Helpers.Common.InlineParseMethod.Italic });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '_', Method = Helpers.Common.InlineParseMethod.Italic });
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed italic text span, or <c>null</c> if this is not a italic text span. </returns>
-        internal static Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
+        internal static Helpers.Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
         {
             // Check the first char.
             char startChar = markdown[start];
@@ -61,7 +61,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             // Find the end of the span.  The end character (either '*' or '_') must be the same as
             // the start character.
             var innerStart = start + 1;
-            int innerEnd = Common.IndexOf(markdown, startChar, start + 1, maxEnd);
+            int innerEnd = Helpers.Common.IndexOf(markdown, startChar, start + 1, maxEnd);
             if (innerEnd == -1)
             {
                 return null;
@@ -74,21 +74,21 @@ namespace DiscordUWA.Controls.Markdown.Parse
             }
 
             // The first character inside the span must NOT be a space.
-            if (Common.IsWhiteSpace(markdown[innerStart]))
+            if (Helpers.Common.IsWhiteSpace(markdown[innerStart]))
             {
                 return null;
             }
 
             // The last character inside the span must NOT be a space.
-            if (Common.IsWhiteSpace(markdown[innerEnd - 1]))
+            if (Helpers.Common.IsWhiteSpace(markdown[innerEnd - 1]))
             {
                 return null;
             }
 
             // We found something!
             var result = new ItalicTextInline();
-            result.Inlines = Common.ParseInlineChildren(markdown, innerStart, innerEnd);
-            return new Common.InlineParseResult(result, start, innerEnd + 1);
+            result.Inlines = Helpers.Common.ParseInlineChildren(markdown, innerStart, innerEnd);
+            return new Helpers.Common.InlineParseResult(result, start, innerEnd + 1);
         }
 
         /// <summary>

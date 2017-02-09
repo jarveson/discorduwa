@@ -57,7 +57,7 @@ namespace DiscordUWA.ViewModels {
         public ChannelListModel SelectedChannel {
             get { return this.selectedChannel; }
             set {
-                if (SetProperty(ref selectedChannel, value)) {
+                if (SetProperty(ref selectedChannel, value) && value != null) {
                     DispatcherHelper.CheckBeginInvokeOnUI(async () => {
                         await SelectChannel(value.ChannelId);
                     });
@@ -69,9 +69,9 @@ namespace DiscordUWA.ViewModels {
         public ServerListModel SelectedGuild {
             get { return this.selectedGuild; }
             set {
-                if (SetProperty(ref selectedGuild, value)) {
+                if (SetProperty(ref selectedGuild, value) && value != null) {
                     DispatcherHelper.CheckBeginInvokeOnUI(async () => {
-                        await SelectServer(value.ServerId)
+                        await SelectServer(value.ServerId);
                     });
                 }
             }
@@ -112,7 +112,7 @@ namespace DiscordUWA.ViewModels {
         public string CurrentChatMessage {
             get { return this.currentChatMessage; }
             set { 
-                if (SetProperty(ref currentChatMessage, value) && !value.IsNullOrEmpty()) {
+                if (SetProperty(ref currentChatMessage, value) && !String.IsNullOrEmpty(value)) {
                     DispatcherHelper.CheckBeginInvokeOnUI(async () => {
                         await (LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel).TriggerTypingAsync();
                     });
@@ -214,16 +214,22 @@ namespace DiscordUWA.ViewModels {
                 }
             }
 
-            string imageUrl = null;
+            string imageUrl = "";
+            int maxHeight = 0;
             // 'pictures' can also just be attachements -_-
             foreach (var attachment in message.Attachments) {
                 // shameless hack around dealing with this
                 if (attachment.Height != null && attachment.Width != null) {
                     imageUrl = attachment.ProxyUrl;
+                    maxHeight = 250;
                 }
             }
             foreach (var embed in message.Embeds) {
                 imageUrl = embed.Thumbnail?.Url;
+                if (embed.Type == "link")
+                    maxHeight = 75;
+                else
+                    maxHeight = 250;
             }
             // Serialize UI update to the main UI thread
             bool sameAuthor = message.Author.Id == lastAuthorId;
@@ -231,10 +237,10 @@ namespace DiscordUWA.ViewModels {
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
                 if (sameAuthor)
                     ChatLogList.Add(new ChatTextListModel("", roleColor.ToWinColor(), message.Content,
-                        message.Timestamp.ToString("h:mm tt"), imageUrl, ""));
+                        message.Timestamp.ToString("h:mm tt"), imageUrl, maxHeight, ""));
                 else 
                     ChatLogList.Add(new ChatTextListModel(message.Author.Username, roleColor.ToWinColor(), message.Content,
-                        message.Timestamp.ToString("h:mm tt"), imageUrl, message.Author.AvatarUrl));
+                        message.Timestamp.ToString("h:mm tt"), imageUrl, maxHeight, message.Author.AvatarUrl));
             });
         }
 
@@ -319,6 +325,7 @@ namespace DiscordUWA.ViewModels {
 
         private async Task PopulateChatLog() {
             ChatLogList.Clear();
+            lastAuthorId = 0L;
             var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
             var messageLog = await channel.GetMessagesAsync(40).Flatten().ConfigureAwait(false);
 
@@ -333,7 +340,7 @@ namespace DiscordUWA.ViewModels {
             await PopulateUserList();
             CurrentServerName = server.Name;
             PopulateChannelList();
-            SelectedChannel = ChannelList.SingleOrDefault(x => x.ChannelId == server.DefaultChannel.Id);
+            SelectedChannel = channelList.SingleOrDefault(x => x.ChannelId == server.DefaultChannel.Id);
         }
     }
 }

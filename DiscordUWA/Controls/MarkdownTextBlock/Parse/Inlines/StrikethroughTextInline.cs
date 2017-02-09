@@ -11,7 +11,7 @@
 // ******************************************************************
 
 using System.Collections.Generic;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -36,9 +36,9 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
-        internal static void AddTripChars(List<Common.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<Helpers.Common.InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '~', Method = Common.InlineParseMethod.Strikethrough });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '~', Method = Helpers.Common.InlineParseMethod.Strikethrough });
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed strikethrough text span, or <c>null</c> if this is not a strikethrough text span. </returns>
-        internal static Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
+        internal static Helpers.Common.InlineParseResult Parse(string markdown, int start, int maxEnd)
         {
             // Check the start sequence.
             if (start >= maxEnd - 1 || markdown.Substring(start, 2) != "~~")
@@ -58,7 +58,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             // Find the end of the span.
             var innerStart = start + 2;
-            int innerEnd = Common.IndexOf(markdown, "~~", innerStart, maxEnd);
+            int innerEnd = Helpers.Common.IndexOf(markdown, "~~", innerStart, maxEnd);
             if (innerEnd == -1)
             {
                 return null;
@@ -71,21 +71,21 @@ namespace DiscordUWA.Controls.Markdown.Parse
             }
 
             // The first character inside the span must NOT be a space.
-            if (Common.IsWhiteSpace(markdown[innerStart]))
+            if (Helpers.Common.IsWhiteSpace(markdown[innerStart]))
             {
                 return null;
             }
 
             // The last character inside the span must NOT be a space.
-            if (Common.IsWhiteSpace(markdown[innerEnd - 1]))
+            if (Helpers.Common.IsWhiteSpace(markdown[innerEnd - 1]))
             {
                 return null;
             }
 
             // We found something!
             var result = new StrikethroughTextInline();
-            result.Inlines = Common.ParseInlineChildren(markdown, innerStart, innerEnd);
-            return new Common.InlineParseResult(result, start, innerEnd + 2);
+            result.Inlines = Helpers.Common.ParseInlineChildren(markdown, innerStart, innerEnd);
+            return new Helpers.Common.InlineParseResult(result, start, innerEnd + 2);
         }
 
         /// <summary>

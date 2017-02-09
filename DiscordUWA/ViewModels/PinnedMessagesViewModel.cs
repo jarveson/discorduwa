@@ -1,12 +1,19 @@
+using Discord;
+using Discord.WebSocket;
 using DiscordUWA.Common;
 using DiscordUWA.Interfaces;
+using DiscordUWA.Models;
 using DiscordUWA.Services;
+using GalaSoft.MvvmLight.Threading;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Core;
 
 namespace DiscordUWA.ViewModels {
-    public class PinnedMesssagesViewModel : BindableBase, INavigable {
+    public class PinnedMessagesViewModel : BindableBase, INavigable {
+        private ulong channelId = 0L;
+
         private RangeObservableCollection<ChatTextListModel> chatLogList = new RangeObservableCollection<ChatTextListModel>();
         public RangeObservableCollection<ChatTextListModel> ChatLogList {
             get { return this.chatLogList; }
@@ -16,7 +23,8 @@ namespace DiscordUWA.ViewModels {
         public async void OnNavigatingTo(object parameter) {
             var id = parameter as ulong?;
             if (id.HasValue) {
-                await PopulateMessageLog(id);
+                channelId = id.Value;
+                await PopulateMessageLog(id.Value);
             }
             // Add back button to titlebar
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -37,31 +45,37 @@ namespace DiscordUWA.ViewModels {
 
         private void AddChatMessageToChatLog(IMessage message) {
             Color roleColor = new Color(0xff, 0xff, 0xff);
-            var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
-            var guildUser = server.GetUser(message.Author.Id);
+            var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketGuildChannel;
+            var guildUser = channel.GetUser(message.Author.Id);
             // todo: figure out how to pick 'highest' role and take that color
             foreach (var roleid in guildUser.RoleIds) {
-                var role = server.GetRole(roleid);
+                var role = channel.Guild.GetRole(roleid);
                 if (!role.IsEveryone) {
                     roleColor = role.Color;
                 }
             }
 
-            string imageUrl = null;
+            string imageUrl = "";
+            int maxHeight = 0;
             // 'pictures' can also just be attachements -_-
             foreach (var attachment in message.Attachments) {
                 // shameless hack around dealing with this
                 if (attachment.Height != null && attachment.Width != null) {
                     imageUrl = attachment.ProxyUrl;
+                    maxHeight = 250;
                 }
             }
             foreach (var embed in message.Embeds) {
                 imageUrl = embed.Thumbnail?.Url;
+                if (embed.Type == "link")
+                    maxHeight = 75;
+                else
+                    maxHeight = 250;
             }
             // Serialize UI update to the main UI thread
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
                 ChatLogList.Add(new ChatTextListModel(message.Author.Username, roleColor.ToWinColor(), message.Content,
-                    message.Timestamp.ToString("h:mm tt"), imageUrl, message.Author.AvatarUrl));
+                    message.Timestamp.ToString("h:mm tt"), imageUrl, maxHeight, message.Author.AvatarUrl));
             });
         }
 

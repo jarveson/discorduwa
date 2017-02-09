@@ -8,7 +8,7 @@ namespace DiscordUWA.Models {
 
         public ServerListModel(ulong serverId, string serverName, string serverUri) {
             this.ServerName = serverName;
-            this.ServerImageUri = serverUri == null ? "x" : serverUri;
+            this.ServerImageUri = serverUri;
             this.ServerId = serverId;
         }
     }

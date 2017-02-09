@@ -100,7 +100,40 @@
     <Compile Include="Common\BindablePage.cs" />
     <Compile Include="Common\DelegateCommand.cs" />
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\HyperlinkExtensions.cs" />
+    <Compile Include="Common\ListViewBaseExtensions.cs" />
     <Compile Include="Common\RangeObservableCollection.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Display\ILinkRegister.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Display\MarkdownTable.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Display\XamlRenderer.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Helpers\Common.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Helpers\DebuggingReporter.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\LinkClickedEventArgs.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\MarkdownRenderedEventArgs.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\MarkdownTextBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Blocks\CodeBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Blocks\HeaderBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Blocks\HorizontalRuleBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Blocks\LinkReferenceBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Blocks\ListBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Blocks\ParagraphBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Blocks\QuoteBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Blocks\TableBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\BoldTextInline.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\CodeInline.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\HyperlinkInline.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\IInlineContainer.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\IInlineLeaf.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\ILinkElement.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\ItalicTextInline.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\MarkdownLinkInline.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\StrikethroughTextInline.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\SuperscriptTextInline.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\TextRunInline.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\MarkdownBlock.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\MarkdownDocument.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\MarkdownElement.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\MarkdownInline.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorToSolidColorBrushConverter.cs" />
     <Compile Include="Converters\ConverterFlipBool.cs" />
@@ -130,10 +163,14 @@
       <DependentUpon>UserList.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\PinnedMessagesViewModel.cs" />
     <Compile Include="ViewModels\ServerViewModel.cs" />
     <Compile Include="ViewModels\UserProfileViewModel.cs" />
     <Compile Include="Views\LoginPanel.xaml.cs">
       <DependentUpon>LoginPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PinnedMessages.xaml.cs">
+      <DependentUpon>PinnedMessages.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserProfile.xaml.cs">
       <DependentUpon>UserProfile.xaml</DependentUpon>
@@ -160,6 +197,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\MarkdownTextBlock\MarkdownTextBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -168,6 +209,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\GuildPane.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -178,6 +223,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\LoginPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PinnedMessages.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

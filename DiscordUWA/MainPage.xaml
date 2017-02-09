@@ -15,13 +15,19 @@
 
     <Page.Resources>
         <Converters:UriToImageSourceConverter x:Key="UriToImageSourceConverter"/>
+        <Converters:StringToUriConverter x:Key="StringToUri"/>
         <DataTemplate x:Key="ImageServerListTemplate" x:DataType="data:ServerListModel">
-                <Image Height="50" Width="50" 
-                        Margin="10"
-                        VerticalAlignment="Center" 
-                        HorizontalAlignment="Center" 
-                        Source="{x:Bind ServerImageUri}" 
-                        Stretch="Uniform"/>
+            <Ellipse Height="50" Width="50" 
+                     VerticalAlignment="Center" 
+                     HorizontalAlignment="Center" Margin="5">
+                <Ellipse.Fill>
+                    <ImageBrush>
+                        <ImageBrush.ImageSource>
+                            <BitmapImage UriSource="{x:Bind ServerImageUri, Mode=OneWay, Converter={StaticResource StringToUri}}" />
+                        </ImageBrush.ImageSource>
+                    </ImageBrush>
+                </Ellipse.Fill>
+            </Ellipse>
         </DataTemplate>
         <DataTemplate x:Key="ChannelListTemplate" x:DataType="data:ChannelListModel">
             <TextBlock Text="{x:Bind ChannelName}"/>
@@ -55,32 +61,33 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <SplitView x:Name="GuildSplitter" DisplayMode="Inline" IsPaneOpen="{x:Bind Vm.ShowServerPane, Mode=TwoWay, FallbackValue='True'}" OpenPaneLength="320" Margin="0,0,-1,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <SplitView x:Name="GuildSplitter" DisplayMode="Inline" IsPaneOpen="{x:Bind Vm.ShowServerPane, Mode=TwoWay, FallbackValue='True'}" OpenPaneLength="320" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <SplitView.Pane>
-                <Grid x:Name="serverChannelGridPane" Margin="-5,0,-1,0" Background="#FF2A2D32">
+                <Grid Background="#FF2A2D32">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="serverNameText" Text="{x:Bind Vm.CurrentServerName, Mode=OneWay}" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock x:Name="serverNameText" Grid.Column="1" Text="{x:Bind Vm.CurrentServerName, Mode=OneWay}" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <ListView x:Name="serverlistView" 
                               Grid.Row="1" 
                               ItemsSource="{x:Bind Vm.ServerListModelList, Mode=OneWay}" 
                               SelectedItem="{x:Bind Vm.SelectedGuild, Mode=TwoWay}"
                               ItemTemplate="{StaticResource ImageServerListTemplate}" />
-                    <ListView x:Name="channelsListView" 
+                    <StackPanel Grid.Column="1" Grid.Row="1" 
+                              Background="#FF2E3136">
+                        <ListView x:Name="channelsListView" 
                               Header="Text Channels" 
                               ItemsSource="{x:Bind Vm.ChannelList, Mode=OneWay}"
                               SelectedItem="{x:Bind Vm.SelectedChannel, Mode=TwoWay}"
-                              Grid.Column="1" Grid.Row="1" 
-                              Background="#FF2E3136"
-                              ItemTemplate="{StaticResource ChannelListTemplate}" 
+                              ItemTemplate="{StaticResource ChannelListTemplate}"
                               Margin="10,0,0,0"/>
+                    </StackPanel>
                     <Grid Grid.Row="2" Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>

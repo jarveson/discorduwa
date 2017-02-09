@@ -12,7 +12,7 @@
 
 using System;
 using System.Collections.Generic;
-using DiscordUWA.Controls.Markdown.Helpers;
+using DiscordUWA.Controls.Markdown;
 
 namespace DiscordUWA.Controls.Markdown.Parse
 {
@@ -86,13 +86,13 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
-        internal static void AddTripChars(List<Common.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<Helpers.Common.InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '<', Method = Common.InlineParseMethod.AngleBracketLink });
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = ':', Method = Common.InlineParseMethod.Url });
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '/', Method = Common.InlineParseMethod.RedditLink });
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '.', Method = Common.InlineParseMethod.PartialLink });
-            tripCharHelpers.Add(new Common.InlineTripCharHelper() { FirstChar = '@', Method = Common.InlineParseMethod.Email });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '<', Method = Helpers.Common.InlineParseMethod.AngleBracketLink });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = ':', Method = Helpers.Common.InlineParseMethod.Url });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '/', Method = Helpers.Common.InlineParseMethod.RedditLink });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '.', Method = Helpers.Common.InlineParseMethod.PartialLink });
+            tripCharHelpers.Add(new Helpers.Common.InlineTripCharHelper() { FirstChar = '@', Method = Helpers.Common.InlineParseMethod.Email });
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed URL, or <c>null</c> if this is not a URL. </returns>
-        internal static Common.InlineParseResult ParseAngleBracketLink(string markdown, int start, int maxEnd)
+        internal static Helpers.Common.InlineParseResult ParseAngleBracketLink(string markdown, int start, int maxEnd)
         {
             int innerStart = start + 1;
 
@@ -152,7 +152,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             }
 
             var url = markdown.Substring(innerStart, innerEnd - innerStart);
-            return new Common.InlineParseResult(new HyperlinkInline { Url = url, Text = url, LinkType = HyperlinkType.BracketedUrl }, start, innerEnd + 1);
+            return new Helpers.Common.InlineParseResult(new HyperlinkInline { Url = url, Text = url, LinkType = HyperlinkType.BracketedUrl }, start, innerEnd + 1);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="tripPos"> The location of the colon character. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed URL, or <c>null</c> if this is not a URL. </returns>
-        internal static Common.InlineParseResult ParseUrl(string markdown, int tripPos, int maxEnd)
+        internal static Helpers.Common.InlineParseResult ParseUrl(string markdown, int tripPos, int maxEnd)
         {
             int start = -1;
 
@@ -201,7 +201,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             int end = FindUrlEnd(markdown, dotIndex + 1, maxEnd);
 
             var url = markdown.Substring(start, end - start);
-            return new Common.InlineParseResult(new HyperlinkInline { Url = url, Text = url, LinkType = HyperlinkType.FullUrl }, start, end);
+            return new Helpers.Common.InlineParseResult(new HyperlinkInline { Url = url, Text = url, LinkType = HyperlinkType.FullUrl }, start, end);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed subreddit or user link, or <c>null</c> if this is not a subreddit link. </returns>
-        internal static Common.InlineParseResult ParseRedditLink(string markdown, int start, int maxEnd)
+        internal static Helpers.Common.InlineParseResult ParseRedditLink(string markdown, int start, int maxEnd)
         {
             var result = ParseDoubleSlashLink(markdown, start, maxEnd);
             if (result != null)
@@ -229,7 +229,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed subreddit or user link, or <c>null</c> if this is not a subreddit link. </returns>
-        private static Common.InlineParseResult ParseDoubleSlashLink(string markdown, int start, int maxEnd)
+        private static Helpers.Common.InlineParseResult ParseDoubleSlashLink(string markdown, int start, int maxEnd)
         {
             // The minimum length is 4 characters ("/u/u").
             if (start > maxEnd - 4)
@@ -269,7 +269,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             // We found something!
             var text = markdown.Substring(start, end - start);
-            return new Common.InlineParseResult(new HyperlinkInline { Text = text, Url = text, LinkType = linkType }, start, end);
+            return new Helpers.Common.InlineParseResult(new HyperlinkInline { Text = text, Url = text, LinkType = linkType }, start, end);
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed subreddit or user link, or <c>null</c> if this is not a subreddit link. </returns>
-        private static Common.InlineParseResult ParseSingleSlashLink(string markdown, int start, int maxEnd)
+        private static Helpers.Common.InlineParseResult ParseSingleSlashLink(string markdown, int start, int maxEnd)
         {
             // The minimum length is 3 characters ("u/u").
             start--;
@@ -321,7 +321,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             // We found something!
             var text = markdown.Substring(start, end - start);
-            return new Common.InlineParseResult(new HyperlinkInline { Text = text, Url = "/" + text, LinkType = linkType }, start, end);
+            return new Helpers.Common.InlineParseResult(new HyperlinkInline { Text = text, Url = "/" + text, LinkType = linkType }, start, end);
         }
 
         /// <summary>
@@ -331,7 +331,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="tripPos"> The location of the dot character. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed URL, or <c>null</c> if this is not a URL. </returns>
-        internal static Common.InlineParseResult ParsePartialLink(string markdown, int tripPos, int maxEnd)
+        internal static Helpers.Common.InlineParseResult ParsePartialLink(string markdown, int tripPos, int maxEnd)
         {
             int start = tripPos - 3;
             if (start < 0 || markdown[start] != 'w' || markdown[start + 1] != 'w' || markdown[start + 2] != 'w')
@@ -355,7 +355,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             int end = FindUrlEnd(markdown, start + 4, maxEnd);
 
             var url = markdown.Substring(start, end - start);
-            return new Common.InlineParseResult(new HyperlinkInline { Url = "http://" + url, Text = url, LinkType = HyperlinkType.PartialUrl }, start, end);
+            return new Helpers.Common.InlineParseResult(new HyperlinkInline { Url = "http://" + url, Text = url, LinkType = HyperlinkType.PartialUrl }, start, end);
         }
 
         /// <summary>
@@ -366,7 +366,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="tripPos"> The location of the at character. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed URL, or <c>null</c> if this is not a URL. </returns>
-        internal static Common.InlineParseResult ParseEmailAddress(string markdown, int minStart, int tripPos, int maxEnd)
+        internal static Helpers.Common.InlineParseResult ParseEmailAddress(string markdown, int minStart, int tripPos, int maxEnd)
         {
             // Search backwards until we find a character which is not a letter, digit, or one of
             // these characters: '+', '-', '_', '.'.
@@ -446,7 +446,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
             // We found an email address!
             var emailAddress = markdown.Substring(start, end - start);
-            return new Common.InlineParseResult(new HyperlinkInline { Url = "mailto:" + emailAddress, Text = emailAddress, LinkType = HyperlinkType.Email }, start, end);
+            return new Helpers.Common.InlineParseResult(new HyperlinkInline { Url = "mailto:" + emailAddress, Text = emailAddress, LinkType = HyperlinkType.Email }, start, end);
         }
 
         /// <summary>
