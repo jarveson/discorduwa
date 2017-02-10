@@ -1,6 +1,4 @@
-﻿using Discord;
-using Discord.Rest;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using DiscordUWA.Interfaces;
 using DiscordUWA.ViewModels;
 using DiscordUWA.Views;
@@ -47,6 +45,5 @@ namespace DiscordUWA.Services {
         public static ISecretService SecretService => ServiceLocator.Current.GetInstance<SecretService>();
 
         public static DiscordSocketClient DiscordSocketClient  => ServiceLocator.Current.GetInstance<DiscordSocketClient>();
-        //public static DiscordRestClient DiscordRestClient => ServiceLocator.Current.GetInstance<DiscordRestClient>();
     }
 }

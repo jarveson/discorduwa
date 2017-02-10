@@ -14,17 +14,13 @@
     DataContext="{Binding ServerView, Source={StaticResource Locator}}">
 
     <Page.Resources>
-        <Converters:StringToUriConverter x:Key="StringToUri"/>
+        <Converters:StringToImageSourceConverter x:Key="StringToImageSource"/>
         <DataTemplate x:Key="ImageServerListTemplate" x:DataType="data:ServerListModel">
             <Ellipse Height="50" Width="50" 
                      VerticalAlignment="Center" 
                      HorizontalAlignment="Center" Margin="5">
                 <Ellipse.Fill>
-                    <ImageBrush>
-                        <ImageBrush.ImageSource>
-                            <BitmapImage UriSource="{x:Bind ServerImageUri, Mode=OneWay, Converter={StaticResource StringToUri}}" />
-                        </ImageBrush.ImageSource>
-                    </ImageBrush>
+                    <ImageBrush ImageSource="{x:Bind ServerImageUri, Mode=OneWay, Converter={StaticResource StringToImageSource}}"/>
                 </Ellipse.Fill>
             </Ellipse>
         </DataTemplate>
@@ -99,11 +95,7 @@
                             VerticalAlignment="Center" 
                             HorizontalAlignment="Center" Margin="20,10,15,10">
                             <Ellipse.Fill>
-                                <ImageBrush>
-                                    <ImageBrush.ImageSource>
-                                        <BitmapImage UriSource="{x:Bind Vm.CurrentUserAvatarUrl, Mode=OneWay, Converter={StaticResource StringToUri}}" />
-                                    </ImageBrush.ImageSource>
-                                </ImageBrush>
+                                <ImageBrush ImageSource="{x:Bind Vm.CurrentUserAvatarUrl, Mode=OneWay, Converter={StaticResource StringToImageSource}}"/>
                             </Ellipse.Fill>
                         </Ellipse>
                         <TextBlock Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center">

@@ -15,8 +15,8 @@
     <UserControl.Resources>
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
         <Converters:StringNotExistsToVisibilityConverter x:Key="StrNotToVis"/>
-        <Converters:StringToUriConverter x:Key="StringToUriConverter"/>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
+        <Converters:StringToImageSourceConverter x:Key="StringToImageSource"/>
 
         <DataTemplate x:Key="UserListTemplate" x:DataType="data:UserListSectionModel">
             <Grid>
@@ -43,11 +43,7 @@
                          Canvas.ZIndex="1">
 
                     <Ellipse.Fill>
-                        <ImageBrush>
-                            <ImageBrush.ImageSource>
-                                <BitmapImage UriSource="{x:Bind AvatarUrl, Converter={StaticResource StringToUriConverter}}" />
-                            </ImageBrush.ImageSource>
-                        </ImageBrush>
+                        <ImageBrush ImageSource="{x:Bind AvatarUrl, Mode=OneWay, Converter={StaticResource StringToImageSource}}"/>
                     </Ellipse.Fill>
                 </Ellipse>
                 <Ellipse 
@@ -70,7 +66,7 @@
                             HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
-                        <TextBlock Text=" BOT" FontWeight="Bold" Visibility="{x:Bind IsBot, FallBackValue='Collapsed'}"/>
+                        <TextBlock Text=" BOT" FontWeight="Bold" Visibility="{x:Bind IsBot, FallbackValue='Collapsed'}"/>
                     </StackPanel>
                     <TextBlock Text="{x:Bind CurrentlyPlaying}" Visibility="{x:Bind CurrentlyPlaying, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
                     <!--<Button Content="Profile" CommandParameter="{x:Bind Id}" Command="{Binding UserClick, ElementName=root}"/>-->

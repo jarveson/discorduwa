@@ -138,7 +138,7 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref channelTopic, value); }
         }
 
-        public override Task OnNavigatingTo(object parameter) {
+        public override Task OnNavigatedToAsync(object parameter) {
             LoadJoinedServersList.Execute(null);
             LoadCurrentUserAvatar.Execute(null);
             var currentUser = LocatorService.DiscordSocketClient.CurrentUser;
@@ -148,9 +148,6 @@ namespace DiscordUWA.ViewModels {
         }
 
         public ServerViewModel() {
-            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
-                ChannelTopic = "Test Channel Topic";
-
 
             LocatorService.DiscordSocketClient.MessageReceived += DiscordClient_MessageReceived;
 

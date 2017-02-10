@@ -11,7 +11,7 @@ namespace DiscordUWA.UserControls {
         
         public static readonly DependencyProperty TextLogListProperty = DependencyProperty.Register(
             nameof(TextLogList),
-            typeof(IEnumerable<TextTextListModel>),
+            typeof(IEnumerable<ChatTextListModel>),
             typeof(MessageList),
             new PropertyMetadata(null)
             );
@@ -22,14 +22,14 @@ namespace DiscordUWA.UserControls {
         }
 
         public static readonly DependencyProperty ItemScrollModeProperty = DependencyProperty.Register(
-            nameof(ItemScrollMode),
-            typeof(ItemsUpdatingScrollMode ),
+            nameof(ScrollModeLastItem),
+            typeof(bool),
             typeof(MessageList),
-            new PropertyMetadata(default(ItemsUpdatingScrollMode))
+            new PropertyMetadata(false)
             );
 
-        public ItemsUpdatingScrollMode ItemScrollMode {
-            get { return (ItemsUpdatingScrollMode)GetValue(ItemScrollModeProperty); }
+        public bool ScrollModeLastItem {
+            get { return (bool)GetValue(ItemScrollModeProperty); }
             set { SetValue(ItemScrollModeProperty, value); }
         }
 

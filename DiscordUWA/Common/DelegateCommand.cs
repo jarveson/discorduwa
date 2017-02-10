@@ -2,6 +2,7 @@
 
 namespace DiscordUWA.Common
 {
+    using DiscordUWA.Interfaces;
     // http://codepaste.net/jgxazh
     using System.Diagnostics;
 
@@ -48,9 +49,7 @@ namespace DiscordUWA.Common
 
         public DelegateCommand(Action<T> execute, Func<T, bool> canexecute = null)
         {
-            if (execute == null)
-                throw new ArgumentNullException(nameof(execute));
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canexecute ?? (e => true);
         }
 

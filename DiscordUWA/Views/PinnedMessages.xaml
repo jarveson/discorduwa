@@ -71,12 +71,11 @@
     <Grid Background="#FF36393E" MaxWidth="720">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Pinned Messages" Margin="20,20,0,0" FontWeight="Bold"/>
 
-        <uc:MessageList TextLogList="{x:Bind Vm.ChatLogList, Mode=OneWay}">
+        <uc:MessageList Grid.Row="1" TextLogList="{x:Bind Vm.ChatLogList, Mode=OneWay}"/>
 
-        </ListView>
     </Grid>
 </common:BindablePage>

@@ -2,6 +2,7 @@ using DiscordUWA.Common;
 using DiscordUWA.Interfaces;
 using DiscordUWA.Services;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Core;
 

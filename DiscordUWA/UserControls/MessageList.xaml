@@ -17,7 +17,8 @@
 
     <UserControl.Resources>
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
-        <Converters:StringToUriConverter x:Key="StringToUri"/>
+        <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
+        <Converters:StringToImageSourceConverter x:Key="StringToImageSource"/>
         <DataTemplate x:Key="ChatTextListTemplate" x:DataType="data:ChatTextListModel">
             <Grid VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
@@ -36,11 +37,7 @@
                          VerticalAlignment="Center" 
                          HorizontalAlignment="Center">
                     <Ellipse.Fill>
-                        <ImageBrush>
-                            <ImageBrush.ImageSource>
-                                <BitmapImage UriSource="{x:Bind AvatarUrl, Converter={StaticResource StringToUri}}" />
-                            </ImageBrush.ImageSource>
-                        </ImageBrush>
+                        <ImageBrush ImageSource="{x:Bind AvatarUrl, Mode=OneWay, Converter={StaticResource StringToImageSource}}"/>
                     </Ellipse.Fill>
                 </Ellipse>
 
@@ -50,7 +47,7 @@
                     <TextBlock MaxWidth="200"
                                FontWeight="Bold"
                                Text="{x:Bind Username}" 
-                               Foreground="{x:Bind (SolidColorBrush)UserRoleColor, FallBackValue='Gray'}"/>
+                               Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}, FallbackValue='Gray'}"/>
                     <TextBlock
                            Margin="5,0,0,0"
                            Text="{x:Bind TimeSent}" 
@@ -60,12 +57,10 @@
                 <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind ChatText}"/>
 
                 <Image Grid.Column="1" Grid.Row="2" MaxHeight="{x:Bind ImageMaxHeight}" HorizontalAlignment="Left"
-                       Visibility="{x:Bind ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}">
-                    <Image.Source>
-                        <BitmapImage UriSource="{x:Bind ImageUrl, Converter={StaticResource StringToUri}"/>
-                    </Image.Source>
-                </Image>
-                <Rectangle Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Fill="DarkGray" Height="1" Margin="4,0"/>
+                       Visibility="{x:Bind ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}"
+                       Source="{x:Bind ImageUrl, Converter={StaticResource StringToImageSource}}"/>
+
+                <!--<Rectangle Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Fill="DarkGray" Height="1" Margin="4,0"/>-->
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -81,7 +76,7 @@
         </ListView.ItemContainerStyle>
         <ListView.ItemsPanel>
             <ItemsPanelTemplate>
-                <ItemsStackPanel ItemsUpdatingScrollMode="{x:Bind ItemScrollMode}" VerticalAlignment="Bottom"/>
+                <ItemsStackPanel x:Name="itemStackPanelTemplate" ItemsUpdatingScrollMode="KeepLastItemInView" VerticalAlignment="Bottom"/>
             </ItemsPanelTemplate>
         </ListView.ItemsPanel>
     </ListView>

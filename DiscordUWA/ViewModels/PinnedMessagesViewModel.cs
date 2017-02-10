@@ -20,7 +20,7 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref chatLogList, value); }
         }
 
-        public override Task OnNavigatedToAsync(object parameter) {
+        public override async Task OnNavigatedToAsync(object parameter) {
             var id = parameter as ulong?;
             if (id.HasValue) {
                 channelId = id.Value;
