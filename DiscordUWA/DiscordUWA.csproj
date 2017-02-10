@@ -134,13 +134,10 @@
     <Compile Include="Controls\MarkdownTextBlock\Parse\MarkdownDocument.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Parse\MarkdownElement.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Parse\MarkdownInline.cs" />
-    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
-    <Compile Include="Converters\ColorToSolidColorBrushConverter.cs" />
     <Compile Include="Converters\ConverterFlipBool.cs" />
     <Compile Include="Converters\StringNotExistsToVisibilityConverter.cs" />
     <Compile Include="Converters\StringExistsToVisibilityConverter.cs" />
     <Compile Include="Converters\StringToUriConverter.cs" />
-    <Compile Include="Converters\UriToImageSourceConverter.cs" />
     <Compile Include="Interfaces\INavigable.cs" />
     <Compile Include="Interfaces\INavServiceExtend.cs" />
     <Compile Include="Interfaces\ISettingsService.cs" />

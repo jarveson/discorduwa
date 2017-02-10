@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Media;
 
 namespace DiscordUWA.UserControls {
     public sealed partial class UserList : UserControl {
-        public static DependencyProperty UserListProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty UserListProperty = DependencyProperty.Register(
             nameof(FullUserList),
             typeof(IEnumerable<UserListSectionModel>),
             typeof(UserList),
@@ -21,7 +21,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(UserListProperty, value); }
         }
 
-        public static DependencyProperty UserClickProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty UserClickProperty = DependencyProperty.Register(
             nameof(UserClick),
             typeof(ICommand),
             typeof(UserList),
@@ -33,7 +33,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(UserClickProperty, value); }
         }
 
-        public static DependencyProperty ShowChannelTopicProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty ShowChannelTopicProperty = DependencyProperty.Register(
             nameof(ShowChannelTopic),
             typeof(bool),
             typeof(UserList),
@@ -45,7 +45,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ShowChannelTopicProperty, value); }
         }
 
-        public static DependencyProperty ChannelTopicProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty ChannelTopicProperty = DependencyProperty.Register(
             nameof(ChannelTopic),
             typeof(string),
             typeof(UserList),

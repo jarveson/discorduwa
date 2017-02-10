@@ -14,6 +14,7 @@
 
     <Page.Resources>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
+        <Converters:StringToUriConverter x:Key="StringToUri"/>
     </Page.Resources>
 
     <Grid Margin="24,0,12,12">
@@ -26,12 +27,12 @@
             <Ellipse 
                 Height="128" Width="128" 
                 VerticalAlignment="Center" 
-                HorizontalAlignment="Center" >
+                HorizontalAlignment="Center">
 
                 <Ellipse.Fill>
                     <ImageBrush>
                         <ImageBrush.ImageSource>
-                            <BitmapImage UriSource="{x:Bind Vm.AvatarUrl}" />
+                            <BitmapImage UriSource="{x:Bind Vm.AvatarUrl, Converter={StaticResource StringToUri}}" />
                         </ImageBrush.ImageSource>
                     </ImageBrush>
                 </Ellipse.Fill>

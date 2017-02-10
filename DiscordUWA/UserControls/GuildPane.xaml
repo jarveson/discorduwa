@@ -12,61 +12,6 @@
     d:DesignHeight="300"
     d:DesignWidth="800"
     x:Name="root" Width="Auto">
-    <UserControl.Resources>
-        <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
-        <Converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
-        <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
-        <Converters:StringToUriConverter x:Key="StringToUri"/>
-        <DataTemplate x:Key="ChatTextListTemplate" x:DataType="data:ChatTextListModel">
-            <Grid VerticalAlignment="Bottom">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Ellipse Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}" 
-                         Height="30" Width="30" 
-                         Grid.RowSpan="2"
-                         Margin="0,5,5,0"
-                         VerticalAlignment="Center" 
-                         HorizontalAlignment="Center">
-                    <Ellipse.Fill>
-                        <ImageBrush>
-                            <ImageBrush.ImageSource>
-                                <BitmapImage UriSource="{Binding AvatarUrl}" />
-                            </ImageBrush.ImageSource>
-                        </ImageBrush>
-                    </Ellipse.Fill>
-                </Ellipse>
-
-                <StackPanel Grid.Column="1" 
-                            Orientation="Horizontal"
-                            Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}">
-                    <TextBlock MaxWidth="200"
-                               FontWeight="Bold"
-                               Text="{x:Bind Username}" 
-                               Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
-                    <TextBlock
-                           Margin="5,0,0,0"
-                           Text="{x:Bind TimeSent}" 
-                           Foreground="#FF686A6E"/>
-                </StackPanel>
-
-                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind ChatText}"/>
-
-                <Image Grid.Column="1" Grid.Row="2" MaxHeight="{x:Bind ImageMaxHeight}" HorizontalAlignment="Left"
-                       Visibility="{x:Bind ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}">
-                    <Image.Source>
-                        <BitmapImage UriSource="{Binding ImageUrl}"/>
-                    </Image.Source>
-                </Image>
-            </Grid>
-        </DataTemplate>
-    </UserControl.Resources>
     <Grid x:Name="chatGrid" Background="#FF36393E">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -96,10 +41,10 @@
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="20,0">
                 <Button Command="{x:Bind ToggleUserListCommand}" HorizontalAlignment="Center" Background="Transparent">
-                    <FontIcon Glyph="&#xE716;"/>
+                    <SymbolIcon Symbol="People"/>
                 </Button>
                 <Button Command="{x:Bind PinnedMessagesCommand}" HorizontalAlignment="Center" Background="Transparent">
-                    <FontIcon Glyph="&#xE718;"/>
+                    <SymbolIcon Symbol="Pin"/>
                 </Button>
             </StackPanel>
         </Grid>
@@ -112,22 +57,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <ListView x:Name="chatLogListView"
-                      Background="#FF36393E" 
-                      ItemsSource="{x:Bind ChatLogList, Mode=OneWay}" 
-                      ItemTemplate="{StaticResource ChatTextListTemplate}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="MinHeight" Value="0"/>
-                        <Setter Property="Padding" Value="6,3"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView" VerticalAlignment="Bottom"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-            </ListView>
+            <uc:MessageList TextLogList="{x:Bind ChatLogList, Mode=OneWay}" ItemScrollMode="KeepLastItemInView">
             <Grid Grid.Row="1" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -138,7 +68,7 @@
             </Grid>
             <SplitView x:Name="UserListSplitView" 
                        Grid.Column="1" Grid.RowSpan="2"
-                       Visibility="{x:Bind ShowUserList, Mode=OneWay, Converter={StaticResource BoolToVis}, FallbackValue='Visible'}" 
+                       Visibility="{x:Bind ShowUserList, Mode=OneWay, FallbackValue='Visible'}" 
                        IsPaneOpen="True" DisplayMode="Inline" PanePlacement="Right" OpenPaneLength="300"
                        HorizontalAlignment="Right">
                 <SplitView.Pane>

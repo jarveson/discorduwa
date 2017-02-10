@@ -17,7 +17,6 @@
         <Converters:StringNotExistsToVisibilityConverter x:Key="StrNotToVis"/>
         <Converters:StringToUriConverter x:Key="StringToUriConverter"/>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
-        <Converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
 
         <DataTemplate x:Key="UserListTemplate" x:DataType="data:UserListSectionModel">
             <Grid>
@@ -71,7 +70,7 @@
                             HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
-                        <TextBlock Text=" BOT" FontWeight="Bold" Visibility="{x:Bind IsBot, Converter={StaticResource BoolToVis}}"/>
+                        <TextBlock Text=" BOT" FontWeight="Bold" Visibility="{x:Bind IsBot, FallBackValue='Collapsed'}"/>
                     </StackPanel>
                     <TextBlock Text="{x:Bind CurrentlyPlaying}" Visibility="{x:Bind CurrentlyPlaying, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
                     <!--<Button Content="Profile" CommandParameter="{x:Bind Id}" Command="{Binding UserClick, ElementName=root}"/>-->

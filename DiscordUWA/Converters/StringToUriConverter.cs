@@ -5,8 +5,8 @@ namespace DiscordUWA.Converters {
     class StringToUriConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, string language) {
             string s = value as string;
-            if (s == null)
-                return null;
+            if (String.IsNullOrEmpty(s))
+                return DependencyProperty.UnsetValue;
 
             Uri uri;
             if (Uri.TryCreate(s, UriKind.Absolute, out uri))
@@ -15,10 +15,12 @@ namespace DiscordUWA.Converters {
             if (Uri.TryCreate(s, UriKind.Relative, out uri))
                 return uri;
 
-            return null;
+            return DependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) {
+            if (value == DependencyProperty.UnsetValue);
+                return DependencyProperty.UnsetValue;
             Uri uri = value as Uri;
             if (uri == null)
                 return null;

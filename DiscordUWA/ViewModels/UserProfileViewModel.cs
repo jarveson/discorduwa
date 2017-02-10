@@ -6,7 +6,7 @@ using System.Windows.Input;
 using Windows.UI.Core;
 
 namespace DiscordUWA.ViewModels {
-    public class UserProfileViewModel : BindableBase, INavigable {
+    public class UserProfileViewModel : ViewModelBase {
         private string userName;
         public string UserName {
             get { return this.userName;}
@@ -26,26 +26,28 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref statusColor, value); }
         }
 
-        private Uri avatarUrl;
-        public Uri AvatarUrl {
+        private string avatarUrl;
+        public string AvatarUrl {
             get { return this.avatarUrl; }
             set { SetProperty(ref avatarUrl, value); }
         }
 
-        public void OnNavigatingTo(object parameter) {
+        public override Task OnNavigatedToAsync(object parameter) {
             var id = parameter as ulong?;
             if (id.HasValue) {
                 var currentUser = LocatorService.DiscordSocketClient.GetUser(id.Value);
-                avatarUrl = new Uri(currentUser.AvatarUrl);
+                avatarUrl = currentUser.AvatarUrl;
                 statusColor = currentUser.Status.ToWinColor();
                 userName = currentUser.Username;
                 UserDescrim = $"#{currentUser.Discriminator}";
             }
             // Add back button to titlebar
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            return Task.CompletedTask;
         }
-        public void OnNavigatingFrom(object parameter) {
+        public override Task OnNavigatedFromAsync(object parameter) {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            return Task.CompletedTask;
         }
 
         public UserProfileViewModel() {

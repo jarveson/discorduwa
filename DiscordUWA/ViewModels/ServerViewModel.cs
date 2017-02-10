@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace DiscordUWA.ViewModels {
-    public class ServerViewModel : BindableBase, INavigable {
+    public class ServerViewModel : ViewModelBase {
         private ulong selectedGuildId = 0L;
         private ulong channelId = 0L;
         private ulong lastAuthorId = 0L;
@@ -89,8 +89,8 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref currentChannelName, value); }
         }
 
-        private Uri currentUserAvatarUrl;
-        public Uri CurrentUserAvatarUrl {
+        private string currentUserAvatarUrl;
+        public string CurrentUserAvatarUrl {
             get { return this.currentUserAvatarUrl; }
             set { SetProperty(ref currentUserAvatarUrl, value); }
         }
@@ -138,18 +138,20 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref channelTopic, value); }
         }
 
-        public void OnNavigatingTo(object parameter) {
+        public override Task OnNavigatingTo(object parameter) {
             LoadJoinedServersList.Execute(null);
             LoadCurrentUserAvatar.Execute(null);
             var currentUser = LocatorService.DiscordSocketClient.CurrentUser;
             CurrentUserName = currentUser.Username;
             CurrentUserDescrim = $"#{currentUser.Discriminator}";
-        }
-        public void OnNavigatingFrom(object parameter) {
-
+            return Task.CompletedTask;
         }
 
         public ServerViewModel() {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+                ChannelTopic = "Test Channel Topic";
+
+
             LocatorService.DiscordSocketClient.MessageReceived += DiscordClient_MessageReceived;
 
             this.LoadJoinedServersList = new DelegateCommand(() => {
@@ -162,7 +164,7 @@ namespace DiscordUWA.ViewModels {
             });
 
             this.LoadCurrentUserAvatar = new DelegateCommand(() => {
-                CurrentUserAvatarUrl = new Uri(LocatorService.DiscordSocketClient.CurrentUser.AvatarUrl);
+                CurrentUserAvatarUrl = LocatorService.DiscordSocketClient.CurrentUser.AvatarUrl;
             });
 
             this.SendMessageToCurrentChannel = new DelegateCommand(async () => {

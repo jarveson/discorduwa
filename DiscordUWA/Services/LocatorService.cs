@@ -44,6 +44,7 @@ namespace DiscordUWA.Services {
 
         public static INavServiceExtend NavigationService  => ServiceLocator.Current.GetInstance<NavigationService>();
         public static ISettingsService SettingsService =>  ServiceLocator.Current.GetInstance<SettingsService>();
+        public static ISecretService SecretService => ServiceLocator.Current.GetInstance<SecretService>();
 
         public static DiscordSocketClient DiscordSocketClient  => ServiceLocator.Current.GetInstance<DiscordSocketClient>();
         //public static DiscordRestClient DiscordRestClient => ServiceLocator.Current.GetInstance<DiscordRestClient>();

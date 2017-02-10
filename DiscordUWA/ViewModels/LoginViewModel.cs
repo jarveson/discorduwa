@@ -5,7 +5,7 @@ using System;
 using System.Windows.Input;
 
 namespace DiscordUWA.ViewModels {
-    public class LoginViewModel : BindableBase {
+    public class LoginViewModel : ViewModelBase {
 
         public ICommand LoginCommand { protected set; get; }
 

@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Media;
 namespace DiscordUWA.UserControls {
     public sealed partial class GuildPane : UserControl {
 
-        public static DependencyProperty ShowUserListProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty ShowUserListProperty = DependencyProperty.Register(
             nameof(ShowUserList),
             typeof(bool),
             typeof(GuildPane),
@@ -22,7 +22,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ShowUserListProperty, value); }
         }
 
-        public static DependencyProperty ChannelNameProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty ChannelNameProperty = DependencyProperty.Register(
             nameof(ChannelName),
             typeof(string),
             typeof(GuildPane),
@@ -34,7 +34,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ChannelNameProperty, value); }
         }
 
-        public static DependencyProperty MessageTextProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty MessageTextProperty = DependencyProperty.Register(
             nameof(MessageText),
             typeof(string),
             typeof(GuildPane),
@@ -46,7 +46,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(MessageTextProperty, value); }
         }
 
-        public static DependencyProperty SendMessageCommandProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty SendMessageCommandProperty = DependencyProperty.Register(
             nameof(SendMessageCommand),
             typeof(ICommand),
             typeof(GuildPane),
@@ -58,7 +58,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(SendMessageCommandProperty, value); }
         }
 
-        public static DependencyProperty UserClickCommandProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty UserClickCommandProperty = DependencyProperty.Register(
             nameof(UserClick),
             typeof(ICommand),
             typeof(GuildPane),
@@ -70,7 +70,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(UserClickCommandProperty, value); }
         }
 
-        public static DependencyProperty ServerListToggleCommandProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty ServerListToggleCommandProperty = DependencyProperty.Register(
             nameof(ServerListToggle),
             typeof(ICommand),
             typeof(GuildPane),
@@ -82,7 +82,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ServerListToggleCommandProperty, value); }
         }
 
-        public static DependencyProperty ChatLogListProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty ChatLogListProperty = DependencyProperty.Register(
             nameof(ChatLogList),
             typeof(IEnumerable<ChatTextListModel>),
             typeof(GuildPane),
@@ -94,7 +94,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ChatLogListProperty, value); }
         }
 
-        public static DependencyProperty ChannelTopicProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty ChannelTopicProperty = DependencyProperty.Register(
             nameof(ChannelTopic),
             typeof(string),
             typeof(GuildPane),
@@ -106,7 +106,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ChannelTopicProperty, value); }
         }
 
-        public static DependencyProperty FullUserListProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty FullUserListProperty = DependencyProperty.Register(
             nameof(FullUserList),
             typeof(IEnumerable<UserListSectionModel>),
             typeof(UserList),
@@ -118,7 +118,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(FullUserListProperty, value); }
         }
 
-        public static DependencyProperty ToggleUserListCommandProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty ToggleUserListCommandProperty = DependencyProperty.Register(
             nameof(ToggleUserListCommand),
             typeof(ICommand),
             typeof(UserList),
@@ -130,7 +130,7 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ToggleUserListCommandProperty, value); }
         }
 
-        public static DependencyProperty PinnedMessagesCommandProperty { get; } = DependencyProperty.Register(
+        public static readonly DependencyProperty PinnedMessagesCommandProperty = DependencyProperty.Register(
             nameof(PinnedMessagesCommand),
             typeof(ICommand),
             typeof(UserList),

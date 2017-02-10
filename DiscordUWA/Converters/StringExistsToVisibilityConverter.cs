@@ -8,10 +8,6 @@ namespace DiscordUWA.Converters {
             if (String.IsNullOrEmpty(value as string)) {
                 return Visibility.Collapsed;
             }
-            string temp = (string)value;
-            if (temp.Equals("x")) {
-                return Visibility.Collapsed;
-            }
             return Visibility.Visible;
         }
 

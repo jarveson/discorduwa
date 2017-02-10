@@ -11,7 +11,7 @@ using System.Windows.Input;
 using Windows.UI.Core;
 
 namespace DiscordUWA.ViewModels {
-    public class PinnedMessagesViewModel : BindableBase, INavigable {
+    public class PinnedMessagesViewModel : ViewModelBase {
         private ulong channelId = 0L;
 
         private RangeObservableCollection<ChatTextListModel> chatLogList = new RangeObservableCollection<ChatTextListModel>();
@@ -20,7 +20,7 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty(ref chatLogList, value); }
         }
 
-        public async void OnNavigatingTo(object parameter) {
+        public override Task OnNavigatedToAsync(object parameter) {
             var id = parameter as ulong?;
             if (id.HasValue) {
                 channelId = id.Value;
@@ -29,8 +29,9 @@ namespace DiscordUWA.ViewModels {
             // Add back button to titlebar
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
-        public void OnNavigatingFrom(object parameter) {
+        public override Task OnNavigatedFromAsync(object parameter) {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            return Task.CompletedTask;
         }
 
         private async Task PopulateMessageLog(ulong channelId) {

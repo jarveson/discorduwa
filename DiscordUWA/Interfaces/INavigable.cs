@@ -1,6 +1,8 @@
-﻿namespace DiscordUWA.Interfaces {
+﻿using System.Threading.Tasks;
+
+namespace DiscordUWA.Interfaces {
     interface INavigable {
-        void OnNavigatingTo(object parameter);
-        void OnNavigatingFrom(object parameter);
+        Task OnNavigatedToAsync(object parameter);
+        Task OnNavigatedFromAsync(object parameter);
     }
 }

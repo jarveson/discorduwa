@@ -6,20 +6,20 @@ using Windows.UI.Xaml.Navigation;
 
 namespace DiscordUWA.Common {
     public class BindablePage : Page {
-        protected override void OnNavigatedTo(NavigationEventArgs e) {
+        protected override async void OnNavigatedTo(NavigationEventArgs e) {
             base.OnNavigatedTo(e);
 
             var navigableViewModel = this.DataContext as INavigable;
             if (navigableViewModel != null)
-                navigableViewModel.OnNavigatingTo(e.Parameter);
+                await navigableViewModel.OnNavigatedToAsync(e.Parameter);
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e) {
+        protected override async void OnNavigatedFrom(NavigationEventArgs e) {
             base.OnNavigatedFrom(e);
 
             var navigableViewModel = this.DataContext as INavigable;
             if (navigableViewModel != null)
-                navigableViewModel.OnNavigatingFrom(e.Parameter);
+                await navigableViewModel.OnNavigatedFromAsync(e.Parameter);
         }
     }
 }

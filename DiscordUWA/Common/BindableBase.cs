@@ -34,6 +34,8 @@ namespace DiscordUWA.Common {
         /// value is optional and can be provided automatically when invoked from compilers
         /// that support <see cref="CallerMemberNameAttribute"/>.</param>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+                return;
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
