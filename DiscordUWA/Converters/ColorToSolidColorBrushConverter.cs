@@ -11,8 +11,8 @@ namespace DiscordUWA.Converters {
                 return null;
             }
             // For a more sophisticated converter, check also the targetType and react accordingly..
-            if (value is Color) {
-                Color color = (Color)value;
+            if (value is Color color) {
+                color = (Color)value;
                 return new SolidColorBrush(color);
             }
             Type type = value.GetType();

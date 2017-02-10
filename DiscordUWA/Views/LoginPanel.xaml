@@ -15,7 +15,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Canvas HorizontalAlignment="Left" Height="523" Margin="516,294,0,0" VerticalAlignment="Top" Width="750" Background="#FF5873B0">
+        <Canvas HorizontalAlignment="Center" Height="523" VerticalAlignment="Center" Width="750" Background="#FF5873B0">
             <TextBox x:Name="emailTxtBox" Canvas.Left="197" TextWrapping="Wrap" Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Canvas.Top="137" Width="324" IsSpellCheckEnabled="False" IsReadOnly="{Binding IsLoading}"/>
             <TextBlock x:Name="textBlock" Canvas.Left="125" TextWrapping="Wrap" Text="Email" Canvas.Top="137" Height="20" Width="67"/>
             <PasswordBox x:Name="loginPasswordTxt" Canvas.Left="197" Canvas.Top="207" Width="324" Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsLoading, Converter={StaticResource ConverterFlipBool}}"/>

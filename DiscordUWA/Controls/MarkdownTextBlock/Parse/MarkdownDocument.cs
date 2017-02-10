@@ -43,8 +43,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// <param name="markdownText"> The markdown text. </param>
         public void Parse(string markdownText)
         {
-            int actualEnd;
-            Blocks = Parse(markdownText, 0, markdownText.Length, quoteDepth: 0, actualEnd: out actualEnd);
+            Blocks = Parse(markdownText, 0, markdownText.Length, quoteDepth: 0, actualEnd: out int actualEnd);
 
             // Remove any references from the list of blocks, and add them to a dictionary.
             for (int i = Blocks.Count - 1; i >= 0; i--)
@@ -166,8 +165,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 }
 
                 // Find the end of the current line.
-                int startOfNextLine;
-                int endOfLine = Helpers.Common.FindNextSingleNewLine(markdown, nonSpacePos, end, out startOfNextLine);
+                int endOfLine = Helpers.Common.FindNextSingleNewLine(markdown, nonSpacePos, end, out int startOfNextLine);
 
                 if (nonSpaceChar == '\0')
                 {
@@ -235,6 +233,10 @@ namespace DiscordUWA.Controls.Markdown.Parse
                         {
                             newBlockElement = CodeBlock.Parse(markdown, realStartOfLine, end, quoteDepth, out endOfBlock);
                         }
+
+                        // codeblock can also start with triple backticks
+                        if (newBlockElement == null && markdown.Length > 3 && markdown.Substring(0, 3) == "```")
+                            newBlockElement = CodeBlock.ParseBackTickType(markdown, realStartOfLine, end, quoteDepth, out endOfBlock);
 
                         if (newBlockElement == null)
                         {
@@ -342,8 +344,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 return null;
             }
 
-            LinkReferenceBlock result;
-            if (_references.TryGetValue(id, out result))
+            if (_references.TryGetValue(id, out LinkReferenceBlock result))
             {
                 return result;
             }

@@ -104,6 +104,10 @@
     <Compile Include="Common\ListViewBaseExtensions.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RangeObservableCollection.cs" />
+    <Compile Include="Controls\EmbedsBlock\EmbedsBlock.xaml.cs">
+      <DependentUpon>EmbedsBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\EmbedsBlock\EmbedsRenderer.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Display\ILinkRegister.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Display\MarkdownTable.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Display\XamlRenderer.cs" />
@@ -203,6 +207,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\EmbedsBlock\EmbedsBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\MarkdownTextBlock\MarkdownTextBlock.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -259,6 +267,7 @@
       <Name>Discord.Net.WebSocket</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

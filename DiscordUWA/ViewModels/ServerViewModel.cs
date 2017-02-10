@@ -156,7 +156,11 @@ namespace DiscordUWA.ViewModels {
                 var servers = LocatorService.DiscordSocketClient.Guilds;
 
                 foreach (var server in servers) {
-                    ServerListModelList.Add(new ServerListModel(server.Id, server.Name, server.IconUrl));
+                    ServerListModelList.Add(new ServerListModel {
+                        ServerId = server.Id,
+                        ServerName = server.Name,
+                        ServerImageUri = server.IconUrl,
+                    });
                 }
             });
 
@@ -166,6 +170,7 @@ namespace DiscordUWA.ViewModels {
 
             this.SendMessageToCurrentChannel = new DelegateCommand(async () => {
                 var message = currentChatMessage;
+                if (String.IsNullOrEmpty(message)) return;
                 var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
                 await channel.SendMessageAsync(message);
 
@@ -213,33 +218,35 @@ namespace DiscordUWA.ViewModels {
                 }
             }
 
-            string imageUrl = "";
-            int maxHeight = 0;
             // 'pictures' can also just be attachements -_-
-            foreach (var attachment in message.Attachments) {
+            /*foreach (var attachment in message.Attachments) {
                 // shameless hack around dealing with this
                 if (attachment.Height != null && attachment.Width != null) {
                     imageUrl = attachment.ProxyUrl;
-                    maxHeight = 250;
                 }
-            }
-            foreach (var embed in message.Embeds) {
-                imageUrl = embed.Thumbnail?.Url;
-                if (embed.Type == "link")
-                    maxHeight = 75;
-                else
-                    maxHeight = 250;
-            }
+            }*/
             // Serialize UI update to the main UI thread
             bool sameAuthor = message.Author.Id == lastAuthorId;
             lastAuthorId = message.Author.Id;
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
                 if (sameAuthor)
-                    ChatLogList.Add(new ChatTextListModel("", roleColor.ToWinColor(), message.Content,
-                        message.Timestamp.ToString("h:mm tt"), imageUrl, maxHeight, ""));
-                else 
-                    ChatLogList.Add(new ChatTextListModel(message.Author.Username, roleColor.ToWinColor(), message.Content,
-                        message.Timestamp.ToString("h:mm tt"), imageUrl, maxHeight, message.Author.AvatarUrl));
+                    ChatLogList.Add(new ChatTextListModel {
+                        Username = "",
+                        UserRoleColor = roleColor.ToWinColor(),
+                        ChatText = message.Content,
+                        TimeSent = message.Timestamp.ToString("h:mm tt"),
+                        AvatarUrl = "",
+                        Embeds = message.Embeds
+                    });
+                else
+                    ChatLogList.Add(new ChatTextListModel {
+                        Username = message.Author.Username,
+                        UserRoleColor = roleColor.ToWinColor(),
+                        ChatText = message.Content,
+                        TimeSent = message.Timestamp.ToString("h:mm tt"),
+                        AvatarUrl = message.Author.AvatarUrl,
+                        Embeds = message.Embeds
+                    });
             });
         }
 
@@ -259,7 +266,10 @@ namespace DiscordUWA.ViewModels {
 
             foreach (var channel in server.TextChannels.OrderBy(x => x.Position)) {
                 string temp = $"# {channel.Name}";
-                ChannelList.Add(new ChannelListModel(channel.Id, temp));
+                ChannelList.Add(new ChannelListModel {
+                    ChannelId = channel.Id,
+                    ChannelName = temp,
+                });
             }
         }
 
@@ -288,33 +298,66 @@ namespace DiscordUWA.ViewModels {
                             foundRole = true;
                             if (!tmpUserSort.ContainsKey(role))
                                 tmpUserSort[role] = new List<UserListSectionModel>();
-                            tmpUserSort[role].Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.IsBot));
+                                tmpUserSort[role].Add(new UserListSectionModel {
+                                AvatarUrl = user.AvatarUrl,
+                                CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
+                                StatusColor = user.Status.ToWinColor(),
+                                Username = user.Username,
+                                UserRoleColor = roleColor.ToWinColor(),
+                                Id = user.Id,
+                                IsBot = user.IsBot,
+                            }); 
                             break;
                         }
                     }
                     if (!foundRole) {
                         if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown)
-                            tmpOffline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.IsBot));
+                            tmpOffline.Add(new UserListSectionModel {
+                                AvatarUrl = user.AvatarUrl,
+                                CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
+                                StatusColor = user.Status.ToWinColor(),
+                                Username = user.Username,
+                                UserRoleColor = roleColor.ToWinColor(),
+                                Id = user.Id,
+                                IsBot = user.IsBot,
+                            });
                         else
-                            tmpOnline.Add(new UserListSectionModel(user.AvatarUrl, user.Game.HasValue ? user.Game.Value.Name : "", user.Status.ToWinColor(), user.Username, roleColor.ToWinColor(), user.Id, user.IsBot));
+                            tmpOnline.Add(new UserListSectionModel {
+                                AvatarUrl = user.AvatarUrl,
+                                CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
+                                StatusColor = user.Status.ToWinColor(),
+                                Username = user.Username,
+                                UserRoleColor = roleColor.ToWinColor(),
+                                Id = user.Id,
+                                IsBot = user.IsBot,
+                            });
                     }
                 }
                 // todo: can we use DeferRefresh here instead of this other range thing?
                 // or is that advancedcollectionview specific?
                 DispatcherHelper.CheckBeginInvokeOnUI(() => {
                     foreach(var key in tmpUserSort.Keys) {
-                        fullUserList.Add(new UserListSectionModel(key.Name, (uint)tmpUserSort[key].Count));
+                        fullUserList.Add(new UserListSectionModel {
+                            RoleSectionName = key.Name,
+                            NumUsers = (uint)tmpUserSort[key].Count,
+                        });
 
                         foreach (var value in tmpUserSort[key])
                             fullUserList.Add(value);
                     }
                     if (tmpOnline.Count > 0) {
-                        fullUserList.Add(new UserListSectionModel("Online", (uint)tmpOnline.Count));
+                        fullUserList.Add(new UserListSectionModel {
+                            RoleSectionName = "Online",
+                            NumUsers = (uint)tmpOnline.Count
+                        });
                         foreach (var user in tmpOnline.OrderBy(x => x.Username))
                             fullUserList.Add(user);
                     }
                     if (tmpOffline.Count > 0) {
-                        fullUserList.Add(new UserListSectionModel("Offline", (uint)tmpOffline.Count));
+                        fullUserList.Add(new UserListSectionModel {
+                            RoleSectionName = "Offline",
+                            NumUsers = (uint)tmpOffline.Count
+                        });
                         foreach (var user in tmpOffline.OrderBy(x => x.Username))
                             fullUserList.Add(user);
                     }

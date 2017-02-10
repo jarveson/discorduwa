@@ -23,7 +23,7 @@
             <Grid VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -54,11 +54,11 @@
                            Foreground="#FF686A6E"/>
                 </StackPanel>
 
-                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind ChatText}"/>
+                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" 
+                                            Text="{x:Bind ChatText}"
+                                            CodeForeground="DarkSlateGray"/>
 
-                <Image Grid.Column="1" Grid.Row="2" MaxHeight="{x:Bind ImageMaxHeight}" HorizontalAlignment="Left"
-                       Visibility="{x:Bind ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}"
-                       Source="{x:Bind ImageUrl, Converter={StaticResource StringToImageSource}}"/>
+                <controls:EmbedsBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" EmbedsList="{x:Bind Embeds, FallbackValue=''}"/>
 
                 <!--<Rectangle Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Fill="DarkGray" Height="1" Margin="4,0"/>-->
             </Grid>
@@ -76,7 +76,7 @@
         </ListView.ItemContainerStyle>
         <ListView.ItemsPanel>
             <ItemsPanelTemplate>
-                <ItemsStackPanel x:Name="itemStackPanelTemplate" ItemsUpdatingScrollMode="KeepLastItemInView" VerticalAlignment="Bottom"/>
+                <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView" VerticalAlignment="Bottom"/>
             </ItemsPanelTemplate>
         </ListView.ItemsPanel>
     </ListView>

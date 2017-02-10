@@ -1,24 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using Windows.UI;
 
 namespace DiscordUWA.Models {
     public class ChatTextListModel {
-        public string Username { get; private set;}
-        public Color UserRoleColor { get; private set; }
-        public string ChatText { get; private set; }
-        public string TimeSent { get; private set; }
-        public string ImageUrl { get; private set; }
-        public int ImageMaxHeight { get; private set; }
-        public string AvatarUrl {get; private set; }
-
-        public ChatTextListModel(string username, Color roleColor, string chatText, string timeSent, string imageUrl, int imageMaxHeight, string avatarUrl) {
-            this.Username = username;
-            this.UserRoleColor = roleColor;
-            this.ChatText = chatText;
-            this.TimeSent = timeSent;
-            this.ImageUrl = imageUrl;
-            this.ImageMaxHeight = imageMaxHeight;
-            AvatarUrl = avatarUrl;
-        }
+        public string Username { get; set; }
+        public Color UserRoleColor { get; set; }
+        public string ChatText { get; set; }
+        public string TimeSent { get; set; }
+        public string AvatarUrl {get; set; }
+        public IEnumerable<Discord.IEmbed> Embeds { get; set; }
     }
 }

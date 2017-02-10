@@ -57,12 +57,12 @@
                 
                 <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" Text="{x:Bind ChatText}"/>
 
-                <Image Grid.Column="1" Grid.Row="2" MaxHeight="{x:Bind ImageMaxHeight}"
+                <!--<Image Grid.Column="1" Grid.Row="2" MaxHeight="{x:Bind ImageMaxHeight}"
                        Visibility="{x:Bind ImageUrl, Converter={StaticResource StringExistsToVisibilityConverter}}">
                     <Image.Source>
                         <BitmapImage UriSource="{Binding ImageUrl}"/>
                     </Image.Source>
-                </Image>
+                </Image>-->
                 
             </Grid>
         </DataTemplate>
@@ -75,7 +75,7 @@
         </Grid.RowDefinitions>
         <TextBlock Text="Pinned Messages" Margin="20,20,0,0" FontWeight="Bold"/>
 
-        <uc:MessageList Grid.Row="1" TextLogList="{x:Bind Vm.ChatLogList, Mode=OneWay}"/>
+        <uc:MessageList Grid.Row="1" TextLogList="{x:Bind Vm.ChatLogList, Mode=OneWay, FallbackValue=''}"/>
 
     </Grid>
 </common:BindablePage>
