@@ -16,7 +16,6 @@
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
         <Converters:StringNotExistsToVisibilityConverter x:Key="StrNotToVis"/>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
-        <Converters:StringToImageSourceConverter x:Key="StringToImageSource"/>
 
         <DataTemplate x:Key="UserListTemplate" x:DataType="data:UserListSectionModel">
             <Grid>
@@ -35,17 +34,10 @@
                            <Run Text="{x:Bind NumUsers}"/>
                 </TextBlock>
 
-                <Ellipse Grid.Row="1" 
-                         Visibility="{x:Bind RoleSectionName, Converter={StaticResource StrNotToVis}}" 
-                         Height="30" Width="30" 
-                         VerticalAlignment="Center" 
-                         HorizontalAlignment="Center" 
-                         Canvas.ZIndex="1">
+                <uc:UserIcon Grid.Row="1" 
+                    Visibility="{x:Bind RoleSectionName, Converter={StaticResource StrNotToVis}}" 
+                    IconUrl="{x:Bind AvatarUrl, Mode=OneWay}"/>
 
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{x:Bind AvatarUrl, Mode=OneWay, Converter={StaticResource StringToImageSource}}"/>
-                    </Ellipse.Fill>
-                </Ellipse>
                 <Ellipse 
                     Visibility="{x:Bind RoleSectionName, Converter={StaticResource StrNotToVis}}"
                     Grid.Row="1"

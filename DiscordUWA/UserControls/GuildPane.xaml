@@ -10,9 +10,31 @@
     xmlns:Converters="using:DiscordUWA.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="800"
+    d:DesignWidth="600"
     x:Name="root" Width="Auto">
     <Grid x:Name="chatGrid" Background="#FF36393E">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="wideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="UserListSplitView.DisplayMode" Value="Inline"/>
+                        <Setter Target="UserListSplitView.IsPaneOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="narrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="UserListSplitView.DisplayMode" Value="Overlay"/>
+                        <Setter Target="UserListSplitView.IsPaneOpen" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition/>
@@ -48,39 +70,39 @@
                 </Button>
             </StackPanel>
         </Grid>
-        <Grid Background="#FF252526" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="90"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <uc:MessageList TextLogList="{x:Bind ChatLogList, Mode=OneWay}"/>
-            <Grid Grid.Row="1" VerticalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox TextWrapping="Wrap" Text="{x:Bind MessageText, Mode=TwoWay}" PlaceholderText="Type Message..." Margin="20,0,0,0"/>
-                <Button x:Name="sendChatMessage" Content="Send" Margin="20,0" Grid.Column="1" Command="{x:Bind SendMessageCommand}"/>
-            </Grid>
-            <SplitView x:Name="UserListSplitView" 
-                       Grid.Column="1" Grid.RowSpan="2"
-                       Visibility="{x:Bind ShowUserList, Mode=OneWay, FallbackValue='Visible'}" 
-                       IsPaneOpen="True" DisplayMode="Inline" PanePlacement="Right" OpenPaneLength="300"
-                       HorizontalAlignment="Right">
-                <SplitView.Pane>
-                    <uc:UserList 
+        <SplitView x:Name="UserListSplitView" 
+                       Grid.Row="1"
+                       IsPaneOpen="{x:Bind ShowUserList, Mode=TwoWay, FallbackValue='True'}"
+                       DisplayMode="Inline"
+                       PanePlacement="Right" OpenPaneLength="300">
+            <SplitView.Content>
+                <Grid Background="#FF252526">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="50" MinHeight="50"/>
+                    </Grid.RowDefinitions>
+                    <uc:MessageList TextLogList="{x:Bind ChatLogList, Mode=OneWay, FallbackValue=''}"/>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="MessageTextBox"  TextWrapping="Wrap" Text="{x:Bind MessageText, Mode=TwoWay}" PlaceholderText="Type Message..." Margin="20,0,0,0" VerticalAlignment="Center" TextChanged="MessageTextBox_TextChanged"/>
+                        <Button x:Name="sendChatMessage" 
+                                Grid.Column="1"
+                                Content="Send" Margin="20,0" Command="{x:Bind SendMessageCommand}"/>
+                    </Grid>
+                </Grid>
+            </SplitView.Content>
+            <SplitView.Pane>
+                <uc:UserList 
                         ShowChannelTopic="False"
                         ChannelTopic="{x:Bind ChannelTopic, Mode=OneWay}"
                         FullUserList="{x:Bind FullUserList, Mode=OneWay}" 
                         UserClick="{x:Bind UserClick}"
                         Margin="20,20,0,0" 
                         VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
-                </SplitView.Pane>
-            </SplitView>
-        </Grid>
+            </SplitView.Pane>
+        </SplitView>
     </Grid>
 </UserControl>

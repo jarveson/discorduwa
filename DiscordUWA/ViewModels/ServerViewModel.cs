@@ -113,6 +113,7 @@ namespace DiscordUWA.ViewModels {
             get { return this.currentChatMessage; }
             set { 
                 if (SetProperty(ref currentChatMessage, value) && !String.IsNullOrEmpty(value)) {
+                    if (channelId == 0) return;
                     DispatcherHelper.CheckBeginInvokeOnUI(async () => {
                         await (LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel).TriggerTypingAsync();
                     });
@@ -171,6 +172,7 @@ namespace DiscordUWA.ViewModels {
             this.SendMessageToCurrentChannel = new DelegateCommand(async () => {
                 var message = currentChatMessage;
                 if (String.IsNullOrEmpty(message)) return;
+                if (channelId == 0) return;
                 var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
                 await channel.SendMessageAsync(message);
 

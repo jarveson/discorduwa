@@ -1,6 +1,8 @@
 using DiscordUWA.Common;
 using DiscordUWA.Models;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -20,6 +22,18 @@ namespace DiscordUWA.UserControls {
         public bool ShowUserList {
             get { return (bool)GetValue(ShowUserListProperty); }
             set { SetValue(ShowUserListProperty, value); }
+        }
+
+        public static readonly DependencyProperty UserListDisplayProperty = DependencyProperty.Register(
+            nameof(UserListDisplay),
+            typeof(string),
+            typeof(GuildPane),
+            new PropertyMetadata("Inline")
+            );
+
+        public string UserListDisplay {
+            get { return (string)GetValue(UserListDisplayProperty); }
+            set { SetValue(UserListDisplayProperty, value); }
         }
 
         public static readonly DependencyProperty ChannelNameProperty = DependencyProperty.Register(
@@ -142,9 +156,15 @@ namespace DiscordUWA.UserControls {
             set { SetValue(PinnedMessagesCommandProperty, value); }
         }
 
+        // you may be wondering what this is for....
+        // its because i cant figure out how to bind textbox 'typing' type update through a usercontrol to a view model
+        // this is annoying, but it works
+        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+            MessageText = MessageTextBox.Text;
+        }
+
         public GuildPane() {
             this.InitializeComponent();
         }
-
     }
 }

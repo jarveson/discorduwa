@@ -14,15 +14,8 @@
     DataContext="{Binding ServerView, Source={StaticResource Locator}}">
 
     <Page.Resources>
-        <Converters:StringToImageSourceConverter x:Key="StringToImageSource"/>
         <DataTemplate x:Key="ImageServerListTemplate" x:DataType="data:ServerListModel">
-            <Ellipse Height="50" Width="50" 
-                     VerticalAlignment="Center" 
-                     HorizontalAlignment="Center" Margin="5">
-                <Ellipse.Fill>
-                    <ImageBrush ImageSource="{x:Bind ServerImageUri, Mode=OneWay, Converter={StaticResource StringToImageSource}}"/>
-                </Ellipse.Fill>
-            </Ellipse>
+            <uc:ServerIcon Margin="5" IconUrl="{x:Bind ServerImageUri, Mode=OneWay}"/>
         </DataTemplate>
         <DataTemplate x:Key="ChannelListTemplate" x:DataType="data:ChannelListModel">
             <TextBlock Text="{x:Bind ChannelName}"/>
@@ -90,14 +83,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Ellipse
-                            Height="30" Width="30" 
-                            VerticalAlignment="Center" 
-                            HorizontalAlignment="Center" Margin="20,10,15,10">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="{x:Bind Vm.CurrentUserAvatarUrl, Mode=OneWay, Converter={StaticResource StringToImageSource}}"/>
-                            </Ellipse.Fill>
-                        </Ellipse>
+                        <uc:UserIcon Margin="20,10,15,10" IconUrl="{x:Bind Vm.CurrentUserAvatarUrl, Mode=OneWay}"/>
                         <TextBlock Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center">
                             <Run Text="{x:Bind Vm.CurrentUserName, Mode=OneWay, FallbackValue='Username'}" Foreground="White"/>
                             <Run Text="{x:Bind Vm.CurrentUserDescrim, Mode=OneWay}" Foreground="Gray" />
@@ -116,7 +102,7 @@
                     ChannelTopic="{x:Bind Vm.ChannelTopic, Mode=OneWay}"
                     ChatLogList="{x:Bind Vm.ChatLogList, Mode=OneWay, FallbackValue=''}"
                     MessageText="{x:Bind Vm.CurrentChatMessage, Mode=TwoWay}"
-                    ShowUserList="{x:Bind Vm.ShowUserList, Mode=OneWay, FallbackValue='True'}"
+                    ShowUserList="{x:Bind Vm.ShowUserList, Mode=TwoWay, FallbackValue='True'}"
                     FullUserList="{x:Bind Vm.FullUserList, Mode=OneWay, FallbackValue=''}"
                     SendMessageCommand="{x:Bind Vm.SendMessageToCurrentChannel}"
                     ToggleUserListCommand="{x:Bind Vm.ToggleUserListCommand}"

@@ -16,11 +16,11 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Canvas HorizontalAlignment="Center" Height="523" VerticalAlignment="Center" Width="750" Background="#FF5873B0">
-            <TextBox x:Name="emailTxtBox" Canvas.Left="197" TextWrapping="Wrap" Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Canvas.Top="137" Width="324" IsSpellCheckEnabled="False" IsReadOnly="{Binding IsLoading}"/>
+            <TextBox x:Name="emailTxtBox" Canvas.Left="197" TextWrapping="Wrap" Text="{Binding Vm.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Canvas.Top="137" Width="324" IsSpellCheckEnabled="False" IsReadOnly="{x:Bind Vm.IsLoading}"/>
             <TextBlock x:Name="textBlock" Canvas.Left="125" TextWrapping="Wrap" Text="Email" Canvas.Top="137" Height="20" Width="67"/>
-            <PasswordBox x:Name="loginPasswordTxt" Canvas.Left="197" Canvas.Top="207" Width="324" Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsLoading, Converter={StaticResource ConverterFlipBool}}"/>
+            <PasswordBox x:Name="loginPasswordTxt" Canvas.Left="197" Canvas.Top="207" Width="324" Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{x:Bind Vm.IsLoading, Converter={StaticResource ConverterFlipBool}}"/>
             <TextBlock x:Name="textBlock1" Canvas.Left="125" TextWrapping="Wrap" Text="Password" Canvas.Top="207"/>
-            <Button x:Name="loginBtn" Content="Login" Canvas.Left="456" Canvas.Top="294" Command="{Binding LoginCommand, Mode=OneWay}" IsEnabled="{Binding IsLoading, Converter={StaticResource ConverterFlipBool}}"/>
+            <Button x:Name="loginBtn" Content="Login" Canvas.Left="456" Canvas.Top="294" Command="{x:Bind Vm.LoginCommand, Mode=OneWay}" IsEnabled="{x:Bind Vm.IsLoading, Converter={StaticResource ConverterFlipBool}}"/>
             <ScrollViewer Height="163" Canvas.Left="108" Canvas.Top="259" Width="298">
                 <TextBlock x:Name="textBlock2" TextWrapping="Wrap" Text="{Binding ErrorMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </ScrollViewer>

@@ -1,0 +1,25 @@
+<UserControl
+    x:Class="DiscordUWA.UserControls.UserIcon"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:common="using:DiscordUWA.Common"
+    xmlns:uc="using:DiscordUWA.UserControls"
+    xmlns:data="using:DiscordUWA.Models"
+    xmlns:Converters="using:DiscordUWA.Converters"
+    mc:Ignorable="d" 
+    d:DesignHeight="60"
+    d:DesignWidth="60"
+    x:Name="root">
+
+    <Ellipse Height="{x:Bind IconSize, Mode=OneWay}" 
+             Width="{x:Bind IconSize, Mode=OneWay}" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center">
+        <Ellipse.Fill>
+            <ImageBrush x:Name="iconImageBrush"/>
+        </Ellipse.Fill>
+    </Ellipse>
+
+</UserControl>

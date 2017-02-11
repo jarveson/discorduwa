@@ -143,7 +143,6 @@
     <Compile Include="Converters\ConverterFlipBool.cs" />
     <Compile Include="Converters\StringNotExistsToVisibilityConverter.cs" />
     <Compile Include="Converters\StringExistsToVisibilityConverter.cs" />
-    <Compile Include="Converters\StringToImageSourceConverter.cs" />
     <Compile Include="Interfaces\IChangedCommand.cs" />
     <Compile Include="Interfaces\INavigable.cs" />
     <Compile Include="Interfaces\INavServiceExtend.cs" />
@@ -167,6 +166,12 @@
     </Compile>
     <Compile Include="UserControls\MessageList.xaml.cs">
       <DependentUpon>MessageList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ServerIcon.xaml.cs">
+      <DependentUpon>ServerIcon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserIcon.xaml.cs">
+      <DependentUpon>UserIcon.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\UserList.xaml.cs">
       <DependentUpon>UserList.xaml</DependentUpon>
@@ -235,6 +240,14 @@
     <Page Include="UserControls\MessageList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ServerIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\UserList.xaml">
       <Generator>MSBuild:Compile</Generator>

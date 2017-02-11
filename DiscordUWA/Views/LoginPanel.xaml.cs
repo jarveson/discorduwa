@@ -1,4 +1,5 @@
 ﻿using DiscordUWA.Services;
+using DiscordUWA.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +22,12 @@ namespace DiscordUWA.Views {
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class LoginPanel : Page {
+        public LoginViewModel Vm {
+            get {
+                return (LoginViewModel)DataContext;
+            }
+        }
+
         public LoginPanel() {
             this.InitializeComponent();
         }

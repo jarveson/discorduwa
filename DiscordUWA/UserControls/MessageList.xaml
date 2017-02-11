@@ -18,7 +18,6 @@
     <UserControl.Resources>
         <Converters:StringExistsToVisibilityConverter x:Key="StringExistsToVisibilityConverter"/>
         <Converters:ColorToSolidColorBrushValueConverter x:Key="ColorToBrush"/>
-        <Converters:StringToImageSourceConverter x:Key="StringToImageSource"/>
         <DataTemplate x:Key="ChatTextListTemplate" x:DataType="data:ChatTextListModel">
             <Grid VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
@@ -30,16 +29,10 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Ellipse Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}" 
-                         Height="30" Width="30" 
-                         Grid.RowSpan="2"
-                         Margin="0,5,5,0"
-                         VerticalAlignment="Center" 
-                         HorizontalAlignment="Center">
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{x:Bind AvatarUrl, Mode=OneWay, Converter={StaticResource StringToImageSource}}"/>
-                    </Ellipse.Fill>
-                </Ellipse>
+                <uc:UserIcon Grid.RowSpan="2"
+                             Margin="0,5,5,0" 
+                             Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}" 
+                             IconUrl="{x:Bind AvatarUrl, Mode=OneWay}"/>
 
                 <StackPanel Grid.Column="1" 
                             Orientation="Horizontal"
