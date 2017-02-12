@@ -56,23 +56,16 @@ namespace DiscordUWA.ViewModels {
                 }
             }
 
-            // 'pictures' can also just be attachements -_-
-            /*foreach (var attachment in message.Attachments) {
-                // shameless hack around dealing with this
-                if (attachment.Height != null && attachment.Width != null) {
-                    imageUrl = attachment.ProxyUrl;
-                    maxHeight = 250;
-                }
-            }*/
             // Serialize UI update to the main UI thread
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
                 ChatLogList.Add(new ChatTextListModel {
                     Username = message.Author.Username,
                     UserRoleColor = roleColor.ToWinColor(),
                     ChatText = message.Content,
-                    TimeSent = message.Timestamp.ToString("h:mm tt"),
+                    TimeSent = message.Timestamp.ToLocalTime().ToString(),
                     AvatarUrl = message.Author.AvatarUrl,
-                    Embeds = message.Embeds
+                    Embeds = message.Embeds,
+                    Attachments = message.Attachments
                 });
             });
         }

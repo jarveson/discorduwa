@@ -28,6 +28,7 @@
                     <RowDefinition/>
                     <RowDefinition Height="*"/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
                 <uc:UserIcon Grid.RowSpan="2"
                              Margin="0,5,5,0" 
@@ -52,6 +53,7 @@
                                             CodeForeground="DarkSlateGray"/>
 
                 <controls:EmbedsBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" EmbedsList="{x:Bind Embeds, FallbackValue=''}"/>
+                <controls:AttachmentsBlock Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" AttachmentsList="{x:Bind Attachments, FallbackValue=''}"/>
 
                 <!--<Rectangle Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Fill="DarkGray" Height="1" Margin="4,0"/>-->
             </Grid>

@@ -74,7 +74,7 @@
                        Grid.Row="1"
                        IsPaneOpen="{x:Bind ShowUserList, Mode=TwoWay, FallbackValue='True'}"
                        DisplayMode="Inline"
-                       PanePlacement="Right" OpenPaneLength="300">
+                       PanePlacement="Right" OpenPaneLength="260">
             <SplitView.Content>
                 <Grid Background="#FF252526">
                     <Grid.RowDefinitions>
@@ -100,8 +100,7 @@
                         ChannelTopic="{x:Bind ChannelTopic, Mode=OneWay}"
                         FullUserList="{x:Bind FullUserList, Mode=OneWay}" 
                         UserClick="{x:Bind UserClick}"
-                        Margin="20,20,0,0" 
-                        VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                        VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
             </SplitView.Pane>
         </SplitView>
     </Grid>

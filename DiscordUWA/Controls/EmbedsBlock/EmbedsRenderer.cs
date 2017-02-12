@@ -30,9 +30,9 @@ namespace DiscordUWA.Controls {
                         if (!embed.Thumbnail.HasValue) return;
                         var result = new Windows.UI.Xaml.Controls.Image {
                             HorizontalAlignment = HorizontalAlignment.Left,
-                            MaxHeight = Math.Max(75, embed.Thumbnail.Value.Height.Value),
+                            MaxHeight = Math.Min(75, embed.Thumbnail.Value.Height.Value),
                             Source = new BitmapImage {
-                                DecodePixelHeight = Math.Max(75, embed.Thumbnail.Value.Height.Value),
+                                DecodePixelHeight = Math.Min(75, embed.Thumbnail.Value.Height.Value),
                                 UriSource = new Uri(embed.Thumbnail.Value.Url),
                             },
                         };
@@ -44,10 +44,22 @@ namespace DiscordUWA.Controls {
                             IsLooping = true,
                             AreTransportControlsEnabled = false,
                             Source = new Uri(embed.Video.Value.Url),
-                            MaxHeight = Math.Max(250, embed.Video.Value.Height.Value),
+                            MaxHeight = Math.Min(250, embed.Video.Value.Height.Value),
                             MaxWidth = embed.Video.Value.Width.Value,
                             HorizontalAlignment = HorizontalAlignment.Left,
                             IsMuted = true,
+                        };
+                        blockUIElementCollection.Add(result);
+                    }
+                    break;
+                case "image": {
+                        var result = new Windows.UI.Xaml.Controls.Image {
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            MaxHeight = Math.Min(250, embed.Thumbnail.Value.Height.Value),
+                            Source = new BitmapImage {
+                                DecodePixelHeight = Math.Min(250, embed.Thumbnail.Value.Height.Value),
+                                UriSource = new Uri(embed.Url),
+                            },
                         };
                         blockUIElementCollection.Add(result);
                     }

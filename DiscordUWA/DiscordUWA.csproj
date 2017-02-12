@@ -104,6 +104,10 @@
     <Compile Include="Common\ListViewBaseExtensions.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RangeObservableCollection.cs" />
+    <Compile Include="Controls\AttachmentsBlock\AttachmentsBlock.xaml.cs">
+      <DependentUpon>AttachmentsBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AttachmentsBlock\AttachmentsRenderer.cs" />
     <Compile Include="Controls\EmbedsBlock\EmbedsBlock.xaml.cs">
       <DependentUpon>EmbedsBlock.xaml</DependentUpon>
     </Compile>
@@ -212,6 +216,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\AttachmentsBlock\AttachmentsBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\EmbedsBlock\EmbedsBlock.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

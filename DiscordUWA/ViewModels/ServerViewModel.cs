@@ -114,9 +114,10 @@ namespace DiscordUWA.ViewModels {
             set { 
                 if (SetProperty(ref currentChatMessage, value) && !String.IsNullOrEmpty(value)) {
                     if (channelId == 0) return;
-                    DispatcherHelper.CheckBeginInvokeOnUI(async () => {
+                    // triggering this every time looks to crash the app eventually
+                    /*DispatcherHelper.CheckBeginInvokeOnUI(async () => {
                         await (LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel).TriggerTypingAsync();
-                    });
+                    });*/
                 }
             }
         }
@@ -220,13 +221,6 @@ namespace DiscordUWA.ViewModels {
                 }
             }
 
-            // 'pictures' can also just be attachements -_-
-            /*foreach (var attachment in message.Attachments) {
-                // shameless hack around dealing with this
-                if (attachment.Height != null && attachment.Width != null) {
-                    imageUrl = attachment.ProxyUrl;
-                }
-            }*/
             // Serialize UI update to the main UI thread
             bool sameAuthor = message.Author.Id == lastAuthorId;
             lastAuthorId = message.Author.Id;
@@ -236,18 +230,20 @@ namespace DiscordUWA.ViewModels {
                         Username = "",
                         UserRoleColor = roleColor.ToWinColor(),
                         ChatText = message.Content,
-                        TimeSent = message.Timestamp.ToString("h:mm tt"),
+                        TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
                         AvatarUrl = "",
-                        Embeds = message.Embeds
+                        Embeds = message.Embeds,
+                        Attachments = message.Attachments
                     });
                 else
                     ChatLogList.Add(new ChatTextListModel {
                         Username = message.Author.Username,
                         UserRoleColor = roleColor.ToWinColor(),
                         ChatText = message.Content,
-                        TimeSent = message.Timestamp.ToString("h:mm tt"),
+                        TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
                         AvatarUrl = message.Author.AvatarUrl,
-                        Embeds = message.Embeds
+                        Embeds = message.Embeds,
+                        Attachments = message.Attachments
                     });
             });
         }
@@ -289,7 +285,8 @@ namespace DiscordUWA.ViewModels {
                     Color roleColor = Color.Default;
 
                     // todo: figure out how to pick 'highest' role and take that color
-                    bool foundRole = false;
+                    // these seems to work for the time being though
+                    IRole foundRole = null;
                     foreach (var roleid in user.RoleIds) {
                         var role = server.GetRole(roleid);
                         roleColor = role.Color;
@@ -297,22 +294,10 @@ namespace DiscordUWA.ViewModels {
                             if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown)
                                 break;
 
-                            foundRole = true;
-                            if (!tmpUserSort.ContainsKey(role))
-                                tmpUserSort[role] = new List<UserListSectionModel>();
-                                tmpUserSort[role].Add(new UserListSectionModel {
-                                AvatarUrl = user.AvatarUrl,
-                                CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
-                                StatusColor = user.Status.ToWinColor(),
-                                Username = user.Username,
-                                UserRoleColor = roleColor.ToWinColor(),
-                                Id = user.Id,
-                                IsBot = user.IsBot,
-                            }); 
-                            break;
+                            foundRole = role;
                         }
                     }
-                    if (!foundRole) {
+                    if (foundRole == null) {
                         if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown)
                             tmpOffline.Add(new UserListSectionModel {
                                 AvatarUrl = user.AvatarUrl,
@@ -333,6 +318,21 @@ namespace DiscordUWA.ViewModels {
                                 Id = user.Id,
                                 IsBot = user.IsBot,
                             });
+                    }
+                    else {
+                        if (!tmpUserSort.ContainsKey(foundRole)) {
+                            tmpUserSort[foundRole] = new List<UserListSectionModel> {
+                                new UserListSectionModel {
+                                    AvatarUrl = user.AvatarUrl,
+                                    CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
+                                    StatusColor = user.Status.ToWinColor(),
+                                    Username = user.Username,
+                                    UserRoleColor = roleColor.ToWinColor(),
+                                    Id = user.Id,
+                                    IsBot = user.IsBot,
+                                }
+                            };
+                        }
                     }
                 }
                 // todo: can we use DeferRefresh here instead of this other range thing?

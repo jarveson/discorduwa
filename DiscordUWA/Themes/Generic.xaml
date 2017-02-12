@@ -3,5 +3,6 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="ms-appx:///Controls/MarkdownTextBlock/MarkdownTextBlock.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/EmbedsBlock/EmbedsBlock.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/AttachmentsBlock/AttachmentsBlock.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

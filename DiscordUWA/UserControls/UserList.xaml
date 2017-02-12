@@ -54,8 +54,8 @@
                             Grid.Row="1" 
                             Orientation="Vertical"
                             Grid.Column="1" 
-                            VerticalAlignment="Center" 
-                            HorizontalAlignment="Center">
+                            VerticalAlignment="Stretch" 
+                            HorizontalAlignment="Stretch">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
                         <TextBlock Text=" BOT" FontWeight="Bold" Visibility="{x:Bind IsBot, FallbackValue='Collapsed'}"/>
@@ -68,8 +68,7 @@
     </UserControl.Resources>
 
     <ListView x:Name="UserListContent" 
-              HorizontalAlignment="Left" VerticalAlignment="Top" 
-              Width="260" 
+              HorizontalAlignment="Stretch" VerticalAlignment="Top" 
               Background="#FF2E3136" 
               IsItemClickEnabled="True"
               ItemsSource="{x:Bind FullUserList}" 

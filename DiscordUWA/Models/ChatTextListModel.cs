@@ -10,5 +10,6 @@ namespace DiscordUWA.Models {
         public string TimeSent { get; set; }
         public string AvatarUrl {get; set; }
         public IEnumerable<Discord.IEmbed> Embeds { get; set; }
+        public IEnumerable<Discord.IAttachment> Attachments { get; set; }
     }
 }
