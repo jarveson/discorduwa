@@ -49,6 +49,7 @@ namespace DiscordUWA.UserControls {
             }
             iconImageBrush.ImageSource = new BitmapImage {
                 UriSource = new System.Uri(IconUrl),
+                DecodePixelType = DecodePixelType.Logical,
                 DecodePixelHeight = IconSize,
                 DecodePixelWidth = IconSize,
             };

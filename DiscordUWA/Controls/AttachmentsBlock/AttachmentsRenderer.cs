@@ -30,6 +30,7 @@ namespace DiscordUWA.Controls {
                     HorizontalAlignment = HorizontalAlignment.Left,
                     MaxHeight = Math.Min(300, attach.Height.Value),
                     Source = new BitmapImage {
+                        DecodePixelType = DecodePixelType.Logical,
                         DecodePixelHeight = Math.Min(300, attach.Height.Value),
                         UriSource = new Uri(attach.Url),
                     },

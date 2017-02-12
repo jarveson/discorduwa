@@ -32,6 +32,7 @@ namespace DiscordUWA.Controls {
                             HorizontalAlignment = HorizontalAlignment.Left,
                             MaxHeight = Math.Min(75, embed.Thumbnail.Value.Height.Value),
                             Source = new BitmapImage {
+                                DecodePixelType = DecodePixelType.Logical,
                                 DecodePixelHeight = Math.Min(75, embed.Thumbnail.Value.Height.Value),
                                 UriSource = new Uri(embed.Thumbnail.Value.Url),
                             },
@@ -57,6 +58,7 @@ namespace DiscordUWA.Controls {
                             HorizontalAlignment = HorizontalAlignment.Left,
                             MaxHeight = Math.Min(250, embed.Thumbnail.Value.Height.Value),
                             Source = new BitmapImage {
+                                DecodePixelType = DecodePixelType.Logical,
                                 DecodePixelHeight = Math.Min(250, embed.Thumbnail.Value.Height.Value),
                                 UriSource = new Uri(embed.Url),
                             },
