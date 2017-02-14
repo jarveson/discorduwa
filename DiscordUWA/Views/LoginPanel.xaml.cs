@@ -31,18 +31,5 @@ namespace DiscordUWA.Views {
         public LoginPanel() {
             this.InitializeComponent();
         }
-
-        protected async override void OnNavigatedTo(NavigationEventArgs e) {
-            base.OnNavigatedTo(e);
-            //if (LocatorService.SettingsService.LocalSettingsContainsKey("loginToken")) {
-                textStatusBlock.Text = "Attemtping Token Login....";
-                //string token = LocatorService.SettingsService.ReadFromLocalSettings<string>("loginToken");
-                string token = "***REMOVED***";
-                await LocatorService.DiscordSocketClient.LoginAsync(Discord.TokenType.User, token);
-                await LocatorService.DiscordSocketClient.ConnectAsync();
-                LocatorService.NavigationService.NavigateTo("main");
-                //App.Current.Locator.NavigationService.NavigateFromPageTo(typeof(MainPage));
-            //}
-        }
     }
 }

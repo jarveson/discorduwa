@@ -58,6 +58,8 @@ namespace DiscordUWA.Controls.Markdown.Parse
         /// A code run
         /// </summary>
         Code,
+
+        Discord,
     }
 
     /// <summary>

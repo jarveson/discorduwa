@@ -221,7 +221,9 @@ namespace DiscordUWA.Controls.Markdown.Helpers
 
                                 break;
                             case InlineParseMethod.AngleBracketLink:
-                                if (!ignoreLinks)
+                                parseResult = MentionInline.Parse(markdown, pos, end);
+                                
+                                if (!ignoreLinks && parseResult == null)
                                 {
                                     parseResult = HyperlinkInline.ParseAngleBracketLink(markdown, pos, end);
                                 }

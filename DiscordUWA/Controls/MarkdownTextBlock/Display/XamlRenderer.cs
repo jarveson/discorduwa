@@ -728,6 +728,9 @@ namespace DiscordUWA.Controls.Markdown.Display
                 case MarkdownInlineType.Code:
                     RenderCodeRun(inlineCollection, (CodeInline)element, context);
                     break;
+                case MarkdownInlineType.Discord:
+                    RenderDiscord(inlineCollection, (DiscordInline)element, context);
+                    break;
             }
         }
 
@@ -861,6 +864,25 @@ namespace DiscordUWA.Controls.Markdown.Display
             // Add it to the current inlines
             inlineCollection.Add(link);
         }
+
+        private void RenderDiscord(InlineCollection inlineCollection, DiscordInline element, RenderContext context)
+        {
+            var link = new Hyperlink();
+
+            // Register the link
+            _linkRegister.RegisterNewHyperLink(link, element.Url);
+
+            // Make a text block for the link
+            Run linkText = new Run
+            {
+                Text = CollapseWhitespace(context, element.Text)
+            };
+            link.Inlines.Add(linkText);
+
+            // Add it to the current inlines
+            inlineCollection.Add(link);
+        }
+
 
         /// <summary>
         /// Renders a text run element.

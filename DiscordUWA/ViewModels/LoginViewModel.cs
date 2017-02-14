@@ -32,15 +32,33 @@ namespace DiscordUWA.ViewModels {
             set { SetProperty<bool>(ref isLoading, value); }
         }
         
+        public override async Task OnNavigatedToAsync(object parameter) {
+            await AttemptTokenLogin();
+        }
+
         public LoginViewModel() {
 
             this.LoginCommand = new DelegateCommand(() => {
                 this.ErrorMessage = "";
                 IsLoading = true;
                 try {
-                    //string token = await LocatorService.DiscordClient.Connect(Email, Password);
-                    //LocatorService.SettingsService.WriteToLocalSettings<string>("loginToken", token);
-                    LocatorService.NavigationService.NavigateTo("main");
+                    string content = $"\{email:\"{Email}\",password: \"{Password}\"\}";
+                    JsonObject loginContent = new JsonObject();
+                    loginContent.SetNamedValue("email", Email);
+                    loginContent.SetNamedValue("password", Password);
+
+                    HttpResponseMessage response = await httpClient.PostAsync(
+                        new Uri("https://discordapp.com/api/v6/auth/login"),
+                        new HttpStringContent(loginContent.Stringify()));
+
+                    if (response.StatusCode != HttpStatusCode.OK) {
+                        ErrorMessage = "Login Failed";
+                        return;
+                    } 
+                    JsonObject jsonresp = JsonObject.Parse(response.Content);
+                    string token = jsonresp.GetNamedString("token", "");
+                    LocatorService.SecretService.WriteSecret("token", token);
+                    AttemptTokenLogin();
                 }
                 catch (Exception ex) {
                     this.ErrorMessage = ex.ToString();
@@ -48,6 +66,21 @@ namespace DiscordUWA.ViewModels {
                 }
                 IsLoading = false;
             });
+        }
+
+        private async Task AttemptTokenLogin() {
+            string token = LocatorService.SecretService.ReadSecret("Token");
+            if (token != string.Empty) {
+                textStatusBlock.Text = "Attempting Token Login....";
+                try {
+                    await LocatorService.DiscordSocketClient.LoginAsync(Discord.TokenType.User, token);
+                    await LocatorService.DiscordSocketClient.ConnectAsync();
+                    LocatorService.NavigationService.NavigateTo("main");
+                }
+                catch (Exception ex) {
+                    this.ErrorMessage = "Token login failed.";
+                }
+            }
         }
     }
 }
