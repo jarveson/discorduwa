@@ -28,6 +28,7 @@ namespace DiscordUWA.Services {
 
             SimpleIoc.Default.Register(() => navService);
             SimpleIoc.Default.Register<SettingsService>();
+            SimpleIoc.Default.Register<SecretService>();
 
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<ServerViewModel>();

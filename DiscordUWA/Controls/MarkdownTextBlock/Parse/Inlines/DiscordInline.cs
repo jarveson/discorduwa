@@ -7,7 +7,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
     /// <summary>
     /// Represents a type of hyperlink where the text can be different from the target URL.
     /// </summary>
-    internal class DiscordInline : MarkdownInline, IInlineContainer, ILinkElement
+    internal class DiscordInline : MarkdownInline, ILinkElement, IInlineLeaf
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MarkdownLinkInline"/> class.
@@ -28,7 +28,9 @@ namespace DiscordUWA.Controls.Markdown.Parse
         public string Tooltip { get; set; }
 
 
-        public ulong ID {get;set;}
+        public ulong ID { get; set; } = 0L;
+
+        public string Text { get; set; }
 
         /// <summary>
         /// Returns the chars that if found means we might have a match.
@@ -71,7 +73,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
             }
 
             // now, check if we are all numbers
-            int innerEnd = markdown.IndexOf('>')
+            int innerEnd = markdown.IndexOf('>');
             if (innerEnd == -1)
                 return null;
             for(int i = pos; i < innerEnd; ++i ) {
@@ -79,22 +81,31 @@ namespace DiscordUWA.Controls.Markdown.Parse
                     return null;
             }
 
-            ID = Convert.ToULong(markdown.Substring(pos, innerEnd - innerStart));
-
+            // remove end bracket
+            innerEnd--;
             var url = markdown.Substring(innerStart, innerEnd - innerStart);
 
+            string idStr = markdown.Substring(pos, innerEnd - innerStart);
+            UInt64.TryParse(idStr, out ulong id);
+
             // We found a regular stand-alone link.
-            var result = new MarkdownLinkInline();
-            result.Url = url;
-            result.Tooltip = "";
-            return new Helpers.Common.InlineParseResult(result, start, innerEnd+1);
+            return new Helpers.Common.InlineParseResult(
+                new DiscordInline {
+                    Url = url,
+                    Tooltip = "",
+                    ID = id,
+                    Text = $"<{url}>",
+                }, 
+                start, 
+                innerEnd+2
+            );
         }
 
         public override string ToString()
         {
             if (Text == null)
             {
-                return base.ToString();
+                return "@" + base.ToString();
             }
 
             return "@" + Text;

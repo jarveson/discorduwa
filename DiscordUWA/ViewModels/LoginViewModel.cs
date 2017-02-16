@@ -2,7 +2,10 @@
 using DiscordUWA.Interfaces;
 using DiscordUWA.Services;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Data.Json;
+using Windows.Web.Http;
 
 namespace DiscordUWA.ViewModels {
     public class LoginViewModel : ViewModelBase {
@@ -38,49 +41,56 @@ namespace DiscordUWA.ViewModels {
 
         public LoginViewModel() {
 
-            this.LoginCommand = new DelegateCommand(() => {
+            this.LoginCommand = new DelegateCommand(async () => {
                 this.ErrorMessage = "";
                 IsLoading = true;
                 try {
-                    string content = $"\{email:\"{Email}\",password: \"{Password}\"\}";
                     JsonObject loginContent = new JsonObject();
-                    loginContent.SetNamedValue("email", Email);
-                    loginContent.SetNamedValue("password", Password);
+                    loginContent.SetNamedValue("email", JsonValue.CreateStringValue(Email));
+                    loginContent.SetNamedValue("password", JsonValue.CreateStringValue(Password));
 
-                    HttpResponseMessage response = await httpClient.PostAsync(
-                        new Uri("https://discordapp.com/api/v6/auth/login"),
-                        new HttpStringContent(loginContent.Stringify()));
-
-                    if (response.StatusCode != HttpStatusCode.OK) {
-                        ErrorMessage = "Login Failed";
-                        return;
-                    } 
-                    JsonObject jsonresp = JsonObject.Parse(response.Content);
-                    string token = jsonresp.GetNamedString("token", "");
-                    LocatorService.SecretService.WriteSecret("token", token);
-                    AttemptTokenLogin();
+                    using (HttpClient httpClient = new HttpClient()) {
+                        HttpResponseMessage response = await httpClient.PostAsync(
+                            new Uri("https://discordapp.com/api/v6/auth/login"),
+                            new HttpStringContent(loginContent.Stringify(), Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/json"));
+                        if (response.StatusCode != HttpStatusCode.Ok) {
+                            ErrorMessage = "Login Failed";
+                            return;
+                        }
+                        JsonObject jsonresp = JsonObject.Parse(response.Content.ToString());
+                        string token = jsonresp.GetNamedString("token", "");
+                        LocatorService.SecretService.WriteSecret(SettingKeys.Token, token);
+                    }
+                    await AttemptTokenLogin();
                 }
                 catch (Exception ex) {
                     this.ErrorMessage = ex.ToString();
                     //LocatorService.DiscordClient.Log.Error($"LoginError: ", ex);
                 }
-                IsLoading = false;
+                finally {
+                    IsLoading = false;
+                }
             });
         }
 
         private async Task AttemptTokenLogin() {
-            string token = LocatorService.SecretService.ReadSecret("Token");
+            string token = LocatorService.SecretService.ReadSecret(SettingKeys.Token);
             if (token != string.Empty) {
-                textStatusBlock.Text = "Attempting Token Login....";
+                this.ErrorMessage = "Attempting Token Login....";
                 try {
+                    IsLoading = true;
                     await LocatorService.DiscordSocketClient.LoginAsync(Discord.TokenType.User, token);
                     await LocatorService.DiscordSocketClient.ConnectAsync();
                     LocatorService.NavigationService.NavigateTo("main");
                 }
-                catch (Exception ex) {
+                catch (Exception) {
                     this.ErrorMessage = "Token login failed.";
                 }
+                finally {
+                    IsLoading = false;
+                }
             }
+            IsLoading = false;
         }
     }
 }

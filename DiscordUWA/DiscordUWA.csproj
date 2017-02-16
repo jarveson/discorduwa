@@ -104,6 +104,7 @@
     <Compile Include="Common\ListViewBaseExtensions.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RangeObservableCollection.cs" />
+    <Compile Include="Common\SettingKeys.cs" />
     <Compile Include="Controls\AttachmentsBlock\AttachmentsBlock.xaml.cs">
       <DependentUpon>AttachmentsBlock.xaml</DependentUpon>
     </Compile>
@@ -130,6 +131,7 @@
     <Compile Include="Controls\MarkdownTextBlock\Parse\Blocks\TableBlock.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\BoldTextInline.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\CodeInline.cs" />
+    <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\DiscordInline.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\HyperlinkInline.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\IInlineContainer.cs" />
     <Compile Include="Controls\MarkdownTextBlock\Parse\Inlines\IInlineLeaf.cs" />
