@@ -22,5 +22,25 @@ namespace DiscordUWA.Common {
                 return Windows.UI.Color.FromArgb(0xff, 0xf0, 0x47, 0x47);
             else return Windows.UI.Color.FromArgb(0xff, 0x74, 0x7f, 0x8d);
         }
+
+        public static string GetReplacedMessageText(this Discord.IMessage message) {
+            string chatText = message.Content;
+            // whats going to happen here is we change the discord tag to also include the text
+            // todo: theres probably a better / faster way to do this?
+            foreach (var user in message.MentionedUsers) {
+                // nickname
+                chatText = chatText.Replace($"<@!{user.Id}>", $"<@!{user.Id}:{user.Nickname}>");
+                // regular name
+                chatText = chatText.Replace($"<@{user.Id}>", $"<@{user.Id}:{user.Name}>");
+            }
+            foreach (var role in message.MentionedRoles) {
+                chatText = chatText.Replace($"<@&{role.Id}>", $"<@&{role.Id}:{role.Name}>");
+            }
+            foreach(var channel in message.MentionedChannels) {
+                chatText = chatText.Replace($"<@#{channel.Id}>", $"<@#{channel.Id}:{channel.Name}>");
+            }
+
+            return chatText;
+        }
     }
 }

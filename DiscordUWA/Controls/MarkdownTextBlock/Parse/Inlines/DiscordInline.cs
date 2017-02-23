@@ -72,29 +72,44 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 return null;
             }
 
-            // now, check if we are all numbers
+            // make sure this has ending bracket
+            string text = string.Empty;
             int innerEnd = markdown.IndexOf('>');
             if (innerEnd == -1)
                 return null;
-            for(int i = pos; i < innerEnd; ++i ) {
+            // check if its all numeric before our ':' which is 'custom' to our discord tag
+            // this avoids passing or hooking id lookups this deep in a control
+            for (int i = pos; i < innerEnd; ++i ) {
+                if (char == ':')
+                    break;
                 if (!char.IsNumber(markdown[i]))
                     return null;
             }
 
             // remove end bracket
             innerEnd--;
-            var url = markdown.Substring(innerStart, innerEnd - innerStart);
 
-            string idStr = markdown.Substring(pos, innerEnd - innerStart);
+            // extract true id/name string
+            int nameStart = markdown.IndexOf(':');
+            string idStr = string.Empty;
+            string text = string.Empty;
+            if (nameStart != -1) {
+                idStr = markdown.Substring(pos, nameStart - innerStart);
+                text = markdown.Substring(nameStart, innerEnd - nameStart);
+            }
+            else {
+                idStr = markdown.Substring(pos, innerEnd - innerStart);
+                text = idStr;
+            }
             UInt64.TryParse(idStr, out ulong id);
 
             // We found a regular stand-alone link.
             return new Helpers.Common.InlineParseResult(
                 new DiscordInline {
-                    Url = url,
+                    Url = idStr,
                     Tooltip = "",
                     ID = id,
-                    Text = $"<{url}>",
+                    Text = text,
                 }, 
                 start, 
                 innerEnd+2

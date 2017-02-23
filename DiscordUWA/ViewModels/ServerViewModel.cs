@@ -20,17 +20,21 @@ namespace DiscordUWA.ViewModels {
         private ulong channelId = 0L;
         private ulong lastAuthorId = 0L;
 
+        private Throttler typingThrottler = new Throttler(TimeSpan.FromSeconds(5));
+
         public ICommand LoadJoinedServersList { protected set; get; }
         public ICommand LoadCurrentUserAvatar { protected set; get; }
         public ICommand SendMessageToCurrentChannel { protected set; get; }
         public ICommand ToggleUserListCommand { protected set; get; }
-        public ICommand PinnedMessagesCommand {protected set; get;}
+        public ICommand PinnedMessagesCommand { protected set; get; }
 
         public ICommand UserClick { protected set; get; }
 
         public ICommand ServerListToggle {protected set; get;}
 
         public ICommand LinkClickCommand { protected set; get;}
+
+        public ICommand OpenDMCommand { protected set; get; }
 
         private ObservableCollection<ServerListModel> serverListModelList = new ObservableCollection<ServerListModel>();
         public ObservableCollection<ServerListModel> ServerListModelList {
@@ -117,15 +121,12 @@ namespace DiscordUWA.ViewModels {
             set { 
                 if (SetProperty(ref currentChatMessage, value) && !String.IsNullOrEmpty(value)) {
                     if (channelId == 0) return;
-                    // triggering this every time looks to crash the app eventually
-                    /*DispatcherHelper.CheckBeginInvokeOnUI(async () => {
-                        await (LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel).TriggerTypingAsync();
-                    });*/
+                    typingThrottler.ResetAndTick();
                 }
             }
         }
 
-        private bool showUserList = true;
+        private bool showUserList;
         public bool ShowUserList {
             get { return this.showUserList; }
             set { SetProperty(ref showUserList, value); }
@@ -153,8 +154,16 @@ namespace DiscordUWA.ViewModels {
         }
 
         public ServerViewModel() {
+            typingThrottler.Action += {
+                DispatcherHelper.CheckBeginInvokeOnUI(async () => {
+                    await (LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel).TriggerTypingAsync();
+                });
+            };
 
             LocatorService.DiscordSocketClient.MessageReceived += DiscordClient_MessageReceived;
+            LocatorService.DiscordSocketClient.MessageUpdated += DiscordClient_MessageUpdated;
+            LocatorService.DiscordSocketClient.MessageDeleted += DiscordClient_MessageDeleted;
+            LocatorService.DiscordSocketClient.UserUpdated += DiscordClient_UserUpdated;
 
             this.LoadJoinedServersList = new DelegateCommand(() => {
                 ServerListModelList.Clear();
@@ -207,15 +216,35 @@ namespace DiscordUWA.ViewModels {
                 if (args.Link.StartsWith("http"))
                     await Windows.System.Launcher.LaunchUriAsync(new Uri(args.Link));
             });
+
+            this.OpenDMCommand = new DelegateCommand(() => {
+                ChannelList.Clear();
+                selectedGuildId = 0L;
+
+                foreach (var channel in LocatorService.DiscordSocketClient.DMChannels) {
+                    string temp = channel.Name;
+                    ChannelList.Add(new ChannelListModel {
+                        ChannelId = channel.Id,
+                        ChannelName = temp,
+                    });
+                }
+            });
         }
 
         private async Task SelectChannel(ulong selectedChannelId) {
             channelId = selectedChannelId;
             await PopulateChatLog();
 
-            var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
-            CurrentChannelName = channel.Name;
-            ChannelTopic = channel.Topic;
+            if (selectedGuildId == 0L) {
+                var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketDMChannel;
+                CurrentChannelName = channel.Name;
+                ChannelTopic = channel.Topic;
+            }
+            else {
+                var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
+                CurrentChannelName = channel.Name;
+                ChannelTopic = channel.Topic;
+            }
         }
 
         private void AddChatMessageToChatLog(IMessage message) {
@@ -233,23 +262,28 @@ namespace DiscordUWA.ViewModels {
             // Serialize UI update to the main UI thread
             bool sameAuthor = message.Author.Id == lastAuthorId;
             lastAuthorId = message.Author.Id;
+
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
                 if (sameAuthor)
                     ChatLogList.Add(new ChatTextListModel {
+                        Id = message.Id,
                         Username = "",
                         UserRoleColor = roleColor.ToWinColor(),
-                        ChatText = message.Content,
+                        ChatText = message.GetReplacedMessageText(),
                         TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
+                        TimeEdited = message.EditedTimestamp?.ToLocalTime().ToString("g"),
                         AvatarUrl = "",
                         Embeds = message.Embeds,
                         Attachments = message.Attachments
                     });
                 else
                     ChatLogList.Add(new ChatTextListModel {
+                        Id = message.Id,
                         Username = message.Author.Username,
                         UserRoleColor = roleColor.ToWinColor(),
-                        ChatText = message.Content,
+                        ChatText = message.GetReplacedMessageText(),
                         TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
+                        TimeEdited = message.EditedTimestamp?.ToLocalTime().ToString("g"),
                         AvatarUrl = message.Author.AvatarUrl,
                         Embeds = message.Embeds,
                         Attachments = message.Attachments
@@ -263,6 +297,41 @@ namespace DiscordUWA.ViewModels {
             }
 
             AddChatMessageToChatLog(message);
+            return Task.CompletedTask;
+        }
+
+        private Task DiscordClient_MessageUpdated(Message before, Message after) {
+            if (before.channelId != selectedChannelId)
+                return Task.CompletedTask;
+
+            var found = ChatLogList.FirstOrDefault(x=>x.Id == before.Id);
+            // didnt find
+            if (found.Id == 0)
+                return Task.CompletedTask;
+
+            DispatcherHelper.CheckBeginInvokeOnUI(() => {
+                found.ChatText = after.GetReplacedMessageText();
+                found.TimeEdited = after.EditedTimestamp?.ToLocalTime().ToString("g"),
+                found.Embeds = after.Embeds;
+                found.Attachments = after.Attachments;
+
+                OnPropertyChanged("ChatLogList");
+            });
+        }
+
+        private Task DiscordClient_MessageDeleted(Message msg) {
+            if (before.channelId != selectedChannelId)
+                return Task.CompletedTask;
+            var found = ChatLogList.FirstOrDefault(x=>x.Id == msg.Id);
+            if (found.Id == 0)
+                return Task.CompletedTask;
+            DispatcherHelper.CheckBeginInvokeOnUI(() => {
+                ChatLogList.Remove(found);
+            });
+        }
+
+        private Task DiscordClient_UserUpdated(User before, User after) {
+            // todo: fix userlist to be a control or something
             return Task.CompletedTask;
         }
 
@@ -294,7 +363,7 @@ namespace DiscordUWA.ViewModels {
                     Color roleColor = Color.Default;
 
                     // todo: figure out how to pick 'highest' role and take that color
-                    // these seems to work for the time being though
+                    // this seems to work for the time being though
                     IRole foundRole = null;
                     foreach (var roleid in user.RoleIds) {
                         var role = server.GetRole(roleid);
@@ -312,7 +381,7 @@ namespace DiscordUWA.ViewModels {
                                 AvatarUrl = user.AvatarUrl,
                                 CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
                                 StatusColor = user.Status.ToWinColor(),
-                                Username = user.Username,
+                                Username = user.Author.Nickname ? user.Author.Nickname : user.Author.Username,
                                 UserRoleColor = roleColor.ToWinColor(),
                                 Id = user.Id,
                                 IsBot = user.IsBot,
@@ -323,7 +392,7 @@ namespace DiscordUWA.ViewModels {
                                 AvatarUrl = user.AvatarUrl,
                                 CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
                                 StatusColor = user.Status.ToWinColor(),
-                                Username = user.Username,
+                                Username = user.Author.Nickname ? user.Author.Nickname : user.Author.Username,
                                 UserRoleColor = roleColor.ToWinColor(),
                                 Id = user.Id,
                                 IsBot = user.IsBot,
@@ -356,24 +425,21 @@ namespace DiscordUWA.ViewModels {
                             NumUsers = (uint)tmpUserSort[key].Count,
                         });
 
-                        foreach (var value in tmpUserSort[key])
-                            fullUserList.Add(value);
+                        fullUserList.AddRange(tmpUserSort[key]);
                     }
                     if (tmpOnline.Count > 0) {
                         fullUserList.Add(new UserListSectionModel {
                             RoleSectionName = "Online",
                             NumUsers = (uint)tmpOnline.Count
                         });
-                        foreach (var user in tmpOnline.OrderBy(x => x.Username))
-                            fullUserList.Add(user);
+                        fullUserList.AddRange(tmpOnline.OrderBy(x => x.Username));
                     }
                     if (tmpOffline.Count > 0) {
                         fullUserList.Add(new UserListSectionModel {
                             RoleSectionName = "Offline",
                             NumUsers = (uint)tmpOffline.Count
                         });
-                        foreach (var user in tmpOffline.OrderBy(x => x.Username))
-                            fullUserList.Add(user);
+                        fullUserList.AddRange(tmpOffline.OrderBy(x => x.Username));
                     }
                 });
             });
@@ -382,8 +448,16 @@ namespace DiscordUWA.ViewModels {
         private async Task PopulateChatLog() {
             ChatLogList.Clear();
             lastAuthorId = 0L;
-            var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
-            var messageLog = await channel.GetMessagesAsync(40).Flatten().ConfigureAwait(false);
+            IAsyncEnumerable<IReadOnlyCollection<IMessage>> messageLog = null;
+            // todo: use message.type or something
+            if (selectedGuildId == 0L) {
+                var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketDMChannel;
+                messageLog = await channel.GetMessagesAsync(40).Flatten().ConfigureAwait(false);
+            }
+            else {
+                var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
+                messageLog = await channel.GetMessagesAsync(40).Flatten().ConfigureAwait(false);
+            }
 
             foreach (var message in messageLog.Reverse()) {
                 AddChatMessageToChatLog(message);

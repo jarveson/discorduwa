@@ -59,10 +59,12 @@ namespace DiscordUWA.ViewModels {
             // Serialize UI update to the main UI thread
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
                 ChatLogList.Add(new ChatTextListModel {
-                    Username = message.Author.Username,
+                    Id = message.Id,
+                    Username = message.Author.Nickname ? message.Author.Nickname : message.Author.Username,
                     UserRoleColor = roleColor.ToWinColor(),
-                    ChatText = message.Content,
-                    TimeSent = message.Timestamp.ToLocalTime().ToString(),
+                    ChatText = message.GetReplacedMessageText(),
+                    TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
+                    TimeEdited = message.EditedTimestamp?.ToLocalTime().ToString("g"),
                     AvatarUrl = message.Author.AvatarUrl,
                     Embeds = message.Embeds,
                     Attachments = message.Attachments
