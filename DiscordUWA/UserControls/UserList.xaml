@@ -57,7 +57,16 @@
                             VerticalAlignment="Stretch" 
                             HorizontalAlignment="Stretch">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{x:Bind Username}" FontWeight="Bold" Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"/>
+                        <TextBlock 
+                            Text="{x:Bind Nickname}" 
+                            FontWeight="Bold" 
+                            Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"
+                            Visibility="{x:Bind Nickname, Converter={StaticResource StringExistsToVisibilityConverter}}"/>
+                        <TextBlock 
+                            Text="{x:Bind Username}" 
+                            FontWeight="Bold" 
+                            Foreground="{x:Bind UserRoleColor, Converter={StaticResource ColorToBrush}}"
+                            Visibility="{x:Bind Nickname, Converter={StaticResource StrNotToVis}}"/>
                         <TextBlock Text=" BOT" FontWeight="Bold" Visibility="{x:Bind IsBot, FallbackValue='Collapsed'}"/>
                     </StackPanel>
                     <TextBlock Text="{x:Bind CurrentlyPlaying}" Visibility="{x:Bind CurrentlyPlaying, Converter={StaticResource StringExistsToVisibilityConverter}}"/>

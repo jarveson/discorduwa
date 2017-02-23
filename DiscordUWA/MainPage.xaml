@@ -108,7 +108,8 @@
                     ToggleUserListCommand="{x:Bind Vm.ToggleUserListCommand}"
                     PinnedMessagesCommand="{x:Bind Vm.PinnedMessagesCommand}"
                     UserClick="{x:Bind Vm.UserClick}"
-                    ServerListToggle="{x:Bind Vm.ServerListToggle}"/>
+                    ServerListToggle="{x:Bind Vm.ServerListToggle}"
+                    LinkClickCommand="{x:Bind Vm.LinkClickCommand}"/>
             </SplitView.Content>
         </SplitView>
     </Grid>

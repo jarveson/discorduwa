@@ -33,6 +33,23 @@ namespace DiscordUWA.UserControls {
             set { SetValue(ItemScrollModeProperty, value); }
         }
 
+        public static readonly DependencyProperty LinkClickCommandProperty = DependencyProperty.Register(
+            nameof(LinkClickCommand),
+            typeof(ICommand),
+            typeof(MessageList),
+            new PropertyMetadata(null)
+        );
+
+        public ICommand LinkClickCommand {
+            get { return (ICommand)GetValue(LinkClickCommandProperty); }
+            set { SetValue(LinkClickCommandProperty, value); }
+        }
+
+        public async void OnMarkdownUserClick(object sender, LinkClickedEventArgs args) {
+            if (LinkClickCommand != null)
+                LinkClickCommand.Execute(sender, args);
+        }
+
         public MessageList() {
             this.InitializeComponent();
         }

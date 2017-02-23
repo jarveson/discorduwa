@@ -50,6 +50,7 @@
 
                 <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" 
                                             Text="{x:Bind ChatText}"
+                                            UserClick="{Binding OnMarkdownUserClick, ElementName=root}"
                                             CodeForeground="DarkSlateGray"/>
 
                 <controls:EmbedsBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" EmbedsList="{x:Bind Embeds, FallbackValue=''}"/>

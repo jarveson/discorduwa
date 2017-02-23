@@ -81,16 +81,32 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="50" MinHeight="50"/>
                     </Grid.RowDefinitions>
-                    <uc:MessageList TextLogList="{x:Bind ChatLogList, Mode=OneWay, FallbackValue=''}"/>
+                    <uc:MessageList 
+                        TextLogList="{x:Bind ChatLogList, Mode=OneWay, FallbackValue=''}"
+                        LinkClickCommand="{x:Bind LinkClickCommand}"/>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto">
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="MessageTextBox"  TextWrapping="Wrap" Text="{x:Bind MessageText, Mode=TwoWay}" PlaceholderText="Type Message..." Margin="20,0,0,0" VerticalAlignment="Center" TextChanged="MessageTextBox_TextChanged"/>
+                        <Button Command="{x:Bind AttachmentCommand}" 
+                                HorizontalAlignment="Center" 
+                                Background="Transparent">
+                            <SymbolIcon Symbol="Attach"/>
+                        </Button>
+                        <TextBox x:Name="MessageTextBox" 
+                                Grid.Column="1" 
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center" 
+                                TextWrapping="Wrap" 
+                                PlaceholderText="Type Message..." 
+                                Text="{x:Bind MessageText, Mode=TwoWay}" 
+                                TextChanged="MessageTextBox_TextChanged"/>
                         <Button x:Name="sendChatMessage" 
-                                Grid.Column="1"
-                                Content="Send" Margin="20,0" Command="{x:Bind SendMessageCommand}"/>
+                                Grid.Column="2"
+                                Content="Send" Margin="20,0" 
+                                Command="{x:Bind SendMessageCommand}"/>
                     </Grid>
                 </Grid>
             </SplitView.Content>

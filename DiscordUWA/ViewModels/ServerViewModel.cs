@@ -29,6 +29,8 @@ namespace DiscordUWA.ViewModels {
 
         public ICommand ServerListToggle {protected set; get;}
 
+        public ICommand LinkClickCommand { protected set; get;}
+
         private ObservableCollection<ServerListModel> serverListModelList = new ObservableCollection<ServerListModel>();
         public ObservableCollection<ServerListModel> ServerListModelList {
             get { return this.serverListModelList; }
@@ -198,6 +200,12 @@ namespace DiscordUWA.ViewModels {
                 if (channelId != 0)
                     LocatorService.NavigationService.NavigateTo("pinnedMessages", channelId);
             });
+
+            this.LinkClickCommand = new DelegateCommand<object,LinkClickedEventArgs>(async (sender, args) => {
+                // todo: rest of these
+                if (args.Link.StartsWith("http"))
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri(args.Link));
+            });
         }
 
         private async Task SelectChannel(ulong selectedChannelId) {
@@ -307,6 +315,7 @@ namespace DiscordUWA.ViewModels {
                                 UserRoleColor = roleColor.ToWinColor(),
                                 Id = user.Id,
                                 IsBot = user.IsBot,
+                                Nickname = user.Nickname
                             });
                         else
                             tmpOnline.Add(new UserListSectionModel {
@@ -317,6 +326,7 @@ namespace DiscordUWA.ViewModels {
                                 UserRoleColor = roleColor.ToWinColor(),
                                 Id = user.Id,
                                 IsBot = user.IsBot,
+                                Nickname = user.Nickname
                             });
                     }
                     else {
@@ -330,6 +340,7 @@ namespace DiscordUWA.ViewModels {
                                     UserRoleColor = roleColor.ToWinColor(),
                                     Id = user.Id,
                                     IsBot = user.IsBot,
+                                    Nickname = user.Nickname
                                 }
                             };
                         }

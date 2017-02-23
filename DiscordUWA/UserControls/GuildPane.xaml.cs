@@ -156,6 +156,30 @@ namespace DiscordUWA.UserControls {
             set { SetValue(PinnedMessagesCommandProperty, value); }
         }
 
+        public static readonly DependencyProperty LinkClickCommandProperty = DependencyProperty.Register(
+            nameof(LinkClickCommand),
+            typeof(ICommand),
+            typeof(UserList),
+            new PropertyMetadata(null)
+            );
+
+        public ICommand LinkClickCommand {
+            get { return (ICommand)GetValue(LinkClickCommandProperty); }
+            set { SetValue(LinkClickCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty AttachmentCommandProperty = DependencyProperty.Register(
+            nameof(AttachmentCommand),
+            typeof(ICommand),
+            typeof(UserList),
+            new PropertyMetadata(null)
+            );
+
+        public ICommand AttachmentCommand {
+            get { return (ICommand)GetValue(AttachmentCommandProperty); }
+            set { SetValue(AttachmentCommandProperty, value); }
+        }
+
         // you may be wondering what this is for....
         // its because i cant figure out how to bind textbox 'typing' type update through a usercontrol to a view model
         // this is annoying, but it works
