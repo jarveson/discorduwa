@@ -1,3 +1,4 @@
+using DiscordUWA.Controls;
 using DiscordUWA.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -45,9 +46,9 @@ namespace DiscordUWA.UserControls {
             set { SetValue(LinkClickCommandProperty, value); }
         }
 
-        public async void OnMarkdownUserClick(object sender, LinkClickedEventArgs args) {
+        public void OnMarkdownUserClick(object sender, LinkClickedEventArgs args) {
             if (LinkClickCommand != null)
-                LinkClickCommand.Execute(sender, args);
+                LinkClickCommand.Execute(args);
         }
 
         public MessageList() {

@@ -9,6 +9,18 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace DiscordUWA.UserControls {
     public sealed partial class ServerIcon : UserControl {
+        public static readonly DependencyProperty GuildNameProperty = DependencyProperty.Register(
+            nameof(GuildName),
+            typeof(string),
+            typeof(ServerIcon),
+            new PropertyMetadata("", OnPropertyChangedStatic)
+            );
+
+        public string GuildName {
+            get { return (string)GetValue(GuildNameProperty); }
+            set { SetValue(GuildNameProperty, value); }
+        }
+
 
         public static readonly DependencyProperty IconUrlProperty = DependencyProperty.Register(
             nameof(IconUrl),
@@ -32,15 +44,27 @@ namespace DiscordUWA.UserControls {
         private void OnPropertyChanged(DependencyObject d, DependencyProperty prop) {
             // rerender the bitmap
             if (string.IsNullOrEmpty(IconUrl)) {
-                serverImageBrush.ImageSource = null;
+                string guildAbbr = string.Empty;
+                foreach (string s in GuildName.Split(new char[]{' '}, System.StringSplitOptions.RemoveEmptyEntries)) {
+                    guildAbbr += char.ToLower(s[0]);
+                }
+                serverNameText.Text = guildAbbr;
+                serverNameText.Visibility = Visibility.Visible;
+                serverNameText.IsTextSelectionEnabled = false;
+                serverEllipse.Fill = new SolidColorBrush {
+                    Color = Windows.UI.Color.FromArgb(0xff, 0x2e, 0x31, 0x36),
+                };
                 return;
             }
+            serverNameText.Visibility = Visibility.Collapsed;
 
-            serverImageBrush.ImageSource = new BitmapImage {
-                UriSource = new System.Uri(IconUrl),
-                DecodePixelType = DecodePixelType.Logical,
-                DecodePixelHeight = 50,
-                DecodePixelWidth = 50,
+            serverEllipse.Fill = new ImageBrush {
+                ImageSource = new BitmapImage {
+                    UriSource = new System.Uri(IconUrl),
+                    DecodePixelType = DecodePixelType.Logical,
+                    DecodePixelHeight = 50,
+                    DecodePixelWidth = 50,
+                },
             };
         }
 

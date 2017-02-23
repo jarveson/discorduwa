@@ -29,6 +29,7 @@ namespace DiscordUWA.Controls {
                 var result = new Windows.UI.Xaml.Controls.Image {
                     HorizontalAlignment = HorizontalAlignment.Left,
                     MaxHeight = Math.Min(300, attach.Height.Value),
+                    MaxWidth = Math.Min(400, attach.Width.Value),
                     Source = new BitmapImage {
                         DecodePixelType = DecodePixelType.Logical,
                         DecodePixelHeight = Math.Min(300, attach.Height.Value),

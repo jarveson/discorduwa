@@ -86,7 +86,7 @@
                         LinkClickCommand="{x:Bind LinkClickCommand}"/>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto">
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
@@ -97,7 +97,6 @@
                         </Button>
                         <TextBox x:Name="MessageTextBox" 
                                 Grid.Column="1" 
-                                Margin="20,0,0,0"
                                 VerticalAlignment="Center" 
                                 TextWrapping="Wrap" 
                                 PlaceholderText="Type Message..." 

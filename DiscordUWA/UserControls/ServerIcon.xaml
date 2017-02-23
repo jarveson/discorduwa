@@ -12,13 +12,21 @@
     d:DesignHeight="60"
     d:DesignWidth="60"
     x:Name="root">
-    
-    <Ellipse Height="50" Width="50" 
-            VerticalAlignment="Center" 
-            HorizontalAlignment="Center">
-        <Ellipse.Fill>
-            <ImageBrush x:Name="serverImageBrush"/>
-        </Ellipse.Fill>
-    </Ellipse>
+
+    <Grid>
+        <Ellipse
+                x:Name="serverEllipse"
+                Height="50" Width="50" 
+                VerticalAlignment="Center" 
+                HorizontalAlignment="Center">
+            <Ellipse.Fill>
+                <SolidColorBrush Color="#ff2e3136"/>
+            </Ellipse.Fill>
+        </Ellipse>
+        <TextBlock x:Name="serverNameText" 
+                   Visibility="Collapsed"
+                   VerticalAlignment="Center" 
+                   HorizontalAlignment="Center"/>
+    </Grid>
 
 </UserControl>

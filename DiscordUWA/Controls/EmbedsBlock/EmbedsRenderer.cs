@@ -46,7 +46,7 @@ namespace DiscordUWA.Controls {
                             AreTransportControlsEnabled = false,
                             Source = new Uri(embed.Video.Value.Url),
                             MaxHeight = Math.Min(250, embed.Video.Value.Height.Value),
-                            MaxWidth = embed.Video.Value.Width.Value,
+                            MaxWidth = Math.Min(400, embed.Video.Value.Width.Value),
                             HorizontalAlignment = HorizontalAlignment.Left,
                             IsMuted = true,
                         };
@@ -57,6 +57,7 @@ namespace DiscordUWA.Controls {
                         var result = new Windows.UI.Xaml.Controls.Image {
                             HorizontalAlignment = HorizontalAlignment.Left,
                             MaxHeight = Math.Min(250, embed.Thumbnail.Value.Height.Value),
+                            MaxWidth = Math.Min(400, embed.Thumbnail.Value.Width.Value),
                             Source = new BitmapImage {
                                 DecodePixelType = DecodePixelType.Logical,
                                 DecodePixelHeight = Math.Min(250, embed.Thumbnail.Value.Height.Value),

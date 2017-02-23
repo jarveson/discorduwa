@@ -12,6 +12,7 @@ using GalaSoft.MvvmLight.Threading;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using DiscordUWA.Controls;
 
 namespace DiscordUWA.ViewModels {
     public class ServerViewModel : ViewModelBase {
@@ -201,7 +202,7 @@ namespace DiscordUWA.ViewModels {
                     LocatorService.NavigationService.NavigateTo("pinnedMessages", channelId);
             });
 
-            this.LinkClickCommand = new DelegateCommand<object,LinkClickedEventArgs>(async (sender, args) => {
+            this.LinkClickCommand = new DelegateCommand<LinkClickedEventArgs>(async (args) => {
                 // todo: rest of these
                 if (args.Link.StartsWith("http"))
                     await Windows.System.Launcher.LaunchUriAsync(new Uri(args.Link));

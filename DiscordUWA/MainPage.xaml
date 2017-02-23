@@ -15,7 +15,9 @@
 
     <Page.Resources>
         <DataTemplate x:Key="ImageServerListTemplate" x:DataType="data:ServerListModel">
-            <uc:ServerIcon Margin="5" IconUrl="{x:Bind ServerImageUri, Mode=OneWay}"/>
+            <uc:ServerIcon Margin="5" 
+                           IconUrl="{x:Bind ServerImageUri, Mode=OneWay}"
+                           GuildName="{x:Bind ServerName, Mode=OneWay}"/>
         </DataTemplate>
         <DataTemplate x:Key="ChannelListTemplate" x:DataType="data:ChannelListModel">
             <TextBlock Text="{x:Bind ChannelName}"/>
@@ -51,7 +53,7 @@
         </Grid.ColumnDefinitions>
         <SplitView x:Name="GuildSplitter" DisplayMode="Inline" IsPaneOpen="{x:Bind Vm.ShowServerPane, Mode=TwoWay, FallbackValue='True'}" OpenPaneLength="320" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <SplitView.Pane>
-                <Grid Background="#FF2A2D32">
+                <Grid Background="#1e2124">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
