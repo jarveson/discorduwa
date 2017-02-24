@@ -154,7 +154,7 @@ namespace DiscordUWA.ViewModels {
         }
 
         public ServerViewModel() {
-            typingThrottler.Action += {
+            typingThrottler.Action += (sender, e) => {
                 DispatcherHelper.CheckBeginInvokeOnUI(async () => {
                     await (LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel).TriggerTypingAsync();
                 });
@@ -207,8 +207,11 @@ namespace DiscordUWA.ViewModels {
             });
 
             this.PinnedMessagesCommand = new DelegateCommand(() => {
-                if (channelId != 0)
-                    LocatorService.NavigationService.NavigateTo("pinnedMessages", channelId);
+                LocatorService.NavigationService.NavigateTo("pinnedMessages", 
+                    new PinnedMessagesNavData {
+                        ChannelId = channelId,
+                        GuildId = selectedGuildId,
+                    });
             });
 
             this.LinkClickCommand = new DelegateCommand<LinkClickedEventArgs>(async (args) => {
@@ -222,7 +225,7 @@ namespace DiscordUWA.ViewModels {
                 selectedGuildId = 0L;
 
                 foreach (var channel in LocatorService.DiscordSocketClient.DMChannels) {
-                    string temp = channel.Name;
+                    string temp = channel.Recipient.Username;
                     ChannelList.Add(new ChannelListModel {
                         ChannelId = channel.Id,
                         ChannelName = temp,
@@ -237,8 +240,8 @@ namespace DiscordUWA.ViewModels {
 
             if (selectedGuildId == 0L) {
                 var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketDMChannel;
-                CurrentChannelName = channel.Name;
-                ChannelTopic = channel.Topic;
+                CurrentChannelName = channel.Recipient.Username;
+                ChannelTopic = "";
             }
             else {
                 var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketTextChannel;
@@ -269,7 +272,7 @@ namespace DiscordUWA.ViewModels {
                         Id = message.Id,
                         Username = "",
                         UserRoleColor = roleColor.ToWinColor(),
-                        ChatText = message.GetReplacedMessageText(),
+                        ChatText = GetReplacedMessageText(message),
                         TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
                         TimeEdited = message.EditedTimestamp?.ToLocalTime().ToString("g"),
                         AvatarUrl = "",
@@ -281,7 +284,7 @@ namespace DiscordUWA.ViewModels {
                         Id = message.Id,
                         Username = message.Author.Username,
                         UserRoleColor = roleColor.ToWinColor(),
-                        ChatText = message.GetReplacedMessageText(),
+                        ChatText = GetReplacedMessageText(message),
                         TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
                         TimeEdited = message.EditedTimestamp?.ToLocalTime().ToString("g"),
                         AvatarUrl = message.Author.AvatarUrl,
@@ -300,37 +303,36 @@ namespace DiscordUWA.ViewModels {
             return Task.CompletedTask;
         }
 
-        private Task DiscordClient_MessageUpdated(Message before, Message after) {
-            if (before.channelId != selectedChannelId)
+        private Task DiscordClient_MessageUpdated(Optional<SocketMessage> before, SocketMessage after) {
+            if (after.Channel.Id != selectedChannel.ChannelId)
                 return Task.CompletedTask;
 
-            var found = ChatLogList.FirstOrDefault(x=>x.Id == before.Id);
+            var found = ChatLogList.FirstOrDefault(x=>x.Id == after.Id);
             // didnt find
             if (found.Id == 0)
                 return Task.CompletedTask;
 
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
-                found.ChatText = after.GetReplacedMessageText();
-                found.TimeEdited = after.EditedTimestamp?.ToLocalTime().ToString("g"),
+                found.ChatText = GetReplacedMessageText(after);
+                found.TimeEdited = after.EditedTimestamp?.ToLocalTime().ToString("g");
                 found.Embeds = after.Embeds;
                 found.Attachments = after.Attachments;
-
-                OnPropertyChanged("ChatLogList");
+                chatLogList.Refresh();
             });
+            return Task.CompletedTask;
         }
 
-        private Task DiscordClient_MessageDeleted(Message msg) {
-            if (before.channelId != selectedChannelId)
-                return Task.CompletedTask;
-            var found = ChatLogList.FirstOrDefault(x=>x.Id == msg.Id);
+        private Task DiscordClient_MessageDeleted(ulong msgId, Optional<SocketMessage> msg) {
+            var found = ChatLogList.FirstOrDefault(x=>x.Id == msgId);
             if (found.Id == 0)
                 return Task.CompletedTask;
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
                 ChatLogList.Remove(found);
             });
+            return Task.CompletedTask;
         }
 
-        private Task DiscordClient_UserUpdated(User before, User after) {
+        private Task DiscordClient_UserUpdated(SocketUser before, SocketUser after) {
             // todo: fix userlist to be a control or something
             return Task.CompletedTask;
         }
@@ -381,7 +383,7 @@ namespace DiscordUWA.ViewModels {
                                 AvatarUrl = user.AvatarUrl,
                                 CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
                                 StatusColor = user.Status.ToWinColor(),
-                                Username = user.Author.Nickname ? user.Author.Nickname : user.Author.Username,
+                                Username = String.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname,
                                 UserRoleColor = roleColor.ToWinColor(),
                                 Id = user.Id,
                                 IsBot = user.IsBot,
@@ -392,7 +394,7 @@ namespace DiscordUWA.ViewModels {
                                 AvatarUrl = user.AvatarUrl,
                                 CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
                                 StatusColor = user.Status.ToWinColor(),
-                                Username = user.Author.Nickname ? user.Author.Nickname : user.Author.Username,
+                                Username = String.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname,
                                 UserRoleColor = roleColor.ToWinColor(),
                                 Id = user.Id,
                                 IsBot = user.IsBot,
@@ -448,7 +450,7 @@ namespace DiscordUWA.ViewModels {
         private async Task PopulateChatLog() {
             ChatLogList.Clear();
             lastAuthorId = 0L;
-            IAsyncEnumerable<IReadOnlyCollection<IMessage>> messageLog = null;
+            IEnumerable<IMessage> messageLog = null;
             // todo: use message.type or something
             if (selectedGuildId == 0L) {
                 var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketDMChannel;
@@ -471,6 +473,31 @@ namespace DiscordUWA.ViewModels {
             CurrentServerName = server.Name;
             PopulateChannelList();
             SelectedChannel = channelList.SingleOrDefault(x => x.ChannelId == server.DefaultChannel.Id);
+        }
+
+        private string GetReplacedMessageText(IMessage message) {
+            string chatText = message.Content;
+            // whats going to happen here is we change the discord tag to also include the text
+            // todo: theres probably a better / faster way to do this?
+            var guild = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
+            foreach (var userId in message.MentionedUserIds) {
+                // nickname
+                var user = guild.GetUser(userId);
+                chatText = chatText.Replace($"<@!{user.Id}>", $"<@!{user.Id}:{user.Nickname}>");
+                // regular name
+                string name = string.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname;
+                chatText = chatText.Replace($"<@{user.Id}>", $"<@{user.Id}:{name}>");
+            }
+            foreach (var roleId in message.MentionedRoleIds) {
+                var role = guild.GetRole(roleId);
+                chatText = chatText.Replace($"<@&{role.Id}>", $"<@&{role.Id}:{role.Name}>");
+            }
+            foreach (var channelId in message.MentionedChannelIds) {
+                var channel = guild.GetChannel(channelId);
+                chatText = chatText.Replace($"<@#{channel.Id}>", $"<@#{channel.Id}:{channel.Name}>");
+            }
+
+            return chatText;
         }
     }
 }

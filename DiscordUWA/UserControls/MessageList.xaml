@@ -47,14 +47,16 @@
                            Text="{x:Bind TimeSent}" 
                            Foreground="#FF686A6E"/>
                 </StackPanel>
-
-                <controls:MarkdownTextBlock Grid.Column="1" Grid.Row="1" 
-                                            Text="{x:Bind ChatText, Mode=OneWay}"
-                                            LinkClicked="OnMarkdownUserClick"
-                                            CodeForeground="DarkSlateGray"/>
-                <TextBlock Grid.Column="1" Grid.Row="1"
-                           Text="{x:Bind TimeEdited, Mode=OneWay}"
-                           Visibility="{x:Bind TimeEdited, Mode=OneWay, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                <StackPanel Grid.Column="1" Grid.Row="1">
+                    <controls:MarkdownTextBlock Text="{x:Bind ChatText, Mode=OneWay}"
+                                                LinkClicked="OnMarkdownUserClick"
+                                                CodeForeground="DarkSlateGray"/>
+                    <TextBlock Foreground="#FF686A6E"
+                               Visibility="{x:Bind TimeEdited, Mode=OneWay, Converter={StaticResource StringExistsToVisibilityConverter}}">
+                        <Run Text="(Edited)"/>
+                        <Run Text="{x:Bind TimeEdited, Mode=OneWay}"/>
+                    </TextBlock>
+                </StackPanel>
                 <controls:EmbedsBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" EmbedsList="{x:Bind Embeds, Mode=OneWay, FallbackValue=''}"/>
                 <controls:AttachmentsBlock Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" AttachmentsList="{x:Bind Attachments, Mode=OneWay, FallbackValue=''}"/>
 

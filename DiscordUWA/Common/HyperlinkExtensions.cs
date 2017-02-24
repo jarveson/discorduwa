@@ -82,16 +82,12 @@ namespace DiscordUWA.Common
 
         private static void OnCommandPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            Hyperlink hyperlink = sender as Hyperlink;
-
-            if (hyperlink != null)
-            {
+            if (sender is Hyperlink hyperlink) {
                 hyperlink.Click -= OnHyperlinkClicked;
 
                 ICommand command = args.NewValue as ICommand;
 
-                if (command != null)
-                {
+                if (command != null) {
                     hyperlink.Click += OnHyperlinkClicked;
                 }
             }

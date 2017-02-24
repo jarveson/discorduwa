@@ -7,7 +7,7 @@ namespace DiscordUWA.Common {
         private object _instanceLock = new object(); 
         private bool shouldTrigger = false;
 
-        public Delayer(TimeSpan timeSpan) {
+        public Throttler(TimeSpan timeSpan) {
             _timer = new DispatcherTimer() { Interval = timeSpan };
             _timer.Tick += Timer_Tick;
         }

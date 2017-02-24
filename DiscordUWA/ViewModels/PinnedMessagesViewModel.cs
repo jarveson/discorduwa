@@ -11,8 +11,14 @@ using System.Windows.Input;
 using Windows.UI.Core;
 
 namespace DiscordUWA.ViewModels {
+    public class PinnedMessagesNavData {
+        public ulong ChannelId { get; set; } = 0;
+        public ulong GuildId { get; set; } = 0;
+    }
+
     public class PinnedMessagesViewModel : ViewModelBase {
         private ulong channelId = 0L;
+        private ulong guildId = 0L;
 
         private RangeObservableCollection<ChatTextListModel> chatLogList = new RangeObservableCollection<ChatTextListModel>();
         public RangeObservableCollection<ChatTextListModel> ChatLogList {
@@ -21,10 +27,10 @@ namespace DiscordUWA.ViewModels {
         }
 
         public override async Task OnNavigatedToAsync(object parameter) {
-            var id = parameter as ulong?;
-            if (id.HasValue) {
-                channelId = id.Value;
-                await PopulateMessageLog(id.Value);
+            if (parameter is PinnedMessagesNavData data) {
+                channelId = data.ChannelId;
+                guildId = data.GuildId;
+                await PopulateMessageLog(channelId);
             }
             // Add back button to titlebar
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -58,11 +64,12 @@ namespace DiscordUWA.ViewModels {
 
             // Serialize UI update to the main UI thread
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
+                // todo: nickname?
                 ChatLogList.Add(new ChatTextListModel {
                     Id = message.Id,
-                    Username = message.Author.Nickname ? message.Author.Nickname : message.Author.Username,
+                    Username = message.Author.Username,
                     UserRoleColor = roleColor.ToWinColor(),
-                    ChatText = message.GetReplacedMessageText(),
+                    ChatText = GetReplacedMessageText(message),
                     TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
                     TimeEdited = message.EditedTimestamp?.ToLocalTime().ToString("g"),
                     AvatarUrl = message.Author.AvatarUrl,
@@ -72,5 +79,29 @@ namespace DiscordUWA.ViewModels {
             });
         }
 
+        private string GetReplacedMessageText(IMessage message) {
+            string chatText = message.Content;
+            // whats going to happen here is we change the discord tag to also include the text
+            // todo: theres probably a better / faster way to do this?
+            var guild = LocatorService.DiscordSocketClient.GetGuild(guildId);
+            foreach (var userId in message.MentionedUserIds) {
+                // nickname
+                var user = guild.GetUser(userId);
+                chatText = chatText.Replace($"<@!{user.Id}>", $"<@!{user.Id}:{user.Nickname}>");
+                // regular name
+                string name = string.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname;
+                chatText = chatText.Replace($"<@{user.Id}>", $"<@{user.Id}:{name}>");
+            }
+            foreach (var roleId in message.MentionedRoleIds) {
+                var role = guild.GetRole(roleId);
+                chatText = chatText.Replace($"<@&{role.Id}>", $"<@&{role.Id}:{role.Name}>");
+            }
+            foreach (var channelId in message.MentionedChannelIds) {
+                var channel = guild.GetChannel(channelId);
+                chatText = chatText.Replace($"<@#{channel.Id}>", $"<@#{channel.Id}:{channel.Name}>");
+            }
+
+            return chatText;
+        }
     }
 }

@@ -105,6 +105,7 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RangeObservableCollection.cs" />
     <Compile Include="Common\SettingKeys.cs" />
+    <Compile Include="Common\Throttler.cs" />
     <Compile Include="Controls\AttachmentsBlock\AttachmentsBlock.xaml.cs">
       <DependentUpon>AttachmentsBlock.xaml</DependentUpon>
     </Compile>

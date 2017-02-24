@@ -88,8 +88,8 @@
                               ItemsSource="{x:Bind Vm.ServerListModelList, Mode=OneWay}" 
                               SelectedItem="{x:Bind Vm.SelectedGuild, Mode=TwoWay}"
                               ItemTemplate="{StaticResource ImageServerListTemplate}" />
-                    <Rectangle Grid.Column="1" Grid.Row="1" Fill="#FF2E3136">
-                
+                    <Rectangle Grid.Column="1" Grid.Row="1" Fill="#FF2E3136"/>
+
                     <ListView x:Name="channelsListView"
                             Grid.Column="1" Grid.Row="1" 
                             Header="Text Channels" 

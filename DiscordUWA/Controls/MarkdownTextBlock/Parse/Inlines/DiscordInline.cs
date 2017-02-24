@@ -73,14 +73,13 @@ namespace DiscordUWA.Controls.Markdown.Parse
             }
 
             // make sure this has ending bracket
-            string text = string.Empty;
             int innerEnd = markdown.IndexOf('>');
             if (innerEnd == -1)
                 return null;
             // check if its all numeric before our ':' which is 'custom' to our discord tag
             // this avoids passing or hooking id lookups this deep in a control
             for (int i = pos; i < innerEnd; ++i ) {
-                if (char == ':')
+                if (markdown[i] == ':')
                     break;
                 if (!char.IsNumber(markdown[i]))
                     return null;
@@ -94,8 +93,12 @@ namespace DiscordUWA.Controls.Markdown.Parse
             string idStr = string.Empty;
             string text = string.Empty;
             if (nameStart != -1) {
+                // remove ':'
+                nameStart++;
                 idStr = markdown.Substring(pos, nameStart - innerStart);
-                text = markdown.Substring(nameStart, innerEnd - nameStart);
+                text = markdown.Substring(nameStart, (innerEnd - nameStart)+1);
+                if (string.IsNullOrEmpty(text))
+                    text = idStr;
             }
             else {
                 idStr = markdown.Substring(pos, innerEnd - innerStart);
@@ -109,7 +112,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
                     Url = idStr,
                     Tooltip = "",
                     ID = id,
-                    Text = text,
+                    Text = $"@{text}",
                 }, 
                 start, 
                 innerEnd+2
@@ -120,10 +123,10 @@ namespace DiscordUWA.Controls.Markdown.Parse
         {
             if (Text == null)
             {
-                return "@" + base.ToString();
+                return base.ToString();
             }
 
-            return "@" + Text;
+            return Text;
         }
     }
 }
