@@ -32,6 +32,8 @@ namespace DiscordUWA.Controls.Markdown.Parse
 
         public string Text { get; set; }
 
+        public bool IsEmote {get;set;} = false;
+
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
@@ -42,6 +44,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         {
             int innerStart = start + 1;
             int pos = -1;
+            bool isEmote = true;
 
             if ((maxEnd - innerStart) > 2) {
                 char char1 = markdown[innerStart];
@@ -63,8 +66,11 @@ namespace DiscordUWA.Controls.Markdown.Parse
                     // channel
                     pos = innerStart + 1;
                 }
-                // else it can be custom emote,
-                // todo: custom emote
+                else if (char1 == ':') {
+                    // emote <:name:id>
+                    pos = innerStart + 1;
+                    isEmote = true;
+                }
             }
 
             if (pos == -1)
@@ -76,47 +82,66 @@ namespace DiscordUWA.Controls.Markdown.Parse
             int innerEnd = markdown.IndexOf('>');
             if (innerEnd == -1)
                 return null;
-            // check if its all numeric before our ':' which is 'custom' to our discord tag
-            // this avoids passing or hooking id lookups this deep in a control
-            for (int i = pos; i < innerEnd; ++i ) {
-                if (markdown[i] == ':')
-                    break;
-                if (!char.IsNumber(markdown[i]))
-                    return null;
-            }
-
-            // remove end bracket
-            innerEnd--;
-
-            // extract true id/name string
-            int nameStart = markdown.IndexOf(':');
-            string idStr = string.Empty;
-            string text = string.Empty;
-            if (nameStart != -1) {
-                // remove ':'
-                nameStart++;
-                idStr = markdown.Substring(pos, nameStart - innerStart);
-                text = markdown.Substring(nameStart, (innerEnd - nameStart)+1);
-                if (string.IsNullOrEmpty(text))
-                    text = idStr;
+            if (isEmote) {
+                var emoteStr = markdown.Substring(pos, innerEnd-pos);
+                if (Discord.Emoji.TryParse(emoteStr, out Discord.Emoji emoji)) {
+                     return new Helpers.Common.InlineParseResult(
+                        new DiscordInline {
+                            Url = emoji.Url,
+                            Tooltip = emoji.Name,
+                            ID = emoji.Id,
+                            Text = emoji.Name,
+                            isEmote = true,
+                        }, 
+                        start, 
+                        innerEnd+2
+                    );
+                }
+                return null;
             }
             else {
-                idStr = markdown.Substring(pos, innerEnd - innerStart);
-                text = idStr;
-            }
-            UInt64.TryParse(idStr, out ulong id);
+                // check if its all numeric before our ':' which is 'custom' to our discord tag
+                // this avoids passing or hooking id lookups this deep in a control
+                for (int i = pos; i < innerEnd; ++i ) {
+                    if (markdown[i] == ':')
+                        break;
+                    if (!char.IsNumber(markdown[i]))
+                        return null;
+                }
 
-            // We found a regular stand-alone link.
-            return new Helpers.Common.InlineParseResult(
-                new DiscordInline {
-                    Url = idStr,
-                    Tooltip = "",
-                    ID = id,
-                    Text = $"@{text}",
-                }, 
-                start, 
-                innerEnd+2
-            );
+                // remove end bracket
+                innerEnd--;
+
+                // extract true id/name string
+                int nameStart = markdown.IndexOf(':');
+                string idStr = string.Empty;
+                string text = string.Empty;
+                if (nameStart != -1) {
+                    // remove ':'
+                    nameStart++;
+                    idStr = markdown.Substring(pos, nameStart - innerStart);
+                    text = markdown.Substring(nameStart, (innerEnd - nameStart)+1);
+                    if (string.IsNullOrEmpty(text))
+                        text = idStr;
+                }
+                else {
+                    idStr = markdown.Substring(pos, innerEnd - innerStart);
+                    text = idStr;
+                }
+                UInt64.TryParse(idStr, out ulong id);
+
+                // We found a regular stand-alone link.
+                return new Helpers.Common.InlineParseResult(
+                    new DiscordInline {
+                        Url = idStr,
+                        Tooltip = "",
+                        ID = id,
+                        Text = $"@{text}",
+                    }, 
+                    start, 
+                    innerEnd+2
+                );
+            }
         }
 
         public override string ToString()

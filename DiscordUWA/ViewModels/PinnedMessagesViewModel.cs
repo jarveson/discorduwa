@@ -72,7 +72,7 @@ namespace DiscordUWA.ViewModels {
                     ChatText = GetReplacedMessageText(message),
                     TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
                     TimeEdited = message.EditedTimestamp?.ToLocalTime().ToString("g"),
-                    AvatarUrl = message.Author.AvatarUrl,
+                    AvatarUrl = message.Author.GetAvatarUrlOrDefault(),
                     Embeds = message.Embeds,
                     Attachments = message.Attachments
                 });

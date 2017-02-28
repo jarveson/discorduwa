@@ -179,7 +179,7 @@ namespace DiscordUWA.ViewModels {
             });
 
             this.LoadCurrentUserAvatar = new DelegateCommand(() => {
-                CurrentUserAvatarUrl = LocatorService.DiscordSocketClient.CurrentUser.AvatarUrl;
+                CurrentUserAvatarUrl = LocatorService.DiscordSocketClient.CurrentUser.GetAvatarUrlOrDefault();
             });
 
             this.SendMessageToCurrentChannel = new DelegateCommand(async () => {
@@ -287,7 +287,7 @@ namespace DiscordUWA.ViewModels {
                         ChatText = GetReplacedMessageText(message),
                         TimeSent = message.Timestamp.ToLocalTime().ToString("g"),
                         TimeEdited = message.EditedTimestamp?.ToLocalTime().ToString("g"),
-                        AvatarUrl = message.Author.AvatarUrl,
+                        AvatarUrl = message.Author.GetAvatarUrlOrDefault(),
                         Embeds = message.Embeds,
                         Attachments = message.Attachments
                     });
@@ -380,7 +380,7 @@ namespace DiscordUWA.ViewModels {
                     if (foundRole == null) {
                         if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown)
                             tmpOffline.Add(new UserListSectionModel {
-                                AvatarUrl = user.AvatarUrl,
+                                AvatarUrl = user.GetAvatarUrlOrDefault(),
                                 CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
                                 StatusColor = user.Status.ToWinColor(),
                                 Username = String.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname,
@@ -391,7 +391,7 @@ namespace DiscordUWA.ViewModels {
                             });
                         else
                             tmpOnline.Add(new UserListSectionModel {
-                                AvatarUrl = user.AvatarUrl,
+                                AvatarUrl = user.GetAvatarUrlOrDefault(),
                                 CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
                                 StatusColor = user.Status.ToWinColor(),
                                 Username = String.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname,
@@ -405,7 +405,7 @@ namespace DiscordUWA.ViewModels {
                         if (!tmpUserSort.ContainsKey(foundRole)) {
                             tmpUserSort[foundRole] = new List<UserListSectionModel> {
                                 new UserListSectionModel {
-                                    AvatarUrl = user.AvatarUrl,
+                                    AvatarUrl = user.GetAvatarUrlOrDefault(),
                                     CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
                                     StatusColor = user.Status.ToWinColor(),
                                     Username = user.Username,

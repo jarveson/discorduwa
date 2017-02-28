@@ -867,20 +867,39 @@ namespace DiscordUWA.Controls.Markdown.Display
 
         private void RenderDiscord(InlineCollection inlineCollection, DiscordInline element, RenderContext context)
         {
-            var link = new Hyperlink();
+            if (!element.IsEmote) {
+                var link = new Hyperlink();
 
-            // Register the link
-            _linkRegister.RegisterNewHyperLink(link, element.Url);
+                // Register the link
+                _linkRegister.RegisterNewHyperLink(link, element.Url);
 
-            // Make a text block for the link
-            Run linkText = new Run
-            {
-                Text = CollapseWhitespace(context, element.Text)
-            };
-            link.Inlines.Add(linkText);
+                // Make a text block for the link
+                Run linkText = new Run
+                {
+                    Text = CollapseWhitespace(context, element.Text)
+                };
+                link.Inlines.Add(linkText);
 
-            // Add it to the current inlines
-            inlineCollection.Add(link);
+                // Add it to the current inlines
+                inlineCollection.Add(link);
+            }
+            else {
+                // in this case we just huck the emote inline instead
+
+                var content = new InlineUIContainer();
+                content.Child = new Windows.UI.Xaml.Controls.Image {
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            MaxHeight = 30,
+                            MaxWidth = 30,
+                            Source = new BitmapImage {
+                                DecodePixelType = DecodePixelType.Logical,
+                                DecodePixelHeight = 30,
+                                UriSource = new Uri(element.Url),
+                            },
+                        };
+
+                inlineCollection.Add(content);
+            }
         }
 
 
