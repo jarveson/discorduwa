@@ -55,8 +55,7 @@ namespace DiscordUWA.ViewModels {
             var channel = LocatorService.DiscordSocketClient.GetChannel(channelId) as SocketGuildChannel;
             var guildUser = channel.GetUser(message.Author.Id);
             // todo: figure out how to pick 'highest' role and take that color
-            foreach (var roleid in guildUser.RoleIds) {
-                var role = channel.Guild.GetRole(roleid);
+            foreach (var role in guildUser.Roles) {
                 if (!role.IsEveryone) {
                     roleColor = role.Color;
                 }

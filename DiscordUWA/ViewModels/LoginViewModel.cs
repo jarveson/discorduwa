@@ -73,15 +73,20 @@ namespace DiscordUWA.ViewModels {
             });
         }
 
+        private Task NavigateToMain() {
+            LocatorService.NavigationService.NavigateTo("main");
+            return Task.CompletedTask;
+        }
+
         private async Task AttemptTokenLogin() {
             string token = LocatorService.SecretService.ReadSecret(SettingKeys.Token);
             if (token != string.Empty) {
                 this.ErrorMessage = "Attempting Token Login....";
                 try {
                     IsLoading = true;
+                    LocatorService.DiscordSocketClient.Connected += NavigateToMain;
+                    await LocatorService.DiscordSocketClient.StartAsync();
                     await LocatorService.DiscordSocketClient.LoginAsync(Discord.TokenType.User, token);
-                    await LocatorService.DiscordSocketClient.ConnectAsync();
-                    LocatorService.NavigationService.NavigateTo("main");
                 }
                 catch (Exception) {
                     this.ErrorMessage = "Token login failed.";

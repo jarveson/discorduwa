@@ -255,8 +255,7 @@ namespace DiscordUWA.ViewModels {
             var server = LocatorService.DiscordSocketClient.GetGuild(selectedGuildId);
             var guildUser = server.GetUser(message.Author.Id);
             // todo: figure out how to pick 'highest' role and take that color
-            foreach (var roleid in guildUser.RoleIds) {
-                var role = server.GetRole(roleid);
+            foreach (var role in guildUser.Roles) {
                 if (!role.IsEveryone) {
                     roleColor = role.Color;
                 }
@@ -367,55 +366,51 @@ namespace DiscordUWA.ViewModels {
                     // todo: figure out how to pick 'highest' role and take that color
                     // this seems to work for the time being though
                     IRole foundRole = null;
-                    foreach (var roleid in user.RoleIds) {
-                        var role = server.GetRole(roleid);
+                    foreach (var role in user.Roles) {
                         roleColor = role.Color;
                         if (role.IsHoisted) {
-                            if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown)
-                                break;
-
                             foundRole = role;
                         }
                     }
+                    if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown) {
+                        tmpOffline.Add(new UserListSectionModel {
+                            AvatarUrl = user.GetAvatarUrlOrDefault(),
+                            CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
+                            StatusColor = user.Status.ToWinColor(),
+                            Username = String.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname,
+                            UserRoleColor = roleColor.ToWinColor(),
+                            Id = user.Id,
+                            IsBot = user.IsBot,
+                            Nickname = user.Nickname
+                        });
+                        continue;
+                    }
                     if (foundRole == null) {
-                        if (user.Status == UserStatus.Offline || user.Status == UserStatus.Unknown)
-                            tmpOffline.Add(new UserListSectionModel {
-                                AvatarUrl = user.GetAvatarUrlOrDefault(),
-                                CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
-                                StatusColor = user.Status.ToWinColor(),
-                                Username = String.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname,
-                                UserRoleColor = roleColor.ToWinColor(),
-                                Id = user.Id,
-                                IsBot = user.IsBot,
-                                Nickname = user.Nickname
-                            });
-                        else
-                            tmpOnline.Add(new UserListSectionModel {
-                                AvatarUrl = user.GetAvatarUrlOrDefault(),
-                                CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
-                                StatusColor = user.Status.ToWinColor(),
-                                Username = String.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname,
-                                UserRoleColor = roleColor.ToWinColor(),
-                                Id = user.Id,
-                                IsBot = user.IsBot,
-                                Nickname = user.Nickname
-                            });
+                        tmpOnline.Add(new UserListSectionModel {
+                            AvatarUrl = user.GetAvatarUrlOrDefault(),
+                            CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
+                            StatusColor = user.Status.ToWinColor(),
+                            Username = String.IsNullOrEmpty(user.Nickname) ? user.Username : user.Nickname,
+                            UserRoleColor = roleColor.ToWinColor(),
+                            Id = user.Id,
+                            IsBot = user.IsBot,
+                            Nickname = user.Nickname
+                        });
                     }
                     else {
                         if (!tmpUserSort.ContainsKey(foundRole)) {
-                            tmpUserSort[foundRole] = new List<UserListSectionModel> {
-                                new UserListSectionModel {
-                                    AvatarUrl = user.GetAvatarUrlOrDefault(),
-                                    CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
-                                    StatusColor = user.Status.ToWinColor(),
-                                    Username = user.Username,
-                                    UserRoleColor = roleColor.ToWinColor(),
-                                    Id = user.Id,
-                                    IsBot = user.IsBot,
-                                    Nickname = user.Nickname
-                                }
-                            };
+                            tmpUserSort[foundRole] = new List<UserListSectionModel>();
                         }
+                        tmpUserSort[foundRole].Add( new UserListSectionModel {
+                            AvatarUrl = user.GetAvatarUrlOrDefault(),
+                            CurrentlyPlaying = user.Game.HasValue ? user.Game.Value.Name : "",
+                            StatusColor = user.Status.ToWinColor(),
+                            Username = user.Username,
+                            UserRoleColor = roleColor.ToWinColor(),
+                            Id = user.Id,
+                            IsBot = user.IsBot,
+                            Nickname = user.Nickname
+                        });
                     }
                 }
                 // todo: can we use DeferRefresh here instead of this other range thing?

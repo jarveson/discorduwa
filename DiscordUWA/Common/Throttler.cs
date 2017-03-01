@@ -5,7 +5,7 @@ namespace DiscordUWA.Common {
     public class Throttler {
         private DispatcherTimer _timer;
         private object _instanceLock = new object(); 
-        private bool shouldTrigger = false;
+        private bool shouldTrigger = true;
 
         public Throttler(TimeSpan timeSpan) {
             _timer = new DispatcherTimer() { Interval = timeSpan };

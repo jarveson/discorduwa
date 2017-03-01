@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace DiscordUWA.Controls.Markdown.Display
 {
@@ -886,19 +887,18 @@ namespace DiscordUWA.Controls.Markdown.Display
             else {
                 // in this case we just huck the emote inline instead
 
-                var content = new InlineUIContainer();
-                content.Child = new Windows.UI.Xaml.Controls.Image {
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            MaxHeight = 30,
-                            MaxWidth = 30,
-                            Source = new BitmapImage {
-                                DecodePixelType = DecodePixelType.Logical,
-                                DecodePixelHeight = 30,
-                                UriSource = new Uri(element.Url),
-                            },
-                        };
-
-                inlineCollection.Add(content);
+                inlineCollection.Add(new InlineUIContainer {
+                    Child = new Image {
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        MaxHeight = 30,
+                        MaxWidth = 30,
+                        Source = new BitmapImage {
+                            DecodePixelType = DecodePixelType.Logical,
+                            DecodePixelHeight = 30,
+                            UriSource = new Uri(element.Url),
+                        },
+                    }
+                });
             }
         }
 

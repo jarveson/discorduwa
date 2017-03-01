@@ -37,7 +37,7 @@ namespace DiscordUWA.ViewModels {
             var id = parameter as ulong?;
             if (id.HasValue) {
                 var currentUser = LocatorService.DiscordSocketClient.GetUser(id.Value);
-                avatarUrl = currentUser.AvatarUrl;
+                avatarUrl = currentUser.GetAvatarUrlOrDefault();
                 statusColor = currentUser.Status.ToWinColor();
                 userName = currentUser.Username;
                 UserDescrim = $"#{currentUser.Discriminator}";

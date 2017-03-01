@@ -31,6 +31,7 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <uc:UserIcon Grid.RowSpan="2"
+                             VerticalAlignment="Top"
                              Margin="0,5,5,0" 
                              Visibility="{x:Bind Username, Converter={StaticResource StringExistsToVisibilityConverter}}" 
                              IconUrl="{x:Bind AvatarUrl, Mode=OneWay}"/>

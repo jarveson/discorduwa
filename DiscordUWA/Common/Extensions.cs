@@ -24,8 +24,8 @@ namespace DiscordUWA.Common {
         }
         
         public static string GetAvatarUrlOrDefault(this Discord.IUser user) {
-            static string server = "https://discordapp.com";
-            static string[] DefaultAvatars = new string[] {
+            string server = "https://discordapp.com";
+            string[] DefaultAvatars = new string[] {
                 "/assets/6debd47ed13483642cf09e832ed0bc1b.png",
                 "/assets/322c936a8c8be1b803cd94861bdfa868.png",
                 "/assets/dd4dbc0016779df1378e7812eabaa04d.png",
@@ -33,14 +33,14 @@ namespace DiscordUWA.Common {
                 "/assets/1cbd08c76f8af6dddce02c5138971129.png"
             };
 
-            static string DefaultBotAvatar = "/assets/f78426a064bc9dd24847519259bc42af.png";
+            string DefaultBotAvatar = "/assets/f78426a064bc9dd24847519259bc42af.png";
 
-            if (string.IsNullOrEmpty(user.AvatarUrl)) {
+            if (string.IsNullOrEmpty(user.AvatarId)) {
                 if (user.IsBot)
                     return server + DefaultBotAvatar;
                 return server + DefaultAvatars[user.DiscriminatorValue % DefaultAvatars.Length];
             }
-            return user.AvatarUrl;
+            return user.GetAvatarUrl();
         }
     }
 }

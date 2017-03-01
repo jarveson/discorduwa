@@ -66,6 +66,12 @@ namespace DiscordUWA.Controls.Markdown.Parse
                 // Alternate double back-tick syntax.
                 innerStart++;
 
+                // disallow triple tick as that is for codeblock
+                if (innerStart == maxEnd)
+                    return null;
+                if (markdown[innerStart] == '`')
+                    return null;
+
                 // Find the end of the span.
                 innerEnd = Helpers.Common.IndexOf(markdown, "``", innerStart, maxEnd);
                 if (innerEnd == -1)
@@ -96,8 +102,9 @@ namespace DiscordUWA.Controls.Markdown.Parse
             }
 
             // We found something!
-            var result = new CodeInline();
-            result.Text = markdown.Substring(innerStart, innerEnd - innerStart).Trim(' ', '\t', '\r', '\n');
+            var result = new CodeInline() {
+                Text = markdown.Substring(innerStart, innerEnd - innerStart).Trim(' ', '\t', '\r', '\n')
+            };
             return new Helpers.Common.InlineParseResult(result, start, end);
         }
 

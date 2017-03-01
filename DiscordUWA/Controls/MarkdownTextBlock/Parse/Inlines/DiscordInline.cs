@@ -44,7 +44,7 @@ namespace DiscordUWA.Controls.Markdown.Parse
         {
             int innerStart = start + 1;
             int pos = -1;
-            bool isEmote = true;
+            bool isEmote = false;
 
             if ((maxEnd - innerStart) > 2) {
                 char char1 = markdown[innerStart];
@@ -83,15 +83,15 @@ namespace DiscordUWA.Controls.Markdown.Parse
             if (innerEnd == -1)
                 return null;
             if (isEmote) {
-                var emoteStr = markdown.Substring(pos, innerEnd-pos);
+                var emoteStr = markdown.Substring(pos-2, (innerEnd+3)-pos);
                 if (Discord.Emoji.TryParse(emoteStr, out Discord.Emoji emoji)) {
                      return new Helpers.Common.InlineParseResult(
                         new DiscordInline {
                             Url = emoji.Url,
                             Tooltip = emoji.Name,
-                            ID = emoji.Id,
+                            ID = emoji.Id ?? 0,
                             Text = emoji.Name,
-                            isEmote = true,
+                            IsEmote = true,
                         }, 
                         start, 
                         innerEnd+2
